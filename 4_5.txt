@@ -1,0 +1,103 @@
+// Circle.h   "header file"
+// Don't contain the implementation of the member function
+// Header file do declarations
+class circle
+{
+  public:
+	Circle(double x, double y, double r);
+	bool scale(double factor);
+	void draw() const;
+	double radius() const;
+  private:
+	// Class invariant m_r > 0
+	double m_x;
+	double m_y;
+	double m_r;
+};
+
+double area(const Circle x);
+/*
+ Circle.cpp   "Implementation file"
+ Don't include cpp files, may cause link errors -> do implementation multiple times
+*/
+#include "Circle.h"
+#include <iostream>
+#include <cmath>
+#include <cstdlib>
+using namespace std;
+
+Circle::Circle(double x, double y, double r) {
+  if (r <= 0) {
+	cerr << "Cannot create a circle with radius" << r << endl;
+	exit(1);
+	}
+  m_x = x;
+  m_y = y;
+  m_r = r;
+}
+
+bool Circle::scale(double factor)
+{
+  if (factor <= 0)
+	return false;
+  m_r *= factor;
+  return true;
+}
+
+void Circle::draw() const
+{
+  ... Draw a circle with center (m_x, m_y) and radius m_r...
+}
+
+double Circle::radius() const
+{
+  return r_m;
+}
+
+double area(const circle &x) 
+/*
+Instead of copy the instance, can use reference
+Use const to promise won't modify the var
+But radius should be const function
+*/
+{
+  const double PI = 4 * actan(1.0);
+  return PI * x.radius() * x.radius();  // Use API to access private member
+}
+
+// myapp.cpp
+# include "Circle.h"
+# include <iostream>
+using namespace std;
+
+int main(void)
+{
+  Circle c(-2, 5, 10);
+  c.scale(2);
+  
+  c.draw();
+  if ( ! c.scale(2))
+	... serious internal error...
+  c.draw();
+  cout << area(c) << endl;  
+}
+
+Separate compilation:
+  If change one source file, we can only re-compile the particular source
+file
+
+==============================================================================================
+c++ source           c++ source        c++ source
+	|                       |                |
+	|  compiler             |		             |
+	V 		                  V		             V
+  object file	       object file	        object file
+       \                  |                  /           libraries (collections of object files)
+	      \	                |			            /                    /
+	       \	              |		             /                    /
+	        \	              V	              /                    /
+	         V	          linker           V                    V
+	         
+                	          executable
+
+

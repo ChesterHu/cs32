@@ -1,0 +1,143 @@
+Class definition and prototypes for non-member functions go in whatever.h
+Function implementation go in whatever.cpp, which has #include "whatever.h"
+
+Other code has #include "whatever.h", and will be built with whatever.cpp
+
+NEVER say #include "whatever.cpp"
+ALWAYS have each .h file use include guards
+
+Point.h
+--------
+#ifndef POINT_INCLUDED
+#define POINT_INCLUDED
+
+class Point
+{
+  ...
+};
+#endif // POINT_INCLUDED
+
+Circle.h
+--------
+
+#ifndef CIRCLE_INCLUDED
+#define CIRCLE_INCLUDED
+#include "Point.h" // Don't include Point in the main rountine. 
+class Circle
+{
+  ...
+  Point m_center
+  ...
+};
+#endif //CIRCLE_INCLUDED
+
+main.cpp
+--------
+#include "Circle.h"
+int main ()
+{
+  Circle c; // Should also let compiler know what is Point class.
+};
+
+
+
+==================================================================
+Circular Dependency
+  All pointers are the same sizes, therefore we can have classes include each other.
+
+Student.h
+---------
+#ifndef STUDENT_INLCUDED
+#define STUDENT_INCLUDED
+
+class Course; // "incomplete type declaration"
+// Will save compilation time
+
+class Student
+{
+  Course* m_studyList[10];
+};
+#endif //STUDENT_INCLUDED
+
+Course.h
+--------
+#ifndef COURSE_INCLUDED
+#define COURSE_INCLUDED
+
+class Student;
+
+class Course
+{
+  Student* m_roster[1000];
+};
+#endif // COURSE_INCLUDED
+
+Student.cpp
+-----------
+
+#include "Student.h"
+#include "Course.h"
+void Student::printStudyList() const
+{
+  for (....)
+    cout << m_studyList[k]->name() << endl;
+}
+
+
+
+==========================================================
+Circle.h
+--------
+
+class Circle
+{
+  public:
+    Circle(double x, double y, double r);
+  ...
+  private:
+    double m_x;
+    double m_y;
+    double m_r;
+};
+
+StickFigure.h
+-------------
+#include <string>
+
+class StickFigure
+{
+  public:
+    StickFigure(double bl, double headDiameter, std::string nm, \
+	        double hx, double hy);
+  private:
+    Circle m_head;
+    std::string m_name;
+    double m_bodyLength;
+}
+
+Circle::Circle(double x, double y, double r)
+: m_x(x), m_y(y), m_r(r)
+{
+  if (r <= 0){
+    cerr << ... << endl;
+    exit(1);
+  }
+}
+
+StickFigure(double bl, double headDiameter, std::string nm, \
+	    double hx, double hy)
+  : m_head(hx, hy, headDiameter/2), m_name(nm), m_bodyLength(bl) 
+{
+  m_head(..., ..., ...) // Illegal!
+  if (bl <= 0)
+  {
+    cerr << ... << endl;
+    exit(1);
+  }
+}
+// This is member inital list, when use string, better use initial list
+
+When CPP construct instances:
+1. ------
+2. Construct the data members
+3. Execute the body of the constructor
