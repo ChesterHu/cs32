@@ -31,3 +31,31 @@ void test1() {
 	m_set.insert(5);
 	m_set.dump();
 }
+
+void test2() {
+	Set m_set;
+	
+	for (int i = 0; i < 5; ++i)
+		m_set.insert(i);
+
+	for (int i = 0; i < 5; ++i)
+		cout << m_set.contains(i) << endl;
+
+}
+
+void test3() {
+	Set a;
+	Set b;
+
+	for (int i = 1; i <= 10; ++i)
+		a.insert(i);
+
+	for (int i = 11; i <= 40; ++i)
+		b.insert(i);
+
+	a.swap(b);
+	cout << "a's items" << endl;
+	a.dump();
+	cout << "b's items" << endl;
+	b.dump();
+}

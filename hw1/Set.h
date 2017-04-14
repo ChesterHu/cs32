@@ -32,7 +32,7 @@ class Set
 		  // value was removed; otherwise, leave the set unchanged and
 		  // return false.
 
-    bool contains(const ItemType& value); 
+    bool contains(const ItemType& value) const;
 		  // Return true if the value is in the set, otherwise false.
 
     bool get(int i, ItemType& value) const;
