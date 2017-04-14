@@ -1,0 +1,72 @@
+C++ CLASS
+=========
+class School
+{
+	public:
+		School(const string &name);
+		School(const School &aSchool);
+		School& operator=(const School &aSchool);
+		string getName() const;				// Accessor.
+		...;
+	private:
+		string m_name;								// Private member, can't access.
+		Student *m_students;
+		int m_numStudents;
+		...;
+};
+
+// Copy constructor overloading
+School::School(const School &s1)
+ :m_name(s1.m_name),
+	m_numStudents(s1.m_numStudents),
+	m_students(new Student[m_numStudents])
+{
+	for(int i = 0; i < m_numStudents; ++i) {
+		m_students[i] = s1.m_students[i];
+	}
+}
+
+// Assignment operator overloading
+School& School::operator=(const School &s1)
+{
+	if (this != &s1) {
+		m_name = s1.m_name;
+		m_numStudents = s1.m_numStudents;
+		//delete [] m_students;
+		m_students = new Students[m_numStudents];
+		
+		for(int i = 0; i < m_numStudents; ++i) {
+			m_students[i] = s1.m_students[i];
+		}
+	}
+	return *this;
+}
+
+Constructor
+-----------
+	The same name as the class. Scalar variables will be initialized by default constructor.
+
+Destructor
+----------
+	Start by ~, then the class name. To free the memory, specially when you have dynamic allocated variables, using the "delete" keywords.
+
+Class Composition
+-----------------
+	Member class will be constructed first. Always construct the most inner object. If it's const variable (int, double or other object) you should initialize it in initialize list.
+
+Copy Constructor
+----------------
+	The default copy constructor will copy all the members. Better to define your own copy constructor if there's a pointer or other class member.
+
+Assginment Operator
+-------------------
+	Remember to check if the object assigned to itself.
+
+Linked List
+-----------
+	Linked list is series of nodes, each pointing to the next one. The last node's next pointer is NULL.
+
+DEBUG
+=====
+	Debugger: Microsoft Visual Studio | gdb | xcode
+	
