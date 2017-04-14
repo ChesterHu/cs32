@@ -1,6 +1,7 @@
 #include "Set.h"
 #include <string>
-
+#include <iostream>
+using namespace std;
 Set::Set()
 {
 	m_size = 0;
@@ -30,7 +31,7 @@ bool Set::insert(const ItemType& value)
 
 	// Find a place to insert.
 	int left = 0, right = m_size - 1, mid = 0;
-	while (left < right) {
+	while (left <= right) {
 		mid = (left + right) / 2;
 		if (m_items[mid] == value) {
 			return false;
@@ -42,11 +43,12 @@ bool Set::insert(const ItemType& value)
 	}
 
 	// "idx" is the place to insert
-	int idx = (m_items[left] > value) ? left : left + 1;
-	// Move every item forward 1 block, start from idx
+	int idx = (m_items[mid] > value) ? mid : mid + 1;
+	// Move every item to right 1 block, start from idx
 	for (int i = m_size - 1; i >= idx; --i)
 		m_items[i + 1] = m_items[i];
 	// Insert
+	cout << idx << " " << value << endl;
 	m_items[idx] = value;
 	m_size++;
 
@@ -60,6 +62,30 @@ bool Set::erase(const ItemType& value)
 		return false;
 
 	// Find the item.
+	int left = 0, right = m_size - 1, mid = 0;
+	bool in = false;
+	while (left <= right) {
+		mid = (left + right) / 2;
+		if (m_items[mid] == value) {
+			in = true;
+			break;	
+		} else if (m_items[mid] < value) {
+			left = mid + 1;
+		} else {
+			right = mid - 1;
+		}
+	}
+
+	// If value not in
+	if (!in)
+		return false;
+
+	// move every item to left 1 block
+	for (int i = mid + 1; i < m_size; ++i) {
+		m_items[i - 1] = m_items[i];
+	}
+	m_size--;
 	
+	return true;
 }
 
