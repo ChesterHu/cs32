@@ -1,11 +1,12 @@
 #include <iostream>
 #include "Set.h"
-#include "test.h"
+#include "SSNSet.h"
+//#include "test.h"
+#include "testSSNSet.h"
 using namespace std;
 
 int main()
 {
-	test3();
-
+ 	testSSN1();
 	return 0;
 }

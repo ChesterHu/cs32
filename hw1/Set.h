@@ -2,11 +2,8 @@
 #define SET_INCLUDED
 
 #include <string>
-typedef int ItemType;  // Define ItemType as the synonym for desired data type.
+typedef unsigned long ItemType;  // Define ItemType as the synonym for desired data type.
 const int DEFAULT_MAX_ITEMS = 200;
-
-#include <iostream>
-using namespace std;
 
 class Set 
 {
@@ -45,9 +42,11 @@ class Set
 
 		void dump()
 		{
+			/*
 			for (int i = 0; i < m_size; ++i) {
 				cout << m_items[i] << endl;
-			}	
+			}
+			*/	
 		}
 
 	private:
