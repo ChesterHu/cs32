@@ -2,7 +2,7 @@
 #define SET_INCLUDED
 
 #include <string>
-typedef unsigned long ItemType;  // Define ItemType as the synonym for desired data type.
+typedef std::string ItemType;  // Define ItemType as the synonym for desired data type.
 const int DEFAULT_MAX_ITEMS = 200;
 
 class Set 
@@ -12,7 +12,7 @@ class Set
 			// Create an empty set.
 
 		bool empty() const;
-			// Return true if the set if empty, otherwise false.
+			// Return true if the set is empty, otherwise false.
 
 		int size() const;
 			// Return the number of items in the set.

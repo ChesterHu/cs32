@@ -1,0 +1,24 @@
+// ItemType std::string
+#include "newSet.h"
+#include <string>
+#include <iostream>
+#include <cassert>
+using namespace std;
+
+void test()
+{
+	Set ss;
+	assert(ss.insert("roti"));
+	assert(ss.insert("pita"));
+	assert(ss.size() == 2);
+	assert(ss.contains("pita"));
+	ItemType x = "bing";
+	assert(ss.get(0, x) && x == "pita");
+	assert(ss.get(0, x) && x == "roti");
+}
+
+int main()
+{
+	test;
+	cout << "Passed all tests" << endl;
+}
