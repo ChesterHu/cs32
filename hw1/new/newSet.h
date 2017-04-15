@@ -5,6 +5,10 @@
 typedef std::string ItemType;  // Define ItemType as the synonym for desired data type.
 const int DEFAULT_MAX_ITEMS = 200;
 
+// include for testing dump;
+#include <iostream>
+using namespace std;
+
 class Set 
 {
 	public:
@@ -54,15 +58,16 @@ class Set
 
 		void dump()
 		{
-			/*
+			
 			for (int i = 0; i < m_size; ++i) {
 				cout << m_items[i] << endl;
 			}
-			*/	
+				
 		}
 
 	private:
 		int				m_size;
+		int				m_maxItems;
 		ItemType* m_items;
 };
 

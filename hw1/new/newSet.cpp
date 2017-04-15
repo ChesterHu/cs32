@@ -1,8 +1,22 @@
-#include "Set.h"
+#include "newSet.h"
 #include <string>
 Set::Set()
 {
 	m_size = 0;
+	m_maxItems = DEFAULT_MAX_ITEMS;
+	m_items = new ItemType[m_maxItems];
+}
+
+Set::Set(int num_items)
+{
+	m_size = 0;
+	m_maxItems = num_items;
+	m_items = new ItemType[num_items];
+}
+
+Set::~Set()
+{
+	delete [] m_items;
 }
 
 bool Set::empty() const
@@ -18,10 +32,10 @@ int Set::size() const
 bool Set::insert(const ItemType& value)
 {
 	// If the set is already full.
-	if (m_size >= DEFAULT_MAX_ITEMS)
+	if (m_size >= m_maxItems)
 		return false;
 	// If the set is empty.
-	if (m_size == 0 && DEFAULT_MAX_ITEMS > 0) {
+	if (m_size == 0 && m_maxItems > 0) {
 		m_items[0] = value;
 		m_size++;
 		return true;
