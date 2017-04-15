@@ -3,15 +3,41 @@
 Set::Set()
 {
 	m_size = 0;
-	m_maxItems = DEFAULT_MAX_ITEMS;
-	m_items = new ItemType[m_maxItems];
+	m_cap = DEFAULT_MAX_ITEMS;
+	m_items = new ItemType[m_cap];
 }
 
 Set::Set(int num_items)
 {
 	m_size = 0;
-	m_maxItems = num_items;
-	m_items = new ItemType[num_items];
+	m_cap = num_items;
+	m_items = new ItemType[m_cap];
+}
+
+Set::Set(const Set& other)
+{
+	m_size = other.m_size;
+	m_cap = other.m_cap;
+	m_items = new ItemType[m_cap];
+	
+	// Copy items
+	for (int i = 0; i < m_size; ++i)
+		m_items[i] = other.m_items[i];
+}
+
+Set& Set::operator=(const Set& rhs)
+{
+	if (this != &rhs) {
+		delete [] m_items;
+		m_size = rhs.m_size;
+		m_cap = rhs.m_cap;
+		m_items = new ItemType[m_cap];
+
+		for (int i = 0; i < m_size; ++i)
+			m_items[i] = rhs.m_items[i];
+	}
+	
+	return *this;
 }
 
 Set::~Set()
@@ -31,17 +57,17 @@ int Set::size() const
 
 bool Set::insert(const ItemType& value)
 {
-	// If the set is already full.
-	if (m_size >= m_maxItems)
+		// If the set is already full.
+	if (m_size >= m_cap)
 		return false;
-	// If the set is empty.
-	if (m_size == 0 && m_maxItems > 0) {
+		// If the set is empty.
+	if (m_size == 0 && m_cap > 0) {
 		m_items[0] = value;
 		m_size++;
 		return true;
 	}
 
-	// Find a place to insert.
+		// Find a place to insert.
 	int left = 0, right = m_size - 1, mid = 0;
 	
 	while (left <= right) {
@@ -55,12 +81,12 @@ bool Set::insert(const ItemType& value)
 		}
 	}
 
-	// "idx" is the place to insert.
+		// "idx" is the place to insert.
 	int idx = (m_items[mid] > value) ? mid : mid + 1;
-	// Move every item to right 1 block, start from idx.
+		// Move every item to right 1 block, start from idx.
 	for (int i = m_size - 1; i >= idx; --i)
 		m_items[i + 1] = m_items[i];
-	// Insert
+		// Insert
 	m_items[idx] = value;
 	m_size++;
 
@@ -69,11 +95,11 @@ bool Set::insert(const ItemType& value)
 
 bool Set::erase(const ItemType& value)
 {
-	// If set is empty.
+		// If set is empty.
 	if (m_size == 0) 
 		return false;
 
-	// Find the item.
+		// Find the item.
 	int left = 0, right = m_size - 1, mid = 0;
 	bool in = false;
 
@@ -89,11 +115,11 @@ bool Set::erase(const ItemType& value)
 		}
 	}
 
-	// If value not in.
+		// If value not in.
 	if (!in)
 		return false;
 
-	// move every item to left 1 block.
+		// move every item to left 1 block.
 	for (int i = mid + 1; i < m_size; ++i) {
 		m_items[i - 1] = m_items[i];
 	}
@@ -104,11 +130,11 @@ bool Set::erase(const ItemType& value)
 
 bool Set::contains(const ItemType& value) const
 {
-	// If set is empty, return false.
+		// If set is empty, return false.
 	if (m_size == 0)
 		return false;
 
-	// Find the item.
+		// Find the item.
 	int left = 0, right = m_size - 1;
 	
 	while (left <= right) {
@@ -136,15 +162,18 @@ bool Set::get(int i, ItemType& value) const
 
 void Set::swap(Set& other)
 {
-	int max_size = (this->size() > other.size()) ? this->size() : other.size();
+		// Switch size.
+	int temp = other.m_size;
+	other.m_size = this->m_size; 
+	this->m_size = temp;
 
-	for (int i = 0; i < max_size; ++i) {
-		ItemType temp = other.m_items[i];
-		other.m_items[i] = this->m_items[i];
-		this->m_items[i] = temp;
-	}
+		// Switch max capacity.
+	temp = other.m_cap;
+	other.m_cap = this->m_cap; 
+	this->m_cap = temp;
 
-	int temp_size = other.m_size;
-	other.m_size = this->m_size;
-	this->m_size = temp_size;
+		// Switch pointer.
+	ItemType* ptr = other.m_items;
+	other.m_items = this->m_items;
+	this->m_items = ptr;
 }

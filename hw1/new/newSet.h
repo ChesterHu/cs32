@@ -18,17 +18,17 @@ class Set
 		Set(int num_items);
 			// Constructor, init with num_items blocks.
 
-		Set(Set& other);
+		Set(const Set& other);
 			// Copy constructor.
 
-		Set& operator=(Set& rhs);
+		Set& operator=(const Set& rhs);
 			// Assignment operater overloading.
 
 		~Set();
 			// Deconstructor.
 
 		bool empty() const;
-			// Return true if the set if empty, otherwise false.
+			// Return true if the set is empty, otherwise false.
 
 		int size() const;
 			// Return the number of items in the set.
@@ -66,9 +66,9 @@ class Set
 		}
 
 	private:
-		int				m_size;
-		int				m_maxItems;
-		ItemType* m_items;
+		int				m_size;		// Current size.
+		int				m_cap;		// Max capacity.
+		ItemType* m_items;	// Current items.
 };
 
 #endif	// Set.h included
