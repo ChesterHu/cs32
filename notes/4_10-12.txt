@@ -130,7 +130,7 @@ String v(p);
 Different implementation in constructor:
   _______           ______
  |nullptr|         |      |------> '\0'
- ---------     VS  --------
+ ---------   VS    --------
  |  int  |         |  int |
  ---------         --------
 // Second one is much easier to implement and construct, but use more instructions (time) and spaces.

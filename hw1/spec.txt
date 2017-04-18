@@ -1,5 +1,8 @@
 HOMEWORK 1
 ==========
+TODO
+  -- Optimize operator assignment, more forgivable
+  -- Don't have to allocate new space for dynamic array.
 
 	Here is a C++ class definition for an abstract data type Set of strings, representing the concept of a collection of strings, without duplicates. (A web server might record unique visitors to a website in a set of strings, for example.) To make things simpler for you, the case of letters in a string matters, so that the strings Roti and rOtI are not considered duplicates.
 
