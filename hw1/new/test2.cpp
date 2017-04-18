@@ -41,6 +41,7 @@ void test()
 
 		// Swap
 	a.swap(b);
+  a.swap(a);
 	assert(a.size() == 5 && b.size() == 0);
 	ItemType x;
 	assert(a.get(0, x) && x == 1);
