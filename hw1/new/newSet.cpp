@@ -28,6 +28,9 @@ Set::Set(const Set& other)
 Set& Set::operator=(const Set& rhs)
 {
 	if (this != &rhs) {
+		Set temp(rhs);
+		this->swap(temp);
+		/*
 		delete [] m_items;
 		m_size = rhs.m_size;
 		m_cap = rhs.m_cap;
@@ -35,6 +38,7 @@ Set& Set::operator=(const Set& rhs)
 
 		for (int i = 0; i < m_size; ++i)
 			m_items[i] = rhs.m_items[i];
+		*/
 	}
 	
 	return *this;
