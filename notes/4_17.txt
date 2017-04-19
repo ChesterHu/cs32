@@ -1,0 +1,51 @@
+Aliasing
+========
+// May cause problem if from and to is same account.
+void transfer(Account& from, Account& to, double amt)
+{
+  if (&from != &to && from.hasAtLeast(amt)) // will solve aliasing problems.
+  {
+    from.debit(amt);
+    to.credit(amt);
+    if (amt >= 10000)
+      fileForm();
+  }
+}
+
+void fire(ship& from, ship& to); // Checking for aliasing for every time.
+
+void swap(String& other)
+{
+  ... swap the m_text pointers ...
+  ... swap the m_len ints ...
+}
+
+String& String::operator=(const String& rhs)
+{
+  if (this != &rhs)
+  {
+      // Much forgive solution.
+    String temp(rhs);      "Copy-and-swap"
+    swap(temp);
+    // delete [] m_text;
+    // m_len = rhs.m_len;
+    // m_text = new char[m_len + 1]; Function will crash if there's no enough free memory. 
+    // strcpy(m_text, rhs.text);
+  }
+  return *this;
+}
+
+Dynamic Array
+-------------
+  Standard library vector is a resizable array. expensive when deleting and intserting new elements within the array. If the array is full, allocating new space, and copy the original one.
+
+Linked List
+===========
+
+struct Node
+{
+  int data;
+  Node* next;
+};
+
+

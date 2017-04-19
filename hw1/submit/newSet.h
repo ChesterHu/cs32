@@ -5,10 +5,6 @@
 typedef unsigned long ItemType;  // Define ItemType as the synonym for desired data type.
 const int DEFAULT_MAX_ITEMS = 200;
 
-// include for testing dump;
-#include <iostream>
-using namespace std;
-
 class Set 
 {
 	public:

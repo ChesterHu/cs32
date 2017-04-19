@@ -7,6 +7,7 @@ Set::Set(int cap)
 	if (cap <= 0) {
 		std::cerr << "Capacity must be greater than 0\n";
 	}
+  // if num_items < 0.
 	m_size = 0;
 	m_cap = cap;
 	m_items = new ItemType[m_cap];
@@ -164,6 +165,8 @@ bool Set::get(int i, ItemType& value) const
 
 void Set::swap(Set& other)
 {
+  if (this == &other)
+    return;
 		// Switch size.
 	int temp = other.m_size;
 	other.m_size = this->m_size; 

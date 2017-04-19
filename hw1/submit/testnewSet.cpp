@@ -24,6 +24,11 @@ void test()
 		assert(e.get(0, x) && x == 1);
 		assert(!e.get(5, x));
 		assert(e.get(4, x) && x == 6);
+		assert(e.erase(1));
+		assert(e.get(0, x) && x == 2);
+		assert(e.erase(6));
+		assert(e.get(2, x) && x == 5);
+		assert(!e.erase(100) && e.size() == 3 && b.size() == 5);
 	}
 		// Assignment operator.
 	do {

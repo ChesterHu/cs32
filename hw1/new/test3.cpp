@@ -15,15 +15,15 @@ void test0()
 	a.insert("insert");
 	a.insert("insert");
 	// cout << a.size() << endl;
-	a.dump();
 	Set b(a);
 	// cout << b.size() << endl;
-	b.dump();
 	Set c(10);
 	a = a;
 	c = b = a;
+	ItemType x = "";
+	assert(c.get(0, x) && x == "hello");
+	assert(c.size() == 2);
 	// cout << c.size() << endl;
-	c.dump();
 }
 
 void test1() 
@@ -43,8 +43,6 @@ void test1()
 	a.insert("world");
 	a.swap(b);
 	assert(!a.insert(v[5])  &&  b.insert(v[5]));
-	a.dump();
-	b.dump();	
 }
 
 int main()
