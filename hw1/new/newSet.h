@@ -12,11 +12,8 @@ using namespace std;
 class Set 
 {
 	public:
-		Set();
+		Set(int cap = DEFAULT_MAX_ITEMS);
 			// Default constructor, create an empty set.
-
-		Set(int num_items);
-			// Constructor, init with num_items blocks.
 
 		Set(const Set& other);
 			// Copy constructor.
@@ -55,15 +52,6 @@ class Set
     
 		void swap(Set& other);
 		  // Exchange the contents of this set with the other one.
-
-		void dump()
-		{
-		/*	
-			for (int i = 0; i < m_size; ++i) {
-				cout << m_items[i] << endl;
-			}
-		*/		
-		}
 
 	private:
 		int				m_size;		// Current size.

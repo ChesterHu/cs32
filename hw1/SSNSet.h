@@ -8,7 +8,7 @@ class SSNSet
 	public:
 		SSNSet();		// Create an empty SSN set.
 
-		bool add(unsigned long ssn);
+		bool add(ItemType ssn);
 			// Add an SSN to the SSNSet. Return true if and only if the SSN
 			// was actually added.
 

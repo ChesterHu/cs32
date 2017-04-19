@@ -14,11 +14,11 @@ void test()
 	assert(ss.contains("pita"));
 	ItemType x = "bing";
 	assert(ss.get(0, x) && x == "pita");
-	assert(ss.get(0, x) && x == "roti");
+	assert(ss.get(1, x) && x == "roti");
 }
 
 int main()
 {
-	test;
+	test();
 	cout << "Passed all tests" << endl;
 }

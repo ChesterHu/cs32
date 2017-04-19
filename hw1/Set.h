@@ -2,7 +2,7 @@
 #define SET_INCLUDED
 
 #include <string>
-typedef std::string ItemType;  // Define ItemType as the synonym for desired data type.
+typedef unsigned long ItemType;  // Define ItemType as the synonym for desired data type.
 const int DEFAULT_MAX_ITEMS = 200;
 
 class Set 
@@ -39,15 +39,6 @@ class Set
     
 		void swap(Set& other);
 		  // Exchange the contents of this set with the other one.
-
-		void dump()
-		{
-			/*
-			for (int i = 0; i < m_size; ++i) {
-				cout << m_items[i] << endl;
-			}
-			*/	
-		}
 
 	private:
 		int				m_size;

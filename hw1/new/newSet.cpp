@@ -1,16 +1,14 @@
 #include "newSet.h"
-#include <string>
-Set::Set()
-{
-	m_size = 0;
-	m_cap = DEFAULT_MAX_ITEMS;
-	m_items = new ItemType[m_cap];
-}
+#include <string>   // ItemType can be std::string
+#include <iostream> // Using cerr
 
-Set::Set(int num_items)
+Set::Set(int cap)
 {
+	if (cap <= 0) {
+		std::cerr << "Capacity must be greater than 0\n";
+	}
 	m_size = 0;
-	m_cap = num_items;
+	m_cap = cap;
 	m_items = new ItemType[m_cap];
 }
 
