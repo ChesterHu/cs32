@@ -1,0 +1,77 @@
+CS32 Project 2 Report
+=====================
+
+Linked List Implementation
+--------------------------
+My linked list is a circular double-likned list, it contains a dummy node (pointed by m_head). The node's data is sorted in ascending order. I also use a int variable m_size to record the size of my linked list.
+ m_head    m_size == 2
+    \
+		 \ (dummy node)	
+			v ____      ____      ____
+			 ||||||    |data|    |data|
+			 ------    ------    ------
+ ------|prev|<---|prev|<---|prev|<----    
+ |		 ------    ------    ------    |
+ |		 |next|--->|next|--->|next|    |
+ |		 ------    ------    ------    |
+ |       ^___________________|       |
+ |___________________________________|
+
+
+Pseudocode
+----------
+insert(value)
+{
+	// iterator will skip the dummy node.
+	Node* iterator = m_head->next;
+	while (iterator not m_head && iterator->data < value) {
+		iterator = iterator->next;
+	}
+	
+	// Since dummy node data contains random number, need to check if the iterator points to dummy node.
+	if (iterator is m_head || iterator->data != value) {
+		Insert value and modify connections in linked list;
+
+		m_size++;
+		return true;
+	}
+
+	return false;
+}
+
+// The logic of erase, contains and get are very similar to insert.
+
+Set(Set& other)
+{
+	Create dummy node, let m_head point to dummy node, and make a circle.
+	for every item in other:
+		insert item into this;
+}
+
+~Set()
+{
+	while (m_size > 0)
+	{
+		Node* iterator = m_head->next;
+		Modify list connect, let m_head->next = iterator->next, and iterator->next->prev = m_head;
+		delete iterator;
+		m_size--;
+	}
+
+	delete m_head;
+}
+
+unite(const Set& s1, const Set& s2, Set result)
+{
+	Set temp;
+	use get() to get every item in s1 and s2, inset them into temp;
+	swap result and temp;
+}
+
+subtract(const Set& s1, const Set& s2, Set result)
+{
+	Set temp;
+	use get() to get every item in s1 and insert into temp;
+	use get() to get every item in s2 and erase it from temp;
+	swap result and temp;
+}
