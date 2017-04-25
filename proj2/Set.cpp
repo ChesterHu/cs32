@@ -98,11 +98,7 @@ bool Set::erase(const ItemType& value)
 	iter->prev->next = iter->next;
 	iter->next->prev = iter->prev;
 		// Update size.
-<<<<<<< HEAD
 	delete iter;	
-=======
-  delete iter;
->>>>>>> c2be3df6f3de46994fd3638b88b6b3bd72329924
 	m_size--;
 	return true;
 }
