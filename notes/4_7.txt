@@ -39,8 +39,6 @@ int main ()
   Circle c; // Should also let compiler know what is Point class.
 };
 
-
-
 ==================================================================
 Circular Dependency
   All pointers are the same sizes, therefore we can have classes include each other.
@@ -83,8 +81,6 @@ void Student::printStudyList() const
     cout << m_studyList[k]->name() << endl;
 }
 
-
-
 ==========================================================
 Circle.h
 --------
@@ -93,7 +89,7 @@ class Circle
 {
   public:
     Circle(double x, double y, double r);
-  ...
+  	...;
   private:
     double m_x;
     double m_y;
@@ -115,6 +111,9 @@ class StickFigure
     double m_bodyLength;
 }
 
+Circle.cpp
+----------
+#include "Circle.h"
 Circle::Circle(double x, double y, double r)
 : m_x(x), m_y(y), m_r(r)
 {
@@ -124,6 +123,9 @@ Circle::Circle(double x, double y, double r)
   }
 }
 
+StickFigure.cpp
+---------------
+#include "StickFigure.h"
 StickFigure(double bl, double headDiameter, std::string nm, \
 	    double hx, double hy)
   : m_head(hx, hy, headDiameter/2), m_name(nm), m_bodyLength(bl) 
@@ -139,5 +141,9 @@ StickFigure(double bl, double headDiameter, std::string nm, \
 
 When CPP construct instances:
 1. ------
-2. Construct the data members
+2. Construct the data members, consulting the member initialization list.
+	If a member is not listed, if it is of a:
+	 	i.  class type, it is default-constructed (if no default constructor, error).
+		ii. builtin type, it is left uninitialized.
+		iii.const variables, should be put into the initialization list.
 3. Execute the body of the constructor
