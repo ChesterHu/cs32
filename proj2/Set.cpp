@@ -1,5 +1,4 @@
 #include <iostream>  	// For test only
-#include <string>			// For string ItemType
 #include "Set.h"
 
 	// Default constructor.
@@ -99,7 +98,8 @@ bool Set::erase(const ItemType& value)
 		// In the list.
 	iter->prev->next = iter->next;
 	iter->next->prev = iter->prev;
-		// Update size.	
+		// Update size.
+  delete iter;
 	m_size--;
 	return true;
 }
