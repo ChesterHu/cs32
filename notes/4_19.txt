@@ -1,0 +1,61 @@
+Linked List
+===========
+// Single linked list
+struct Node
+{
+  int m_data;
+  Node* m_next;
+};
+
+// Double linked list
+struct Node
+{
+  int m_data;
+  Node* next;
+  Node* prev;
+}
+
+Node* head;
+... build up linked list somehow ...
+
+for (Node* p = head; p != nulptr; p = p->next)  // Better use this loop after head is well defined.
+  cout << p->data << endl;
+
+When you create linked list, draw pictures. Trace through code CAREFULLY!!!
+Any time you see p->
+--------------------
+  Make sure p has a well-defined value
+  Make sure p is not null
+Check
+-----
+  normal, empty list, front, back, one-element list. 
+  Make sure you do things in the right order. If you create a new Node, set its member first.
+
+Node* p;
+for (p = head; p != nullptr && p->m_data != 42; p = p->next);
+if (p != nullptr) // Insert 35
+{
+  Node* newGuy = new Node;
+  newGuy.m_data = 35;
+  newGuy->next = p->next;
+  p->next = newGuy;
+}
+
+// Erase a node
+Node* prev;
+Node* curr;
+for (curr = head; curr != nullptr && curr->data != 42; prev = curr, curr = curr->next);
+// Single linked list
+if (curr != nullptr)
+{
+  prev->next = curr->next;  // prev pointer could be undefiend pointer if the list is empty, also may cause problem when 42 is in head node.
+  delete curr;
+}
+// Double linked list
+curr->prev->next = curr->next;
+curr->next->prev = curr->prev;
+Compared with array, when insert new item in the array, it's index for some items will change (or pointers point to that some position of the array), whild linked list won't have this problem.
+A && B
+------
+  If A is false, then B will never be excuted.
+  
