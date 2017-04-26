@@ -64,6 +64,18 @@ void test()
 		c.dump();
 		assert(c.size() == 2);
 	} while(0);
+
+  do {
+    Set a;
+    a.insert("a");
+    a.insert("b");
+    a.insert("c");
+    assert(a.erase("b"));
+    assert(a.erase("c"));
+    assert(a.erase("a"));
+    assert(a.size() == 0);
+    assert(!a.contains("a") && !a.contains("c") && !a.contains("b"));
+  } while(0);
 }
 
 int main()

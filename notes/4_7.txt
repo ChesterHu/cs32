@@ -39,8 +39,6 @@ int main ()
   Circle c; // Should also let compiler know what is Point class.
 };
 
-
-
 ==================================================================
 Circular Dependency
   All pointers are the same sizes, therefore we can have classes include each other.
@@ -82,8 +80,6 @@ void Student::printStudyList() const
   for (....)
     cout << m_studyList[k]->name() << endl;
 }
-
-
 
 ==========================================================
 Circle.h

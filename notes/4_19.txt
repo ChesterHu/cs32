@@ -57,5 +57,4 @@ curr->next->prev = curr->prev;
 Compared with array, when insert new item in the array, it's index for some items will change (or pointers point to that some position of the array), whild linked list won't have this problem.
 A && B
 ------
-  If A is false, then B will never be excuted.
-  
+  If A is false, then B will never be excuted.  
