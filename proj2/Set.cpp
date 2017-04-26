@@ -1,6 +1,5 @@
 #include <iostream>  	// For test only
 #include "Set.h"
-
 	// Default constructor.
 Set::Set()
 {
@@ -99,7 +98,7 @@ bool Set::erase(const ItemType& value)
 	iter->prev->next = iter->next;
 	iter->next->prev = iter->prev;
 		// Update size.
-  delete iter;
+	delete iter;	
 	m_size--;
 	return true;
 }
@@ -144,18 +143,15 @@ void unite(const Set& s1, const Set& s2, Set& result)
 {
 	Set temp;
 	ItemType x;
-		// Insert s1 data.
-	for (int i = 0; i < s1.size(); ++i)
+	int max_size = (s1.size() > s2.size()) ? s1.size() : s2.size();
+		// Insert data.
+	for (int i = 0; i < max_size; ++i)
 	{
-		s1.get(i, x);
-		temp.insert(x);
-	}
-		// Erase d2 data.
-	for (int i = 0; i < s2.size(); ++i)
-	{
-		s2.get(i, x);
-		temp.insert(x);
-	}
+		if (s1.get(i, x))
+			temp.insert(x);
+		if (s2.get(i, x))
+			temp.insert(x);
+	}	
 		// Swap items.
 	result.swap(temp);
 }
@@ -185,5 +181,5 @@ void subtract(const Set& s1, const Set& s2, Set& result)
 void Set::dump() const
 {
 	for(Node* iter = m_head->next; iter != m_head; iter = iter->next)
-		std::cout << iter->data << std::endl;
+		std::cerr << iter->data << std::endl;
 }

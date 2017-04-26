@@ -1,6 +1,11 @@
 #ifndef SET_INCLUDED
 #define SET_INCLUDED
+<<<<<<< HEAD
 #include <string> // Using ItemType of std::string
+=======
+
+#include <string>		// For std::string ItemType
+>>>>>>> af3e8628fc4a92d148e1367126635ddf135a6f6f
 typedef std::string ItemType;
 
 	// Implementation of double linked lisk (circular).

@@ -61,7 +61,7 @@ int main()
 	s.push(20);
 		// n will be 20.
 	int n = s.top();
-		// 20 will be removed. C++ library pop() won'r return the top item in the stack, it returns void.
+		// 20 will be removed. C++ library pop() won't return the top item in the stack, it returns void.
 	s.pop();
 	if ( ! s.empty)
 	{

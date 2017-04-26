@@ -13,7 +13,7 @@ void f(String t)
   ...;
   u = t;              // Assignment is different from construction. The default assignment operator is assign every class member.
   ...;                // When assign a class, the instance will call u.operator=(t); which is equal to the syntax: u = t;
-}                     // l = k = m ==> l = (k = m) After assignment, the operator can return the left-hand-side.
+}                     // l = k = m --> l = (k = m) After assignment, the operator can return the left-hand-side.
 
 int main()
 {
@@ -26,15 +26,16 @@ int main()
   f(s);  // Will copy s, need a copy constructor otherwise will free memory twice.
   ...;
 }
-===============================================
+
+============
 class String
 {
   public:
     String(const char* value = "");
-    String(const String& other); // Copy constructor.
+    String(const String& other); 						 // Copy constructor.
     void operator=(const String& rhs);
-    // String operator=(const String& rhs); NOT QUITE RIGHT...
-    String& operator=(const String& rhs);  // Why reference?
+    // String operator=(const String& rhs);  //NOT QUITE RIGHT...
+    String& operator=(const String& rhs);    // Why reference?
     ~String();
     ...;
   private:
@@ -48,7 +49,8 @@ class String
     char* m_text;  // For flexibility
     int m_len;
 };
-===============================================
+
+==================
 #include <cstring>
 using namespace std;
 
@@ -70,8 +72,8 @@ String::String(const char* value)
 String::String(const char* value)
 {
   if (value == nullptr)
-    value = ""; // The const means we can't modify the content of the pointer points, but we can let pointer point to other object.
-  m_len = strlen(value); // Use "" to indicate it's a string.
+    value = ""; 							// The const means we can't modify the content of the pointer points, but we can let pointer point to other object.
+  m_len = strlen(value); 			// Use "" to indicate it's a string.
   m_text = new char[m_len+1];
   // m_text[0] = '\0';
   strcpy(m_text, value);
@@ -109,11 +111,11 @@ String::~String()
 FREE MOMERY
 // C++ use new to allocate new memory, make sure use the appropriate delete methods.
 Blah* bp = new Blah;
-...
+...;
 delete bp;
 
 Blah* bpa = new Blah[...];  // Allocate an array in the memory
-...
+...;
 delete [] bpa;
 ------------------------------
 // What if value is a nullptr?

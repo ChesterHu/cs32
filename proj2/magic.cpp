@@ -7,8 +7,13 @@
     (void)p;                                                                   \
   }
 
+<<<<<<< HEAD
     static_assert(std::is_default_constructible<Set>::value,
                   "Set must be default-constructible.");
+=======
+static_assert(std::is_default_constructible<Set>::value,
+              "Set must be default-constructible.");
+>>>>>>> af3e8628fc4a92d148e1367126635ddf135a6f6f
 static_assert(std::is_copy_constructible<Set>::value,
               "Set must be copy-constructible.");
 

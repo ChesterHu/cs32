@@ -46,7 +46,7 @@ bool Circle::scale(double factor)
 
 void Circle::draw() const
 {
-  ... Draw a circle with center (m_x, m_y) and radius m_r...
+  ... Draw a circle with center (m_x, m_y) and radius m_r...;
 }
 
 double Circle::radius() const
@@ -79,7 +79,7 @@ int main(void)
   if ( ! c.scale(2))
 	... serious internal error...
   c.draw();
-  cout << area(c) << endl;  
+  cout << area(c) << endl; 
 }
 
 Separate compilation:
@@ -87,10 +87,10 @@ Separate compilation:
 file
 
 ==============================================================================================
-c++ source           c++ source        c++ source
-	|                       |                |
-	|  compiler             |		             |
-	V 		                  V		             V
+		c++ source          c++ source        c++ source
+			|                    |                  |
+			|  compiler          |		              |
+			V 		               V		              V
   object file	       object file	        object file
        \                  |                  /           libraries (collections of object files)
 	      \	                |			            /                    /
