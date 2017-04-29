@@ -1,4 +1,3 @@
-#include <iostream>  	// For test only
 #include "Set.h"
 	// Default constructor.
 Set::Set()
@@ -175,11 +174,4 @@ void subtract(const Set& s1, const Set& s2, Set& result)
 	}
 
 	result.swap(temp);
-}
-
-	// Test func
-void Set::dump() const
-{
-	for(Node* iter = m_head->next; iter != m_head; iter = iter->next)
-		std::cerr << iter->data << std::endl;
 }

@@ -1,11 +1,7 @@
 #include "Set.h"
 #include <type_traits>
 
-#define CHECKTYPE(f, t)                                                        \
-  {                                                                            \
-    auto p = (t)(f);                                                           \
-    (void)p;                                                                   \
-  }
+#define CHECKTYPE(f, t) { auto p = (t)(f); (void)p; }
 
 static_assert(std::is_default_constructible<Set>::value,
               "Set must be default-constructible.");

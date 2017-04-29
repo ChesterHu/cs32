@@ -11,10 +11,58 @@ Interface:
 	2. pop() : remove the item in front of the queue.
 
 Object-Oriented Design Principles
+=================================
 	-Inheritance
 	-Polymorphism
 	-Encapsulation
 		Information hiding - public, private, protect
 		Implementation hiding - interface
 	-Abstraction
+
+Inheritance
+-----------
+The process of deriving a new class using another class as a base
+class Animal
+{};
+class Dog : public Animal
+{};
+
+Construction:
+	1. The base class is constructed.
+	2. The member of the class is constructed.
+	3. The body of the class is constructed.
+
+Derived class do not have access to the base class private member.
+
+// Animal constructor
+Animal(int age)
+{
+	m_age = age;
+}
+
+// Dog constructor
+Dog (int age, int weight)
+	: Animal(age), m_weight(weight)
+{}
+
+base class ---> derived class:
+a -> b -> c -> d;
+Construction d, the construction sequence:
+a -> b -> c -> d;
+Deconstruction sequence:
+d -> c -> b -> a;
+
+Polymorphism
+------------
+	-Overload
+		Same function, different return type and input type.
+	-Overriding
+		Same function, implemented in different derived classes.
+
+virtual function
+	Always use virtual on deconstructor, otherwise will have undefined behavior. Virtual deconstructor is useful when you can delete an instance of a derived class from a pointer to base class.
+	base* p = new derived;
+	delete p; // Will have undefined behavior, if the deconstructor is not virtual.
+pure virtual function:
+	virtual void speak() const = 0; // A pure virtual function.
 

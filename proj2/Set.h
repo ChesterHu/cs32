@@ -21,9 +21,6 @@ class Set
 		bool contains(const ItemType& value) const;
 		bool get(int pos, ItemType& value) const;
 		void swap(Set& other);
-
-			// For test only
-		void dump() const;
 	private:
 			// Node
 		struct Node

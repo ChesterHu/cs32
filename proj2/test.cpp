@@ -1,4 +1,5 @@
 #include "Set.h"
+#include "Set.h"
 #include <cassert>
 #include <iostream>
 using namespace std;
@@ -9,8 +10,8 @@ void test() {
     assert(a.empty()); // For an empty set.
     // Insert
     assert(a.size() == 0);
-    assert(a.insert("a"));
     assert(a.insert("b"));
+    assert(a.insert("a"));
     assert(a.insert("c"));
     assert(!a.insert("a"));
     assert(!a.insert("b"));
@@ -55,12 +56,8 @@ void test() {
     assert(b.insert("g")); 		// For insert.
     Set c;
     unite(a, b, c);						// For unite.
-    cout << "unite" << endl;
-    c.dump();
     assert(c.size() == 7);
     subtract(b, a, c);
-    cout << "subtract" << endl; 
-    c.dump();
     assert(c.size() == 3);	   // For subtract.
 		assert(!c.erase("c"));
 		assert(!c.erase("b"));
@@ -83,13 +80,12 @@ void test() {
     a.insert("abc");
     unite(a, b, c);
     subtract(b, a, c);
-    c.dump();		// For set.
 		unite(a, a, a);
-		a.dump();		// For aliasing
-		subtract(a, a, a);
-		a.dump();
+		subtract(a, a, a); // For aliasing.
+		assert(a.size() == 0);
   } while (0);
-  do {
+  
+	do {
     Set ss;
     assert(ss.insert("roti"));
     assert(ss.insert("pita"));
@@ -99,6 +95,29 @@ void test() {
     assert(ss.get(0, x) && x == "pita");
     assert(ss.get(1, x) && x == "roti");
   } while (0);
+
+	do {
+		Set a;
+		a.insert("c");
+		a.insert("d");
+		a.insert("a");
+		a.insert("b");
+		a.erase("a");  // erase head item.
+		ItemType x;
+		assert(a.get(0, x) && x == "b");
+		assert(a.get(1, x) && x == "c");
+		assert(a.get(2, x) && x == "d");
+		a.insert("a");
+		a.erase("d");  // erase tail item.
+		assert(a.get(0, x) && x == "a");
+		assert(a.get(1, x) && x == "b");
+		assert(a.get(2, x) && x == "c");
+		a.insert("d");
+		a.erase("c");  // erase middle item.
+		assert(a.get(0, x) && x == "a");
+		assert(a.get(1, x) && x == "b");
+		assert(a.get(2, x) && x == "d");
+	} while (0);
 }
 
 int main() {
