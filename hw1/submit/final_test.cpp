@@ -1,6 +1,10 @@
 // tester.cpp
 // To test HW 1 Problem 5, uncomment the following line:
+<<<<<<< HEAD
 // #define TESTNEW
+=======
+#define TESTNEW
+>>>>>>> c32d19a00bec6a3022d7d3d9c3fe40fe676b53ec
 
 #ifdef TESTNEW
 #include "newSet.h"
@@ -463,10 +467,18 @@ void testone(int n)
 
 int main()
 {
+<<<<<<< HEAD
         cout << "Enter test number: ";
         int n;
         cin >> n;
         testone(n);
         cout << "Passed" << endl;
+=======
+  for (int i = 1; i <= 62; ++i)
+  {
+        testone(i);
+  }
+  cout << "Passed" << endl;
+>>>>>>> c32d19a00bec6a3022d7d3d9c3fe40fe676b53ec
 }
 

@@ -1,0 +1,90 @@
+Stack & Queue
+=============
+
+Prefix
+------
+add(sub(8, div(6, 2)), 1) --> add sub 8 div 6 2 1
+
+Infix
+-----
+8 - 6 / 2 + 1
+
+Postfix
+-------
+8 6 2 / - 1 +
+
+infix --> postfix:
+6 - 2 * 1 ---> 6 2 1 * -
+3 + ((6 - 2) * 4 + 1) * 2  ---> 3 6 2 - 4 * 1 + 2 * +
+
+Class inheritance
+=================
+
+class Shape
+{
+  public:
+    void movve(double xnew, double ynew);
+    virtual void draw() const;  // If it declared in the base class, derived class is virtual even we don't say virtual in front. but for readers, better add it.
+    double x() const { return x; }
+    double y() const { return y; }
+  private:
+    double m_x;
+    double m_y;
+};
+
+void Shape::move(double xnew, double ynew)
+{
+  m_x = xnew;
+  m_y = ynew;
+}
+
+class Circle : public Shape
+{
+  public:
+    virtual void draw() const;
+  private:
+    double m_r;
+};
+
+class Rect : public Shape
+{
+  public:
+    virtual void draw() const;
+  private:
+    double m_dx;
+    double m_dy;
+};
+
+void Rect::draw() const
+{
+  ... draw a line from (m_x, m_y) to (m_x + m_dx, m_y) ...;
+  ...;
+}
+
+Automatic convertion
+--------------------
+Shape* pic[100];
+pic[0] = new Circle;
+pic[1] = new Rect;
+pic[2] = new Circle;
+
+void f(Shape& x)      // If x is a Circle, function f will get the Shape reference of the Circle object.
+{
+  x.move(10, 20);
+  x.draw(); // Compiler will decide to choose which draw() to call. Implemented by static binding.
+}
+
+ Circle Object
+  ___________
+ |  _______  | 
+ | | Shape | |<------- Shape* points to the shape part of the Circle       
+ | |  m_x  | |     
+ | |  m_y  | |      
+ |  -------  |
+ |    m_r    |
+  -----------
+
+static binding --- compile time
+
+dynamic binding --- run time
+  -- will cause a little over head.

@@ -68,7 +68,7 @@ String::String(const char* value)
   }
 }
 
-// Can do no para input 
+// Can do no param input 
 String::String(const char* value)
 {
   if (value == nullptr)
@@ -92,7 +92,8 @@ String::String(const String& other)  // Better to make const to the original one
 // Operator equal
 String& String::operator=(const String& rhs)
 {
-  if (this != &rhs){  // If the object assigns itself, skip the operation and return its reference
+  if (this != &rhs)
+  {  // If the object assigns itself, skip the operation and return its reference
     delete [] m_text; // First free the memory
     m_len = rhs.m_len;
     m_text = new char[m_len + 1];
@@ -125,15 +126,15 @@ String v(p);
 ===============================================
   _____        ______________
  | ptr |-----> |h|e|l|l|o|\0|
- -------
+  -----
  | int |<----length of string
- -------
+  -----
 
 Different implementation in constructor:
   _______           ______
  |nullptr|         |      |------> '\0'
- ---------   VS    --------
+  -------    VS     ------ 
  |  int  |         |  int |
- ---------         --------
+  -------           ------ 
 // Second one is much easier to implement and construct, but use more instructions (time) and spaces.
 

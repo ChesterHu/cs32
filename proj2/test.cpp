@@ -72,6 +72,41 @@ void test() {
 		assert(c.size() == 1);
   } while (0);
 
+<<<<<<< HEAD
+	do {
+		Set a, b;
+		assert(a.insert("a"));
+		assert(a.insert("b"));
+		assert(a.insert("c"));
+		assert(a.insert("d"));
+		assert(b.insert("c"));
+		assert(b.insert("d"));
+		assert(b.insert("e"));
+		assert(b.insert("f"));
+		assert(b.insert("g"));
+		Set c;
+		unite(a, b, c);
+		cout << "unite" << endl;
+		c.dump();
+		assert(c.size() == 7);
+		subtract(a, b, c);
+		cout << "subtract" << endl;
+		c.dump();
+		assert(c.size() == 2);
+	} while(0);
+
+  do {
+    Set a;
+    a.insert("a");
+    a.insert("b");
+    a.insert("c");
+    assert(a.erase("b"));
+    assert(a.erase("c"));
+    assert(a.erase("a"));
+    assert(a.size() == 0);
+    assert(!a.contains("a") && !a.contains("c") && !a.contains("b"));
+  } while(0);
+=======
   do {
     Set a, b, c;
     a.insert("abc");
@@ -95,6 +130,7 @@ void test() {
     assert(ss.get(0, x) && x == "pita");
     assert(ss.get(1, x) && x == "roti");
   } while (0);
+<<<<<<< HEAD
 
 	do {
 		Set a;
@@ -118,6 +154,9 @@ void test() {
 		assert(a.get(1, x) && x == "b");
 		assert(a.get(2, x) && x == "d");
 	} while (0);
+=======
+>>>>>>> af3e8628fc4a92d148e1367126635ddf135a6f6f
+>>>>>>> c32d19a00bec6a3022d7d3d9c3fe40fe676b53ec
 }
 
 int main() {
