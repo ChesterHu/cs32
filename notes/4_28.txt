@@ -1,0 +1,20 @@
+Linked List
+===========
+Sanity Checks
+	Does it work if p == head?
+	Does it work if p points to the nullptr?
+
+Stack
+=====
+Interface:
+	1. push() : add a new item on the stack.
+	2. pop() : remove the item in front of the queue.
+
+Object-Oriented Design Principles
+	-Inheritance
+	-Polymorphism
+	-Encapsulation
+		Information hiding - public, private, protect
+		Implementation hiding - interface
+	-Abstraction
+
