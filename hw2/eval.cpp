@@ -60,6 +60,7 @@ int main() {
     assert(evaluate("!(F|T)", pf, answer) == 0 && !answer);
     assert(evaluate("!F|T", pf, answer) == 0 && pf == "F!T|" && answer);
     assert(evaluate("T|F&F", pf, answer) ==	0 && pf == "TFF&|" && answer);
+		assert(evaluate("F()", pf, answer) == 1);
   } while (0);
   cout << "Passed all tests" << endl;
   return 0;
@@ -142,6 +143,18 @@ int evaluate(std::string infix, std::string &postfix, bool &result) {
       break;
 
     case ')':
+			if (i == 0)
+				return 1;
+			for (int j = i - 1; j >= 0; j--)
+			{
+				if (infix[j] == '(')
+					return 1;
+				else if (infix[j] == ' ')
+					continue;
+				else
+					break;
+			}
+
       while (!operatorStack.empty() &&
              operatorStack.top() != '(') // pop stack until meet '('
       {
