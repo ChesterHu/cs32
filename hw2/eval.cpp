@@ -61,6 +61,10 @@ int main() {
     assert(evaluate("!F|T", pf, answer) == 0 && pf == "F!T|" && answer);
     assert(evaluate("T|F&F", pf, answer) ==	0 && pf == "TFF&|" && answer);
 		assert(evaluate("F()", pf, answer) == 1);
+		assert(evaluate(")", pf, answer) == 1);
+		assert(evaluate("(T(F))", pf, answer) == 1);
+		assert(evaluate("(T&T|F)&T", pf, answer) == 0 && pf == "TT&F|T&" && answer);
+		assert(evaluate("(T&)(F)", pf, answer) == 1);
   } while (0);
   cout << "Passed all tests" << endl;
   return 0;
@@ -85,33 +89,32 @@ bool postfixEval(const std::string &postfix, bool &result) {
     }
 
     bool operand1, operand2;
-    switch (ch) {
-    case '!':
-      if (operandStack.empty()) // when operator is ! (not), return false if
-                                // stack is empty,
-        return false;           // push back operand result
-      operand1 = operandStack.top();
-      operandStack.pop();
-      operandStack.push(!operand1);
-      break;
+    switch (ch) 
+		{
+    case '!': if (operandStack.empty()) // when operator is ! (not), return false if
+								return false;			      // stack is empty,
+								                        // push back operand result
+							operand1 = operandStack.top();
+							operandStack.pop();
+							operandStack.push(!operand1);
+							break;
 
     case '&':
-    case '|':
-      if (operandStack.size() < 2) // when operator is | (or), return false
-                                   // stack doesn't have enough operand.
-        return false;              // push back operand result
-      operand1 = operandStack.top();
-      operandStack.pop();
-      operand2 = operandStack.top();
-      operandStack.pop();
-      if (ch == '|')
-        operandStack.push(operand1 || operand2);
-      else
-        operandStack.push(operand1 && operand2);
-      break;
+    case '|': if (operandStack.size() < 2) // when operator is | (or), return false
+								return false;		        	 // stack doesn't have enough operand.
+								                           // push back operand result
+							operand1 = operandStack.top();
+							operandStack.pop();
+							operand2 = operandStack.top();
+							operandStack.pop();
+							if (ch == '|')
+								operandStack.push(operand1 || operand2);
+							else
+								operandStack.push(operand1 && operand2);
+							break;
 
-    default: // cerr << "invalid syntax!\n";
-      return false;
+		default:  // cerr << "invalid syntax!\n";
+							return false;
     }
   }
 
@@ -129,73 +132,69 @@ int evaluate(std::string infix, std::string &postfix, bool &result) {
   for (int i = 0; i < infix.size(); ++i) // convert infix to postfix
   {
     char ch = infix[i];
-    switch (ch) {
-    case ' ':
-      continue; // if it's a space, skip
+    switch (ch) 
+		{
+    case ' ': continue; // if it's a space, skip
 
     case 'T':
-    case 'F':
-      temp_postfix += ch;
-      break;
+    case 'F': temp_postfix += ch;
+              break;
 
-    case '(':
-      operatorStack.push(ch); // if it's a '(' push it on operator stack
-      break;
+    case '(': operatorStack.push(ch); // if it's a '(' push it on operator stack
+              break;
 
-    case ')':
-			if (i == 0)
-				return 1;
-			for (int j = i - 1; j >= 0; j--)
-			{
-				if (infix[j] == '(')
-					return 1;
-				else if (infix[j] == ' ')
-					continue;
-				else
-					break;
-			}
+    case ')': if (i == 0)
+								return 1;
+							for (int j = i - 1; j >= 0; j--)
+							{
+								if (infix[j] == '(')
+									return 1;
+								else if (infix[j] == ' ')
+									continue;
+								else
+									break;
+							}
 
-      while (!operatorStack.empty() &&
-             operatorStack.top() != '(') // pop stack until meet '('
-      {
-        temp_postfix += operatorStack.top();
-        operatorStack.pop();
-      }
-      if (operatorStack.empty())
-        return 1;
-      operatorStack.pop(); // pop the '('
-      break;
+							while (!operatorStack.empty() &&
+										 operatorStack.top() != '(') // pop stack until meet '('
+							{
+								temp_postfix += operatorStack.top();
+								operatorStack.pop();
+							}
+							if (operatorStack.empty())
+								return 1;
+							operatorStack.pop(); // pop the '('
+							break;
 
     case '&':
-    case '|':
-      if (i == 0)
-        return 1;
-      for (int j = i - 1; j >= 0; j--) // move to nearest non-blank char
-      {
-        if (infix[j] == 'F' || infix[j] == 'T') // valid
-          break;
-        if (infix[j] != ' ')
-          return 1;
-      }
+    case '|': if (i == 0)
+								return 1;
+							for (int j = i - 1; j >= 0; j--) // move to nearest non-blank char
+							{
+								if (infix[j] == 'F' || infix[j] == 'T' || infix[j] == ')') // valid
+									break;
+								if (infix[j] != ' ')
+									return 1;
+							}
 
-    case '!':
-      while (!operatorStack.empty() && operatorStack.top() != '(' &&
-             lessEqual(ch, operatorStack.top())) {
-        temp_postfix += operatorStack.top();
-        operatorStack.pop();
-      }
-      operatorStack.push(ch);
-      break;
+    case '!': while (!operatorStack.empty() && operatorStack.top() != '(' &&
+										 lessEqual(ch, operatorStack.top())) 
+							{
+								temp_postfix += operatorStack.top();
+								operatorStack.pop();
+							}
+							operatorStack.push(ch);
+							break;
 
-    default:
-      return 1;
+						default:
+							return 1;
     }
   }
-
   while (!operatorStack.empty()) {
     temp_postfix += operatorStack.top();
     operatorStack.pop();
   }
+	cout << temp_postfix << endl;
   if (postfixEval(temp_postfix, result)) {
     postfix.swap(temp_postfix);
     return 0;
