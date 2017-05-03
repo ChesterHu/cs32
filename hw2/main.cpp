@@ -1,6 +1,6 @@
-#include "mazestack.cpp"
+// #include "mazestack.cpp"
 #include <iostream>
-//#include "mazequeue.cpp"
+#include "mazequeue.cpp"
 #include "eval.cpp"
 #include <cassert> // for testing
 using namespace std;
@@ -72,7 +72,7 @@ void test_eval() {
     assert(evaluate("!F", pf, answer) == 0 && answer);
     assert(evaluate("dsvfwe rg", pf, answer) == 1 && answer);
     assert(evaluate("TF&", pf, answer) == 1 && answer);
-    assert(evaluate("TTF&!&T", pf, answer) == 1 && answer);
+    assert(evaluate("  T   T   &   ", pf, answer) == 1 && answer);
   } while (0);
 }
 

@@ -136,7 +136,7 @@ int evaluate(std::string infix, std::string &postfix, bool &result) {
 
     case '!':
       while (i + 1 < infix.size() && infix[i + 1] == ' ')
-        ++i; // if it's !, there should at one non-space char
+        ++i; // if it's ! or | or &, there should at one non-space char
       if (i == infix.size() - 1)
         return 1;
       while (!operatorStack.empty() && operatorStack.top() != '(' &&
