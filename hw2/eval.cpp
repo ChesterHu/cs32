@@ -21,7 +21,6 @@ int evaluate(std::string infix, std::string &postfix, bool &result);
 //   that case, postfix may or may not be changed, but result must
 //   be unchanged.
 
-
 // function implementation
 /////////////////////////////////////////////////////////////////////////////
 bool lessEqual(const char &lhs, const char &rhs) {
@@ -68,7 +67,7 @@ bool postfixEval(const std::string &postfix, bool &result) {
         operandStack.push(operand1 && operand2);
       break;
 
-    default: 	// if char is neither operand nor operator
+    default: // if char is neither operand nor operator
       return false;
     }
   }
@@ -136,9 +135,10 @@ int evaluate(std::string infix, std::string &postfix, bool &result) {
       }
 
     case '!':
-			while(i + 1 < infix.size() && infix[i + 1] == ' ') ++i;   // if it's !, there should at one non-space char
-			if (i == infix.size() - 1)
-				return 1;
+      while (i + 1 < infix.size() && infix[i + 1] == ' ')
+        ++i; // if it's !, there should at one non-space char
+      if (i == infix.size() - 1)
+        return 1;
       while (!operatorStack.empty() && operatorStack.top() != '(' &&
              lessEqual(ch, operatorStack.top())) {
         temp_postfix += operatorStack.top();

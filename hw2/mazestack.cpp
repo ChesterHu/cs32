@@ -1,5 +1,5 @@
 #include <stack>    // Use C++ builtin structure stack.
-
+using namespace std;
 class Coord 
 {
 public:

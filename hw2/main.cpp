@@ -1,12 +1,11 @@
+#include "mazestack.cpp"
 #include <iostream>
-// #include "mazestack.cpp"
-#include "mazequeue.cpp"
+//#include "mazequeue.cpp"
 #include "eval.cpp"
-#include <cassert>   // for testing
+#include <cassert> // for testing
 using namespace std;
 
-bool test(int sr, int sc, int er, int ec) 
-{
+bool test(int sr, int sc, int er, int ec) {
   char maze[10][10] = {{'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'},
                        {'X', '.', '.', '.', '.', '.', '.', '.', '.', 'X'},
                        {'X', 'X', '.', 'X', '.', 'X', 'X', 'X', 'X', 'X'},
@@ -17,12 +16,11 @@ bool test(int sr, int sc, int er, int ec)
                        {'X', '.', 'X', 'X', 'X', '.', 'X', 'X', '.', 'X'},
                        {'X', '.', '.', '.', 'X', '.', '.', '.', '.', 'X'},
                        {'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'}};
-	
-	return pathExists(maze, sr, sc, er, ec);
+
+  return pathExists(maze, sr, sc, er, ec);
 }
 
-void test_eval()
-{
+void test_eval() {
   do {
     assert(!lessEqual('&', '|'));
     assert(lessEqual('&', '&'));
@@ -64,27 +62,28 @@ void test_eval()
     assert(evaluate("F()", pf, answer) == 1);
     assert(evaluate(" )", pf, answer) == 1);
     assert(evaluate("( T (F   ))", pf, answer) == 1);
-    assert(evaluate("( T &  T  |  F)&T", pf, answer) == 0 && pf == "TT&F|T&" && answer);
+    assert(evaluate("( T &  T  |  F)&T", pf, answer) == 0 && pf == "TT&F|T&" &&
+           answer);
     assert(evaluate("(T &)(F)", pf, answer) == 1);
     assert(evaluate("T|F &F", pf, answer) == 0 && answer);
-    assert(evaluate("T&!( F|T&T|F  )  |  !  !  ! (F&T&F)  ", pf, answer) == 0 && answer);
+    assert(evaluate("T&!( F|T&T|F  )  |  !  !  ! (F&T&F)  ", pf, answer) == 0 &&
+           answer);
     assert(evaluate("  F   !    ", pf, answer) == 1);
-    assert(evaluate("!F",  pf, answer) == 0 && answer);
+    assert(evaluate("!F", pf, answer) == 0 && answer);
     assert(evaluate("dsvfwe rg", pf, answer) == 1 && answer);
-		assert(evaluate("T   F   &", pf, answer) == 1 && answer);
+    assert(evaluate("TF&", pf, answer) == 1 && answer);
+    assert(evaluate("TTF&!&T", pf, answer) == 1 && answer);
   } while (0);
 }
 
-int main()
-{
-	assert(test(6, 4, 1, 1));
-	assert(test(8, 8, 1, 1));
-	assert(test(7, 8, 1, 1));
-	assert(!test(8, 1, 1, 1));
-	assert(test(6, 3, 1, 1));
-	assert(!test(8, 3, 1, 1));
-	test_eval();
-	std::cout<< "Passed all test" << endl;
-
-	return 0;
+int main() {
+  assert(test(6, 4, 1, 1));
+  assert(test(8, 8, 1, 1));
+  assert(test(7, 8, 1, 1));
+  assert(!test(8, 1, 1, 1));
+  assert(test(6, 3, 1, 1));
+  assert(!test(8, 3, 1, 1));
+  test_eval();
+  std::cout << "Passed all test" << endl;
+  return 0;
 }

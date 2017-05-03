@@ -1,4 +1,5 @@
 #include <queue>    // Use C++ builtin structure queue.
+using namespace std;
 
 class Coord 
 {
@@ -58,3 +59,4 @@ bool pathExists(char maze[][10], int sr, int sc, int er, int ec)
 
   return false;
 }
+
