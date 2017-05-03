@@ -1,0 +1,122 @@
+// NEVER NEVER NEVER attempt to override a non-virtual function!!!
+// Derived* ---> Base*
+// Derived& ---> Base&
+
+class Shape
+{
+	public:
+		virtual void move(double xnew, double ynew);   // if every class use the same function, don't make it virtual
+		virtual void draw() const = 0;   // let the function point to nullptr, it's "pure virtual", which will make this
+		double x() const;                // class as abstract class
+		double y() const;
+
+	private:
+		double m_x;
+		double m_y;
+};
+
+class Rectangle : public Shape
+{
+	public:
+    Rectangle(double x, double y, double dx, double dy);    // if we don't implement virtual move function, it will use the move function in base class
+		virtual void draw() const;                              // check always implement the exact virtual class
+		virtual double diag() const;
+	private:
+		double m_dx;
+		double m_dy;
+};
+
+// what if WarningSymbol class has a different implementation of move function?
+
+class WarningSymbol : public Shape
+{
+	virtual void move(double xnew, double ynew);
+};
+
+class Polygon : public Shape
+{
+}
+
+void Shape::move(double xnew, double ynew)
+{
+	m_x = xnew; m_y = ynew;
+}
+
+void WarningSymbol::move(double xnew, double ynew)
+{
+	Shape::move(xnew, ynew);   // will use move function of Shape class
+	// ...flash three times...
+}
+
+// let's see what is the consequence...
+WarningSymbol ws;
+ws.move(x, y);   // will call move function of WarningSymbol
+f(ws);   // will call move function of Shape!
+// thus we have to make move function virtual
+// so NEVER attempt to override a non-virtual function!!!
+
+void f(Shape& x)
+{
+	x.move(10, 20);
+	x.draw();
+}
+
+Rectangle r;
+f(r);   // will call move function of WarningSymbol and call draw function of Rectangle
+                ____
+//       |---- |vptr|              virtual pointer to virtual functions talbe (vptr)
+//       |     |m_x |<----sp       when the object is Rectangle, the vptr will points to the 
+//       |     |m_y |              virtual table of Rectangle. vptr is a part of Shape instance
+//       |     |____|
+//       |
+//       |   Shape's virtual table
+//       |----------->  _____
+//       |     move   0|     |-------------+-------> Shape::move(double xnew, double ynew)
+//(sp=&r)|     draw   1|_____|------------/--------> nullptr (it's purevirtual)    when shape's draw is a pure virtual will cause undefine
+//       |                               /                                         behavior if we call the draw function of shape, thus in
+//       |   Rectangle's virtual table  /                                          C++ don't allow us create instance of such objects
+//       |----------->  _____          /
+//             move   0|     |---------
+//             draw   1|     |---------------------> Rectangle::draw()
+//             diag   2|_____|---------------------> Rectangle::diag()
+
+Shape* sp;
+Rectangle r;
+Shape s;
+sp = &r; 
+// sp = &s;
+sp->draw();   // call the function that sp->vptr[1] points to
+// the cost of call a virtual function is expensive than call a non-virtual function
+
+// abstract class VS. concrete class
+// RULE:
+//   If a class has at least one virtual function, it'a an abstract class
+
+// 1. Construct the base part
+// 2. Construct the data members
+// 3. Excute the body of the constructor
+// ======
+// 1. Execute the body of the deconstructor
+// 2. Destroy the data members
+// 3. Destroy the base part
+
+Shape::Shape(double x, double y)
+	: m_x(x), m_y(y)
+{}
+
+Rectangle::Rectangle(double x, double y, double dx, double dy)
+	: Shape(x, y), m_dx(dx), m_dy(dy)
+{}
+
+//                 Polygon                      when deconstructed, we need implement deconstructor of Polygon's linked list member
+//                  ______                      in order to let compiler know which deconstructor to call, we make deconstructor virtual
+//         sp------|>____ |                     and we must implement it, because every derived class will call base class deconstructor     
+//                 ||    ||
+//                 ||____||
+//                 |  ----|-->linked list
+//                 |______|
+//
+
+// RULE:
+//   If a class is designed to base class, declare its
+//   deconstructor virtual and implement it
