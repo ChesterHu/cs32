@@ -1,6 +1,4 @@
-#include <iostream> // Use cout and cerr.
 #include <stack>    // Use C++ builtin structure stack.
-using namespace std;
 
 class Coord 
 {
@@ -18,31 +16,13 @@ bool pathExists(char maze[][10], int sr, int sc, int er, int ec);
 // Return true if there is a path from (sr, sc) to (er, ec)
 // through the maze; return false otherwise.
 
-int main() 
-{
-  Coord a(0, 1);
-  char maze[10][10] = {{'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'},
-                       {'X', '.', '.', '.', '.', '.', '.', '.', '.', 'X'},
-                       {'X', 'X', '.', 'X', '.', 'X', 'X', 'X', 'X', 'X'},
-                       {'X', '.', '.', 'X', '.', 'X', '.', '.', '.', 'X'},
-                       {'X', '.', '.', 'X', '.', '.', '.', 'X', '.', 'X'},
-                       {'X', 'X', 'X', 'X', '.', 'X', 'X', 'X', '.', 'X'},
-                       {'X', '.', 'X', '.', '.', '.', '.', 'X', 'X', 'X'},
-                       {'X', '.', 'X', 'X', 'X', '.', 'X', 'X', '.', 'X'},
-                       {'X', '.', '.', '.', 'X', '.', '.', '.', '.', 'X'},
-                       {'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'}};
-	
-	cout << pathExists(maze, 6, 4, 6, 1) << endl;
-	return 0;
-}
-
 
 // Function implementation
 ////////////////////////////////////////////////////////////////////////////
 
 bool pathExists(char maze[][10], int sr, int sc, int er, int ec) 
 {
-	stack<Coord> coordStack;          // record possible places
+	std::stack<Coord> coordStack;          // record possible places
 	coordStack.push(Coord(sr, sc));   // push start place into stack
 	maze[sr][sc] = 'X';               // update the maze to indicate this place has been visited
 
@@ -51,7 +31,7 @@ bool pathExists(char maze[][10], int sr, int sc, int er, int ec)
 		int curr_r = coordStack.top().r();  // get the place algo intend to explore 
 		int curr_c = coordStack.top().c();
 		coordStack.pop();                   // pop out the top coordinate
-		cout << curr_r << ' ' << curr_c << endl;	
+		// cout << curr_r << ' ' << curr_c << endl;   // for problem 2	
 		if (curr_r == er && curr_c == ec)   // if this is the end place, return true
 			return true;
 		
