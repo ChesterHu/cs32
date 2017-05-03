@@ -21,55 +21,9 @@ int evaluate(std::string infix, std::string &postfix, bool &result);
 //   that case, postfix may or may not be changed, but result must
 //   be unchanged.
 
-int main() {
-  do {
-    assert(!lessEqual('&', '|'));
-    assert(lessEqual('&', '&'));
-    assert(lessEqual('&', '!'));
-    bool x;
-    assert(postfixEval("TF&", x) && !x);
-    assert(!postfixEval("TF&|", x) && !x);
-    assert(postfixEval("T!T|", x) && x);
-    assert(postfixEval("FF!TF&&|", x) && !x);
-    assert(postfixEval("TF|", x) && x);
-    assert(postfixEval("T", x) && x);
-    assert(postfixEval("F", x) && !x);
-  } while (0);
 
-  do {
-    string pf;
-    bool answer;
-    assert(evaluate("T| F", pf, answer) == 0 && pf == "TF|" && answer);
-    assert(evaluate("T|", pf, answer) == 1);
-    assert(evaluate("F F", pf, answer) == 1);
-    assert(evaluate("TF", pf, answer) == 1);
-    assert(evaluate("()", pf, answer) == 1);
-    assert(evaluate("T(F|T)", pf, answer) == 1);
-    assert(evaluate("T(&T)", pf, answer) == 1);
-    assert(evaluate("(T&(F|F)", pf, answer) == 1);
-    assert(evaluate("", pf, answer) == 1);
-    assert(evaluate("F  |  !F & (T&F) ", pf, answer) == 0 && pf == "FF!TF&&|" &&
-           !answer);
-    assert(evaluate(" F  ", pf, answer) == 0 && pf == "F" && !answer);
-    assert(evaluate("((T))", pf, answer) == 0 && pf == "T" && answer);
-    assert(evaluate("FT(F)", pf, answer) == 1 && answer);
-    assert(evaluate("T", pf, answer) == 0 && answer);
-    assert(evaluate("(F)", pf, answer) == 0 && !answer);
-    assert(evaluate("T&(F)", pf, answer) == 0 && pf == "TF&" && !answer);
-    assert(evaluate("T & !F", pf, answer) == 0 && answer);
-    assert(evaluate("!(F|T)", pf, answer) == 0 && !answer);
-    assert(evaluate("!F|T", pf, answer) == 0 && pf == "F!T|" && answer);
-    assert(evaluate("T|F&F", pf, answer) == 0 && pf == "TFF&|" && answer);
-    assert(evaluate("F()", pf, answer) == 1);
-    assert(evaluate(")", pf, answer) == 1);
-    assert(evaluate("(T(F))", pf, answer) == 1);
-    assert(evaluate("(T&T|F)&T", pf, answer) == 0 && pf == "TT&F|T&" && answer);
-    assert(evaluate("(T&)(F)", pf, answer) == 1);
-  } while (0);
-  cout << "Passed all tests" << endl;
-  return 0;
-}
-
+// function implementation
+/////////////////////////////////////////////////////////////////////////////
 bool lessEqual(const char &lhs, const char &rhs) {
   if (rhs == '!' || (rhs == '&' && lhs != '!') || (rhs == '|' && lhs == '|'))
     return true;
@@ -101,7 +55,7 @@ bool postfixEval(const std::string &postfix, bool &result) {
 
     case '&':
     case '|':
-      if (operandStack.size() < 2) // when operator is | (or), return false
+      if (operandStack.size() < 2) // when operator is | (or), return false if
         return false;              // stack doesn't have enough operand.
                                    // push back operand result
       operand1 = operandStack.top();
@@ -114,7 +68,7 @@ bool postfixEval(const std::string &postfix, bool &result) {
         operandStack.push(operand1 && operand2);
       break;
 
-    default: // cerr << "invalid syntax!\n";
+    default: 	// if char is neither operand nor operator
       return false;
     }
   }
@@ -182,6 +136,9 @@ int evaluate(std::string infix, std::string &postfix, bool &result) {
       }
 
     case '!':
+			while(i + 1 < infix.size() && infix[i + 1] == ' ') ++i;   // if it's !, there should at one non-space char
+			if (i == infix.size() - 1)
+				return 1;
       while (!operatorStack.empty() && operatorStack.top() != '(' &&
              lessEqual(ch, operatorStack.top())) {
         temp_postfix += operatorStack.top();
@@ -198,7 +155,7 @@ int evaluate(std::string infix, std::string &postfix, bool &result) {
     temp_postfix += operatorStack.top();
     operatorStack.pop();
   }
-  cout << temp_postfix << endl;
+  // cout << temp_postfix << endl;
   if (postfixEval(temp_postfix, result)) {
     postfix.swap(temp_postfix);
     return 0;

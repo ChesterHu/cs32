@@ -28,3 +28,12 @@ mazequeue.cpp output
 8 5
 2 4
 4 6
+
+The difference in visiting order comes from different data structure those two algorithems used.
+The algo of mazestack would push all possible cells into stack and will explore cell at the top.
+Therefore mazestack will keep search on one continuous path untill it hits the end cell or it's
+a dead path. Whie the algo of mazequeue would push all possible cells in to queue, but explore
+cells from the font of queue. So mazequeue will search all possible cells around current place,
+then store next possible cells for next searching.
+
+The mazestack uses DFS search while mazequeue ueses BSF search.

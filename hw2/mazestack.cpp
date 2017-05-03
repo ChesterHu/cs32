@@ -23,8 +23,8 @@ bool pathExists(char maze[][10], int sr, int sc, int er, int ec);
 bool pathExists(char maze[][10], int sr, int sc, int er, int ec) 
 {
 	std::stack<Coord> coordStack;          // record possible places
-	coordStack.push(Coord(sr, sc));   // push start place into stack
-	maze[sr][sc] = 'X';               // update the maze to indicate this place has been visited
+	coordStack.push(Coord(sr, sc));        // push start place into stack
+	maze[sr][sc] = 'X';                    // update the maze to indicate this place has been visited
 
 	while (!coordStack.empty())                // while stack is not empty, keep doing DFS search
 	{
