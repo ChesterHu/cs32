@@ -1,0 +1,47 @@
+// inheritance & polymorphism
+// if a class is designed to be a base class, declare its desconstructor to be 
+// virtual, and implement it.
+
+class Shape
+{
+	public:
+		virtual ~Shape() {}
+};
+
+class Polygon : public Shape
+{
+	public:
+		virtual ~Polygon() {}
+};
+
+Shape *sp;
+sp = new Polygon();
+// sp = new Rectangle();
+delete sp;   // need deconstructor of Shape, Polygon and Rectangle be virtual, otherwise
+             // compiler won't know which deconstructor to call.
+
+
+
+// static in C++
+// In C++ "static" can also apply to member functions and data members of classes. A 
+// static data member is also called a "class variable", while a non-static data member
+// is an "instance variable". If a data member of a class is static, which means the 
+// variable is shared by all objects of this classes. So a static data member is 
+// essentially a global variable within a certain class.
+// 
+// Non-static member functions can access all data members of the class: static and non-
+// static. Static member functions can only operate on the static data members.
+// The static function, as other function in the class, has the right to access other 
+// member of the same class, but need to pass an instance of the class. Otherwise it can
+// only access static member.
+// C++ standard allows only static constant integral or enumeration types to be
+// initialized inside the class.
+
+class student
+{
+	public:
+		student() { num_student++; };
+		int how_many() { return num_student; }
+	private:
+		static int num_student;
+};
