@@ -100,9 +100,7 @@ int indexOfLeast(const string a[], int n)
 {
 	if (n < 1) return -1;
 	int next_idx = indexOfLeast(a, n - 1);   // return the next possible small index
-	if (next_idx == -1)
-		return n - 1;
-	return (a[next_idx] < a[n - 1]) ? next_idx : n - 1;
+	return (a[next_idx] < a[n - 1] && next_idx != -1) ? next_idx : n - 1;
 }
 
 bool includes(const string a1[], int n1, const string a2[], int n2)   // duplicates in a2?
