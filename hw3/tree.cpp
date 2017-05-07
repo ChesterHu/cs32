@@ -69,15 +69,11 @@ int countIncludes(const string a1[], int n1, const string a2[], int n2)
 	if (n2 < 1) return 1;
 	if (n1 < n2 || n1 < 1) return 0;
 	
-	int count = 0;
 	if (a1[n1 - 1] == a2[n2 - 1])
 	{
 		return countIncludes(a1, n1 - 1, a2, n2 - 1) + countIncludes(a1, n1 - 1, a2, n2);
 	}
-	else
-	{
-		return countIncludes(a1, n1 - 1, a2, n2);
-	}
+	return countIncludes(a1, n1 - 1, a2, n2);
 }
 
 void exchange(string &x, string &y)
