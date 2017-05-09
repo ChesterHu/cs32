@@ -18,7 +18,7 @@ class Animal
 		string m_name;
 };
 
-// Cat derived class
+// Cat derived class of Animal
 class Cat : public Animal
 {
 	public:
@@ -28,6 +28,7 @@ class Cat : public Animal
 		virtual void speak() const;
 };
 
+// Pig derived class of Animal
 class Pig : public Animal
 {
 	public:
@@ -39,6 +40,7 @@ class Pig : public Animal
 		int m_pounds;
 };
 
+// Duck derived class of Animal
 class Duck : public Animal
 {
 	public:
@@ -137,6 +139,7 @@ void Duck::speak() const
 }
 
 ///////////////////////////////////////////////////////////
+/*
 void animate(const Animal* a)
 {
 	    a->speak();
@@ -161,5 +164,6 @@ int main()
 	      // Clean up the animals before exiting
 	    cout << "Cleaning up." << endl;
 	    for (int k = 0; k < 4; k++)
-      delete animals[k];
+      	delete animals[k];
 }
+*/

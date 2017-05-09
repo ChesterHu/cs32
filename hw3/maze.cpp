@@ -1,12 +1,8 @@
-#include <iostream>
-#include <cassert>
-using namespace std;
-
 bool pathExists(char maze[][10], int sr, int sc, int er, int ec);
 // Return true if there is a path from (sr, sc) to (er, ec)
 // through the maze; return false otherwise. Use recursion
 
-
+/*
 bool test(int sr, int sc, int er, int ec) {
   char maze[10][10] = {{'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'},
                        {'X', '.', '.', '.', '.', '.', '.', '.', '.', 'X'},
@@ -31,7 +27,7 @@ int main()
 	assert(test(5, 8, 1, 1));	
 	cout << "Passed all test" << endl;
 }
-
+*/
 // function implementation
 ///////////////////////////////////////////////////////////
 

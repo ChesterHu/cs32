@@ -1,8 +1,3 @@
-#include <string>
-#include <iostream>   // for test only
-#include <cassert> 
-using namespace std;
-
 int countIncludes(const string a1[], int n1, const string a2[], int n2);
 // Return the number of ways that all n2 elements of a2 appear 
 // in the n1 element array a1 in the same order (though not
@@ -40,6 +35,7 @@ void order(string a[], int n);
 // a[0] <= a[1] <= a[2] <= ... <= a[n-2] <= a[n-1]
 // If n <= 1, do nothing
 
+/*
 int main()
 {
 	do {   // test countIncludes
@@ -55,13 +51,13 @@ int main()
 	} while (0);
 
 	do {   // test order
-		string a[] = {"d", "e", "f", "c", "a", "g", "b"};
-		order(a, 7);
-		for (int i = 0; i < 7; ++i)
+		string a[] = {"d", "e", "f", "c", "a", "g", "b", "a", "b", "c", "e", "d"};
+		order(a, 12);
+		for (int i = 0; i < 12; ++i)
 			cout << a[i] << endl;	
 	} while (0);
 }
-
+*/
 // function implementation
 ///////////////////////////////////////////////////////////
 int countIncludes(const string a1[], int n1, const string a2[], int n2)
@@ -69,15 +65,9 @@ int countIncludes(const string a1[], int n1, const string a2[], int n2)
 	if (n2 < 1) return 1;
 	if (n1 < n2 || n1 < 1) return 0;
 	
-	int count = 0;
 	if (a1[n1 - 1] == a2[n2 - 1])
-	{
 		return countIncludes(a1, n1 - 1, a2, n2 - 1) + countIncludes(a1, n1 - 1, a2, n2);
-	}
-	else
-	{
-		return countIncludes(a1, n1 - 1, a2, n2);
-	}
+	return countIncludes(a1, n1 - 1, a2, n2);
 }
 
 void exchange(string &x, string &y)
@@ -106,7 +96,7 @@ void separate(string a[], int n, string separator, int& firstNotLess, int& first
 	int firstUnknown = 0;
 	while (firstUnknown < firstGreater)
 	{
-		if (a[firstUnknown] > separator)
+		if (a[firstUnknown] > separator)   // not stable sort
 		{
 			firstGreater--;
 			exchange(a[firstUnknown], a[firstGreater]);
