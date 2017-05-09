@@ -132,4 +132,3 @@ bool includes(const string a1[], int n1, const string a2[], int n2)
 	else
 		return includes(a1, n1 - 1, a2, n2);
 }
-int main() {}
