@@ -45,3 +45,28 @@ class student
 	private:
 		static int num_student;
 };
+
+Class template
+==============
+template<typename T>
+
+T minimun(T a, T b)
+{
+	if (a < b)
+		return a;
+	return b;
+}
+
+int main()
+{
+	int k;
+	cin >> k;
+	cout << minumun(k, 10) / 2;
+	double x;
+	...;
+	double z = 3 * minimum(x * x, x + 10);
+	...;
+	int z = minimum(0, 3 * k - k + 4);
+	...;
+}
+
