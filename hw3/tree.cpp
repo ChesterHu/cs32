@@ -67,10 +67,6 @@ int countIncludes(const string a1[], int n1, const string a2[], int n2)
 	
 	if (a1[n1 - 1] == a2[n2 - 1])
 		return countIncludes(a1, n1 - 1, a2, n2 - 1) + countIncludes(a1, n1 - 1, a2, n2);
-<<<<<<< HEAD
-=======
-	}
->>>>>>> 7e0d288d7798141872eb825d282ca597ad2eabf8
 	return countIncludes(a1, n1 - 1, a2, n2);
 }
 
