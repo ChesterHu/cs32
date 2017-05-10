@@ -35,29 +35,6 @@ void order(string a[], int n);
 // a[0] <= a[1] <= a[2] <= ... <= a[n-2] <= a[n-1]
 // If n <= 1, do nothing
 
-/*
-int main()
-{
-	do {   // test countIncludes
-		string a1[] = {"stan", "kyle", "cartman", "kenny", "kyle", "cartman", "butters"};
-		string a2[] = {"stan", "cartman", "butters"};
-		string a3[] = {"stan", "kenny", "cartman"};
-		string a4[] = {"kyle", "cartman", "butters"};
-		string a5[] = {"kenny", "stan", "cartman"};
-		assert(countIncludes(a1, 7, a2, 3) == 2);
-		assert(countIncludes(a1, 7, a3, 3) == 1);
-		assert(countIncludes(a1, 7, a4, 3) == 3);
-		assert(countIncludes(a1, 7, a5, 3) == 0);
-	} while (0);
-
-	do {   // test order
-		string a[] = {"d", "e", "f", "c", "a", "g", "b", "a", "b", "c", "e", "d"};
-		order(a, 12);
-		for (int i = 0; i < 12; ++i)
-			cout << a[i] << endl;	
-	} while (0);
-}
-*/
 // function implementation
 ///////////////////////////////////////////////////////////
 int countIncludes(const string a1[], int n1, const string a2[], int n2)
