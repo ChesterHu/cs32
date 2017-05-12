@@ -1,0 +1,193 @@
+// C++ Template 
+using namespace std;
+template<typename T>   // template <typename T1, typename T2, ... > T1 & T2 could be same and different
+
+T minimum(T a, T b)     // int minimum(int a, int b);
+{                       // double minimum(double a, double b);
+	if (a < b)            // Instantiation of the template has to compile
+		return a;
+	else
+		return b;
+}
+
+char* minimum(char* a, char* b)    // overiding the function, use this for special case when a, b are char
+{
+	if (strcmp(a, b) < 0)   // C string compare builtin function
+		return a;
+	else
+		return b;
+}
+
+T sum(const T a[], int n)          // double(), int(), bool() ... initialize 0
+{                                  // string() initialize ""
+	T total = T();                   // int*() initialize nullptr
+	for (int k = 0; k < n; ++k)
+		total += a[k];
+	return total;
+}
+
+// int main()
+// {
+// 	 int k;
+//   cin >> k;
+//   cout << minimum(k, 10) / 2;
+//   double x;
+//	 double y = 3 * minumum(x * x, x + 10);
+//	 int z = minumum(0, 3 * k - k + 4);
+// }
+
+// When you use template
+//   Your call has to match some template
+//   No conversions are considered in template argument deduction
+
+
+// template<typename T1, typename T2>
+// ??? minimum(T1 a, T2 b)    // undefined return type, no good solution
+// {
+//    if (a < b)
+//      return a;
+//    else
+//      return b;
+// }
+
+// int main()                          // Chicken minimum(Chicken a, Chicken b)
+// {                                   // {
+//   Chicken c1, c2;                   // 	if (a < b)
+//   Chichen c3 = minimum(c1, c2);     //     return a;
+// }                                   //   else
+                                       //     return b;
+																			 // }
+
+// int main()
+// {
+//	 char ca1[100];   // C string
+//	 char ca2[100];
+//	 cin.getline(ca1, 100);
+//	 cin.getline(ca2, 100);
+// 	 char* ca3 = minimum(ca1, ca2);   // will compare the address of ca1 and ca2 point to
+// }
+
+// ExpensiveToCopyThing minimium(const ExpensiveToCopyThing& a, const ExpensiveToCopyThing& b)
+// {
+//   if (a < b)
+//     return a;
+//   else
+//     return b;
+// }
+
+
+
+// int main()
+// {
+//   ExpensiveToCopyThing x, y;
+//   ExpensiveToCopyThing z = minimum(x, y);
+// }
+
+
+// int main()
+// {
+//   double da[100];                                                                           // string sum(const string a[], int n)
+//   da = {1, 2, 3, 4, 5};                                                                     // {
+//   cout << sum(da, 5);                                                                       //   string total = 0  
+//   string sa[10] = {"This", "is", "a", "test."};                                             //    ....
+//   string s = sum(sa, 4);    // won't work because can't initialize string with zero. 
+// }                                                               
+
+template<typename T>
+class Stack
+{
+	public:
+		Stack();
+		void push(T x);
+		void pop();
+		T top() const;
+		int size() const;
+	private:
+		T m_data[100];
+		int m_top;
+};
+
+template<typename T>
+Stack<T>::Stack()      // compiler will only instantiate them when it's been called
+	: m_top()
+{}
+
+template<typename T>
+void Stack<T>::push(const T& x)
+{
+	m_data[m_top] = x;    // undefined if it's full
+	m_top++;
+}
+
+template<typename T>
+void Stack<T>::pop()
+{
+	m_top--;   // undefined if it's empty
+}
+
+template<typename T>
+Stack<T>::top() const
+{
+	return m_data[m_top - 1];   // undefined if it's empty
+}
+
+template<typename T>
+int Stack<T>::size() const
+{
+	return m_top;
+}
+
+template<typename T>
+Stack<T>::~Stack()
+{}
+
+// STL standard template library
+#include <stack>
+#include <queue>
+// other useful ones
+#include <vector>
+//  _____         _______
+// |     |------>|_______|
+// | cap |   |     __________
+// | size|   |--->|__________|  push_back when the size is bigger than capacity, then points to larger array
+// |_____|
+
+vector<int> vi;
+vi.push_back(10);
+vi.push_back(20);
+vi.push_back(30);
+cout << vi.size();
+cout << vi.front();
+cout << vi.back();
+vi[1] = 40;
+vi.pop_back();
+vi.at(1) = 60;
+vi.at(3) = 70;   // throws exception
+vector<double> vd(10);
+// vd.size() is 10, each element is 0.0
+vector<double> vs(10, "Hello");
+// vs.size() is 10, each element is "Hello"
+int a[5] = {10, 20, 30, 40, 50};
+vector<int> vx(a, a + 5);
+// vx.size() is 5, vx[0] is 10, vx[1] is
+// 20, ..., vx[4] is 50
+
+#include <list>
+list<int> li;   // empty list
+li.push_back(20);
+li.push_back(30);
+li.push_front(10);
+cout << li.size();    // writes 3
+cout << li.front();   // writes 10
+cout << li.back()l    // writes 30
+li.push_front(40);
+li.pop_front();
+
+//   li.begin()                        li.end()
+//        v                               v
+//       10         20           30
+
+// Iterator
+//   acts like a pointer, hide the details of pointers and nodes in the list
+for (list<int>::iterator p = li.begin(); p!= li.end(); p++)
+	cout << *p << endl;
