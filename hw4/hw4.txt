@@ -1,0 +1,3 @@
+Problem 2
+=========
+The insert() function use operator == and < to find the place to insert item into the Set. But we don't implement the == and < operator for class Coord.
