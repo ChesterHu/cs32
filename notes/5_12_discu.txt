@@ -1,0 +1,28 @@
+Climbing Stairs
+===============
+There is n steps stairs. Return how many times you can do climbing the stairs
+
+dp[i] = dp[i - 1] + dp[i - 2]
+
+
+Contains Duplicates
+===================
+Given an array of integers, find if the array contains any duplicates. Return true if any duplicates, otherwise return false.
+
+use set || map
+
+MajoritL Elements
+=================
+Given an array of size n, find the majority element. The majority element is the elements appears more than n/2 times. You may assume that there is always majority elements.
+
+use set || map
+
+Two Sum
+=======
+Given an array of integers, return indices of the two numbers such that they add up to a specific target.
+
+Merge Two Sorted List
+=====================
+Merge two sorted liked list and return it as a new list. The new list should be made from the two lists
+
+recursion

@@ -1,37 +1,35 @@
-Implement stack in array
-------------------------
-           ______________
-          |   |   |  |   |
-          ----------------
-         /                 \        size = top - start
-       start               top 
+// Implement stack in array
+// ------------------------
+//           _______________
+//          |___|___|___|___|
+//         /                 \        size = top - start
+//       start               top 
+//
+// Implement stack in linked list
+// ------------------------------
+//             ___
+// top------->|   |old
+//  \        ^|___|
+//   \      /  
+//    v___ /
+//    |   |new
+//    |___|
 
-Implement stack in linked list
-------------------------------
-            ___
-top------->|   |old
- \        ^|   |
-  \      /  ---
-   v___ /
-   |   |new
-   |   |
-    ---
-When "push" data, add a new node in the front of the list, and let top points to new node.
+// When "push" data, add a new node in the front of the list, and let top points to new node.
 
-Implement queue in array
-------------------------
-       _____________... ...___________________
-      |  |  |  |  |      |  |  |  |  |  |  |  |
-      -----------------------------------------
-       ^         ^
-       |         |
-      head      tail
-When enqueue, add item at tail, when dequque, move head foward 1 block. But when the tail hits the end of array
-  1. Shift all data to the beginning of array.
-  2. Let tail points to the front of the array (circluar array & ring buffer), use a int to record the number of items in the array.
+// Implement queue in array
+// ------------------------
+//       _____________... ...___________________
+//      |__|__|__|__|_... ..._|__|__|__|__|__|__|
+//       ^         ^
+//       |         |
+//      head      tail
+// When enqueue, add item at tail, when dequque, move head foward 1 block. But when the tail hits the end of array
+//   1. Shift all data to the beginning of array.
+//   2. Let tail points to the front of the array (circluar array & ring buffer), use a int to record the number of items in the array.
 
-Shape.h
--------
+// Shape.h
+// -------
 class Shape
 {
   void move(double xnew, double ynew);
@@ -51,8 +49,8 @@ class Circl : public Shape  // A Circle is a kind of shapee
     double m_r;
 };
 
-Rectangle.h
------------
+// Rectangle.h
+// -----------
 class Rectangle : public Shape
 {
   public:
@@ -77,19 +75,18 @@ void f(Rectangle & r)
   r.draw();
 }
 
-  generalization:                   Mammal
-   (superclass)                  /    |    \
-    base class                  /     |     \
-                               /      |      \
-  specialization            Dog     Gopher   Monkey
-   (subclasses)
-   derive class
+//  generalization:                   Mammal
+//   (superclass)                  /    |    \
+//    base class                  /     |     \
+//                               /      |      \
+//  specialization            Dog     Gopher   Monkey
+//   (subclasses)
+//   derive class
 
 Shape pic[100]
 pic[0] = new Circle;
 pic[1] = new Rectangle;
 pic[2] = new Circle;
 
-Derived* ---> Base*
-Derived& ---> Base&
-
+// Derived* ---> Base*
+// Derived& ---> Base&

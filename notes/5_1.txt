@@ -51,7 +51,7 @@ void WarningSymbol::move(double xnew, double ynew)
 // let's see what is the consequence...
 WarningSymbol ws;
 ws.move(x, y);   // will call move function of WarningSymbol
-f(ws);   // will call move function of Shape!
+f(ws);           // will call move function of Shape!
 // thus we have to make move function virtual
 // so NEVER attempt to override a non-virtual function!!!
 
@@ -72,7 +72,7 @@ f(r);   // will call move function of WarningSymbol and call draw function of Re
 //       |   Shape's virtual table
 //       |----------->  _____
 //       |     move   0|     |-------------+-------> Shape::move(double xnew, double ynew)
-//(sp=&r)|     draw   1|_____|------------/--------> nullptr (it's purevirtual)    when shape's draw is a pure virtual will cause undefine
+//(sp=&r)|     draw   1|_____|------------/--------> nullptr (it's purevirtual)    when shape's draw is a pure virtual will cause undefined
 //       |                               /                                         behavior if we call the draw function of shape, thus in
 //       |   Rectangle's virtual table  /                                          C++ don't allow us create instance of such objects
 //       |----------->  _____          /
@@ -90,7 +90,7 @@ sp->draw();   // call the function that sp->vptr[1] points to
 
 // abstract class VS. concrete class
 // RULE:
-//   If a class has at least one virtual function, it'a an abstract class
+//   If a class has at least one pure virtual function, it'a an abstract class
 
 // 1. Construct the base part
 // 2. Construct the data members
@@ -108,7 +108,7 @@ Rectangle::Rectangle(double x, double y, double dx, double dy)
 	: Shape(x, y), m_dx(dx), m_dy(dy)
 {}
 
-//                 Polygon                      when deconstructed, we need implement deconstructor of Polygon's linked list member
+//                 Polygon                      when destructed, we need implement deconstructor of Polygon's linked list member
 //                  ______                      in order to let compiler know which deconstructor to call, we make deconstructor virtual
 //         sp------|>____ |                     and we must implement it, because every derived class will call base class deconstructor     
 //                 ||    ||
@@ -119,4 +119,4 @@ Rectangle::Rectangle(double x, double y, double dx, double dy)
 
 // RULE:
 //   If a class is designed to base class, declare its
-//   deconstructor virtual and implement it
+//   destructor virtual and implement it

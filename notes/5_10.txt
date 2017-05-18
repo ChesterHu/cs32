@@ -149,7 +149,7 @@ Stack<T>::~Stack()
 //  _____         _______
 // |     |------>|_______|
 // | cap |   |     __________
-// | size|   |--->|__________|  push_back when the size is bigger than capacity, then points to larger array
+// | size|   ---->|__________|  push_back when the size is bigger than capacity, then points to larger array
 // |_____|
 
 vector<int> vi;
@@ -189,5 +189,30 @@ li.pop_front();
 
 // Iterator
 //   acts like a pointer, hide the details of pointers and nodes in the list
-for (list<int>::iterator p = li.begin(); p!= li.end(); p++)
+for (list<int>::iterator p = li.begin(); p!= li.end(); p++)   // can also do p-- but p -= 2 and p += 2 won't comp:ile 
 	cout << *p << endl;
+
+template<typename Iter, typename T>
+Iter find(Iter b, Iter e, T& target)
+{
+	for (; b != e; b++)
+		if (*b == target)
+			return b;
+	return b;
+}
+
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int mian()
+{
+	vector<int> vi;
+	vector<int>::iterator p = find(vi.begin(), vi.end(), 42);
+	if (p != vi.end())
+	{
+		int n = count(vi.begin(), vi.end(), 0);
+		reverse(vi.begin(), vi.end());
+	}
+	sort(vi.begin(), vi.end());
+}

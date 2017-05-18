@@ -57,8 +57,8 @@ class Rect : public Shape
 
 void Rect::draw() const
 {
-  ... draw a line from (m_x, m_y) to (m_x + m_dx, m_y) ...;
-  ...;
+  // ... draw a line from (m_x, m_y) to (m_x + m_dx, m_y) ...;
+  // ...;
 }
 
 Automatic convertion
@@ -71,7 +71,7 @@ pic[2] = new Circle;
 void f(Shape& x)      // If x is a Circle, function f will get the Shape reference of the Circle object.
 {
   x.move(10, 20);
-  x.draw(); // Compiler will decide to choose which draw() to call. Implemented by static binding.
+  x.draw();           // Compiler will decide to choose which draw() to call. Implemented by static binding.
 }
 
  Circle Object
@@ -80,9 +80,9 @@ void f(Shape& x)      // If x is a Circle, function f will get the Shape referen
  | | Shape | |<------- Shape* points to the shape part of the Circle       
  | |  m_x  | |     
  | |  m_y  | |      
- |  -------  |
+ | |_______| |
  |    m_r    |
-  -----------
+ |___________|
 
 static binding --- compile time
 

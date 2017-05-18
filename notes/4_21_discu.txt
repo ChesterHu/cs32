@@ -63,7 +63,7 @@ int main()
 	int n = s.top();
 		// 20 will be removed. C++ library pop() won't return the top item in the stack, it returns void.
 	s.pop();
-	if ( ! s.empty)
+	if ( ! s.empty())
 	{
 			// size() still works if stack is empty.
 		cout << s.size() << endl;

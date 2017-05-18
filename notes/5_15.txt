@@ -1,0 +1,64 @@
+template<typename Iter, typename Func>
+Iter find_if(Iter b, Iter e, Func f)
+{
+	for ( ; b != e; b++)
+		if (f(*b))
+			break;
+	return b;
+}
+
+bool isNegative(int k)
+{
+	return k < 0;
+}
+
+bool isEmpty(string s)
+{
+	return s.empty();
+}
+
+
+bool isGreater(int i, int j)
+{
+	return i > j;
+}
+
+bool makesLessThan(const Employee& e1, const Employee& e2)
+{
+	return e1.salary() < e2.salary();
+}
+
+bool hasBetterRecord(const Team& t1, const Team& t2)
+{
+	if (t1.wins() > t2.wins())
+		return true;
+	if (t1.wins() < t2.wins())
+		return false;
+	return t1.ties() > t2.ties();
+}
+
+
+
+int main()
+{
+	vector<int> vi;
+	vector<int>::iterator p = find_if(vi.begin(), vi.end(), isNegative);   // find the first negative value
+	                                                                       // will generate a pointer to the code for is Negative function
+                                                                         // pointor to function that take on int and return bool.
+	                                                                       // g(), g could be the name of a appropriate function
+	                                                                       // g could be a pointer to an appropriate function.
+	vector<string>::iterator p = find_if(vi.begin(), vi.end(), isEmpty);   // find the first empty string
+	
+	vector<int> vi;
+	sort(vi.begin(), vi.end(), isGreater);                 // sort int in descending order
+	Employee ea[100];
+	sort(ea, ea + 100, makesLessThan);                     // sort employees by salary in ascending order
+	vector<Team> league;
+	sort(league.begin(), league.end(), hasBetterRecord);   // sort teams by the number of wins and ties in ascending order.
+
+	for (int i = 0; i < N; i++)  // 7N + 1 operations
+		c[i] = a[i] * b[i];        // 5 operations
+}
+
+// traditional matrix multiplication do O(N*N*N) complexity
+// all log functions are proportional to each other.

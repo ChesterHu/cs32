@@ -49,7 +49,7 @@ base class ---> derived class:
 a -> b -> c -> d;
 Construction d, the construction sequence:
 a -> b -> c -> d;
-Deconstruction sequence:
+Destruction sequence:
 d -> c -> b -> a;
 
 Polymorphism
@@ -60,9 +60,9 @@ Polymorphism
 		Same function, implemented in different derived classes.
 
 virtual function
-	Always use virtual on deconstructor, otherwise will have undefined behavior. Virtual deconstructor is useful when you can delete an instance of a derived class from a pointer to base class.
+	Always use virtual on destructor, otherwise will have undefined behavior. Virtual destructor is useful when you can delete an instance of a derived class from a pointer to base class.
 	base* p = new derived;
-	delete p; // Will have undefined behavior, if the deconstructor is not virtual.
+	delete p; // Will have undefined behavior, if the destructor is not virtual.
 pure virtual function:
 	virtual void speak() const = 0; // A pure virtual function.
 

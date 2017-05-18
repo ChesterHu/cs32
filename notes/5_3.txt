@@ -1,5 +1,5 @@
 // inheritance & polymorphism
-// if a class is designed to be a base class, declare its desconstructor to be 
+// if a class is designed to be a base class, declare its destructor to be 
 // virtual, and implement it.
 
 class Shape
@@ -17,7 +17,7 @@ class Polygon : public Shape
 Shape *sp;
 sp = new Polygon();
 // sp = new Rectangle();
-delete sp;   // need deconstructor of Shape, Polygon and Rectangle be virtual, otherwise
+delete sp;   // need destructor of Shape, Polygon and Rectangle be virtual, otherwise
              // compiler won't know which deconstructor to call.
 
 
