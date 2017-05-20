@@ -23,9 +23,13 @@ class GameImpl
 			// return a random point on the game board
     bool addShip(int length, char symbol, string name);
     int nShips() const;
+			// return number of ships in on the game board
     int shipLength(int shipId) const;
+			// return the length of m_Ships[shipId]
     char shipSymbol(int shipId) const;
+			// return the symbol of m_Ships[shipId]
     string shipName(int shipId) const;
+			// return the name of m_Ships[shipId]
     Player* play(Player* p1, Player* p2, Board& b1, Board& b2, bool shouldPause);
 
 	private:
@@ -59,7 +63,7 @@ void waitForEnter()
 ///////////////////////////////////////////////////////////
 
 GameImpl::GameImpl(int nRows, int nCols)  // modified
-	: m_rows(nRows), m_cols(nCols)
+	: m_rows(nRows), m_cols(nCols), m_nShips(0)
 {}
 
 int GameImpl::rows() const  // modified
@@ -84,7 +88,13 @@ Point GameImpl::randomPoint() const
 
 bool GameImpl::addShip(int length, char symbol, string name)
 {
-    return false;  // This compiles but may not be correct
+    if (m_nShips < 26)
+		{
+			m_Ships[m_nShips] = Ship(length, symbol, name);
+			m_nShips++;
+			return true;
+		}
+		return false;
 }
 
 int GameImpl::nShips() const  // modified
@@ -94,12 +104,12 @@ int GameImpl::nShips() const  // modified
 
 int GameImpl::shipLength(int shipId) const  // modified
 {
-    return m_Ships[shipId].ShipSymbol;
+    return m_Ships[shipId].ShipLength;
 }
 
-char GameImpl::shipSymbol(int shipId) const
+char GameImpl::shipSymbol(int shipId) const  // modified
 {
-    return m_Ships[shipId].ShipLength; 
+    return m_Ships[shipId].ShipSymbol; 
 }
 
 string GameImpl::shipName(int shipId) const  // modified

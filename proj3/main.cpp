@@ -14,9 +14,23 @@ bool addStandardShips(Game& g)
            g.addShip(2, 'P', "patrol boat");
 }
 
+void test()
+{
+		Game g(10, 10);
+		assert(addStandardShips(g));
+		assert(g.nShips() == 5);
+		assert(g.rows() == 10 && g.cols() == 10);
+		assert(g.shipLength(0) == 5 && g.shipLength(4) == 2);
+		assert(g.shipSymbol(2) == 'D' && g.shipSymbol(3) == 'S');
+		assert(g.shipName(1) == "battleship" && g.shipName(0) == "aircraft carrier");
+		cout << "Passed all tests" << endl;
+}
+
+
 int main()
 {
     const int NTRIALS = 10;
+		test();
 
     cout << "Select one of these choices for an example of the game:" << endl;
     cout << "  1.  A mini-game between two mediocre players" << endl;
