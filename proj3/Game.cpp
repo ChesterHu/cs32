@@ -14,22 +14,22 @@ class GameImpl
   public:
     GameImpl(int nRows, int nCols);
     int rows() const;
-			// return number of rows in the game board
+		// return number of rows in the game board
     int cols() const;
-			// return number of columns in the game board
+		// return number of columns in the game board
     bool isValid(Point p) const;
-			// return true if and only if the point denotes a position on the game board
+		// return true if and only if the point denotes a position on the game board
     Point randomPoint() const;
-			// return a random point on the game board
+		// return a random point on the game board
     bool addShip(int length, char symbol, string name);
-    int nShips() const;
-			// return number of ships in on the game board
+	int nShips() const;
+		// return number of ships in on the game board
     int shipLength(int shipId) const;
-			// return the length of m_Ships[shipId]
+		// return the length of m_Ships[shipId]
     char shipSymbol(int shipId) const;
-			// return the symbol of m_Ships[shipId]
+		// return the symbol of m_Ships[shipId]
     string shipName(int shipId) const;
-			// return the name of m_Ships[shipId]
+		// return the name of m_Ships[shipId]
     Player* play(Player* p1, Player* p2, Board& b1, Board& b2, bool shouldPause);
 
 	private:
@@ -50,7 +50,7 @@ class GameImpl
 		int m_rows;            // number of rows of the board
 		int m_cols;            // number of columns of the board
 		int m_nShips;          // number of Ships on the board
-		Ship m_Ships[26];      // store all kinds of Ships on the board
+		Ship m_Ships[255];     // store all kinds of Ships on the board
 };
 
 void waitForEnter()
@@ -88,13 +88,13 @@ Point GameImpl::randomPoint() const
 
 bool GameImpl::addShip(int length, char symbol, string name)
 {
-    if (m_nShips < 26)
-		{
-			m_Ships[m_nShips] = Ship(length, symbol, name);
-			m_nShips++;
-			return true;
-		}
-		return false;
+    if (m_nShips < 255)
+	{
+		m_Ships[m_nShips] = Ship(length, symbol, name);
+		m_nShips++;
+		return true;
+	}
+	return false;
 }
 
 int GameImpl::nShips() const  // modified
@@ -242,4 +242,3 @@ Player* Game::play(Player* p1, Player* p2, bool shouldPause)
     Board b2(*this);
     return m_impl->play(p1, p2, b1, b2, shouldPause);
 }
-

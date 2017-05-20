@@ -23,6 +23,8 @@ void test()
 		assert(g.shipLength(0) == 5 && g.shipLength(4) == 2);
 		assert(g.shipSymbol(2) == 'D' && g.shipSymbol(3) == 'S');
 		assert(g.shipName(1) == "battleship" && g.shipName(0) == "aircraft carrier");
+
+		Board(g);
 		cout << "Passed all tests" << endl;
 }
 

@@ -9,6 +9,7 @@ class BoardImpl
 {
   public:
     BoardImpl(const Game& g);
+	~BoardImpl();
     void clear();
     void block();
     void unblock();
@@ -22,12 +23,25 @@ class BoardImpl
       // TODO:  Decide what private members you need.  Here's one that's likely
       //        to be useful:
     const Game& m_game;
+	char** m_Board;   // 2-dimention dynamic array to record board
 };
 
-BoardImpl::BoardImpl(const Game& g)
+// Function Implementation
+///////////////////////////////////////////////////////////
+
+BoardImpl::BoardImpl(const Game& g)  // modified
  : m_game(g)
 {
-    // This compiles, but may not be correct
+    m_Board = new char*[m_game.rows()];
+	for (int i = 0; i < m_game.rows(); i++)
+		m_Board[i] = new char[m_game.cols()];
+}
+
+BoardImpl::~BoardImpl()
+{
+	for (int i = 0; i < m_game.rows(); i++)
+		delete [] m_Board[i];
+	delete m_Board;
 }
 
 void BoardImpl::clear()
