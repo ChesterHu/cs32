@@ -23,6 +23,21 @@ class GameImpl
     char shipSymbol(int shipId) const;
     string shipName(int shipId) const;
     Player* play(Player* p1, Player* p2, Board& b1, Board& b2, bool shouldPause);
+
+	private:
+
+		struct Ship
+		{
+			int ShipID;
+			int ShipLength;
+			char ShipSymbol;
+			string ShipName;
+		};
+
+		int m_rows;
+		int m_cols;
+		int m_nShips;
+		Ship m_Ships[26];
 };
 
 void waitForEnter()
@@ -31,19 +46,21 @@ void waitForEnter()
     cin.ignore(10000, '\n');
 }
 
-GameImpl::GameImpl(int nRows, int nCols)
+// Function Implementation
+///////////////////////////////////////////////////////////
+
+GameImpl::GameImpl(int nRows, int nCols)  // modified
+	: m_rows(nRows), m_cols(nCols)
+{}
+
+int GameImpl::rows() const  // modified
 {
-    // This compiles but may not be correct
+    return m_rows; 
 }
 
-int GameImpl::rows() const
+int GameImpl::cols() const  // modeified
 {
-    return -1;  // This compiles but may not be correct
-}
-
-int GameImpl::cols() const
-{
-    return -1;  // This compiles but may not be correct
+    return m_cols;
 }
 
 bool GameImpl::isValid(Point p) const
