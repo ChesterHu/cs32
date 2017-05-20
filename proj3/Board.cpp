@@ -44,9 +44,11 @@ BoardImpl::~BoardImpl()
 	delete m_Board;
 }
 
-void BoardImpl::clear()
+void BoardImpl::clear()  // modified
 {
-    // This compiles, but may not be correct
+	for (int i = 0; i < m_game.rows(); i++)
+		for (int j = 0; j < m_game.cols(); j++)
+			m_Board[i][j] = '.';
 }
 
 void BoardImpl::block()
