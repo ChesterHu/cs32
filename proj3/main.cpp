@@ -26,6 +26,8 @@ void test()
 	assert(g.shipName(1) == "battleship" && g.shipName(0) == "aircraft carrier");
 
 	Board b(g);
+	b.clear();
+	b.display(true);
 	cout << "Passed all tests" << endl;
 }
 

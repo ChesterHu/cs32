@@ -11,6 +11,7 @@ class BoardImpl
     BoardImpl(const Game& g);
 	~BoardImpl();
     void clear();
+	
     void block();
     void unblock();
     bool placeShip(Point topOrLeft, int shipId, Direction dir);
@@ -81,9 +82,24 @@ bool BoardImpl::unplaceShip(Point topOrLeft, int shipId, Direction dir)
     return false; // This compiles, but may not be correct
 }
 
-void BoardImpl::display(bool shotsOnly) const
+void BoardImpl::display(bool shotsOnly) const  // modified
 {
-    // This compiles, but may not be correct
+    int n_rows = m_game.rows(), n_cols = m_game.cols();
+	cout << "  ";
+	for (int i = 0; i < n_cols; i++)
+		cout << i;
+	cout << endl;
+
+	for (int i = 0; i < n_rows; i++)
+	{
+		cout << i << ' ';
+		for (int j = 0; j < n_cols; j++)
+		{
+			cout << m_Board[i][j];
+		}
+		cout << endl;
+	}
+			
 }
 
 bool BoardImpl::attack(Point p, bool& shotHit, bool& shipDestroyed, int& shipId)
