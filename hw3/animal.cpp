@@ -107,7 +107,7 @@ void Pig::speak() const
 	if (m_pounds < 170)
 		cout << "Oink";
 	else
-		cout << "Quack";
+		cout << "Grunt";
 }
 
 // Duck
