@@ -27,6 +27,9 @@ void test()
 
 	Board b(g);
 	b.clear();
+	b.block();
+	b.display(true);
+	b.unblock();
 	b.display(true);
 	cout << "Passed all tests" << endl;
 }

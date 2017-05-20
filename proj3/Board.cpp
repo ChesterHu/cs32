@@ -52,23 +52,24 @@ void BoardImpl::clear()  // modified
 			m_Board[i][j] = '.';
 }
 
-void BoardImpl::block()
+void BoardImpl::block()  // modified
 {
       // Block cells with 50% probability
     for (int r = 0; r < m_game.rows(); r++)
         for (int c = 0; c < m_game.cols(); c++)
             if (randInt(2) == 0)
             {
-                ; // TODO:  Replace this with code to block cell (r,c)
+				m_Board[r][c] = 'X';
             }
 }
 
-void BoardImpl::unblock()
+void BoardImpl::unblock()  // modified
 {
     for (int r = 0; r < m_game.rows(); r++)
         for (int c = 0; c < m_game.cols(); c++)
         {
-            ; // TODO:  Replace this with code to unblock cell (r,c) if blocked
+			if (m_Board[r][c] == 'X')
+				m_Board[r][c] = '.';
         }
 }
 
@@ -82,7 +83,7 @@ bool BoardImpl::unplaceShip(Point topOrLeft, int shipId, Direction dir)
     return false; // This compiles, but may not be correct
 }
 
-void BoardImpl::display(bool shotsOnly) const  // modified
+void BoardImpl::display(bool shotsOnly) const  // modified TODO: shotsOnly different display
 {
     int n_rows = m_game.rows(), n_cols = m_game.cols();
 	cout << "  ";
