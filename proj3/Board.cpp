@@ -53,7 +53,7 @@ BoardImpl::~BoardImpl()
 {
 	for (int i = 0; i < m_game.rows(); i++)
 		delete [] m_Board[i];
-	delete m_Board;
+	delete [] m_Board;
 	delete [] m_placedShips;
 }
 
