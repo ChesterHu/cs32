@@ -45,6 +45,7 @@ void test()
 	} while (0);
 
 	do {
+		cout << "Second test" << endl;
 		Game g(10, 10);
 		assert(addStandardShips(g));
 		Board b(g);
@@ -56,7 +57,10 @@ void test()
 		assert(b.attack(Point(1, 1), shotHit, shipDestroyed, shipId) && !shotHit && !shipDestroyed && shipId == 0);
 		assert(!b.allShipsDestroyed());
 		assert(b.attack(Point(0, 0), shotHit, shipDestroyed, shipId) && shotHit && !shipDestroyed && shipId == 4);
+		b.display(true);
+		b.display(false);
 		assert(b.attack(Point(0, 1), shotHit, shipDestroyed, shipId) && shotHit && shipDestroyed && shipId == 4);
+		b.display(false);
 		assert(b.allShipsDestroyed());
 	} while(0);
 	cout << "Passed all tests" << endl;
