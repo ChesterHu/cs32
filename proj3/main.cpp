@@ -30,6 +30,12 @@ void test()
 	b.block();
 	b.display(true);
 	b.unblock();
+	assert(b.placeShip(Point(0, 0), 0, HORIZONTAL));
+	assert(!b.placeShip(Point(1, 1), 0, VERTICAL));
+	assert(b.placeShip(Point(1, 1), 1, VERTICAL));
+	assert(!b.placeShip(Point(2, 2), 1, VERTICAL));
+	assert(!b.placeShip(Point(1, 0), 4, HORIZONTAL));
+	assert(b.placeShip(Point(1, 2), 4, HORIZONTAL));
 	b.display(true);
 	cout << "Passed all tests" << endl;
 }

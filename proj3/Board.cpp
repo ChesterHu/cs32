@@ -19,12 +19,16 @@ class BoardImpl
     void display(bool shotsOnly) const;
     bool attack(Point p, bool& shotHit, bool& shipDestroyed, int& shipId);
     bool allShipsDestroyed() const;
+	  // prevent copy constructor and assignment operator
+	BoardImpl(const BoardImpl&) = delete;
+	BoardImpl& operator=(const BoardImpl&) = delete;
 
   private:
       // TODO:  Decide what private members you need.  Here's one that's likely
       //        to be useful:
     const Game& m_game;
-	char** m_Board;   // 2-dimention dynamic array to record board
+	bool* m_placedShips; // dynamic bool array, m_placedShips[i] == true means the ship has been placed
+	char** m_Board;      // 2-dimention dynamic array to record board
 };
 
 // Function Implementation
@@ -33,9 +37,15 @@ class BoardImpl
 BoardImpl::BoardImpl(const Game& g)  // modified
  : m_game(g)
 {
+	  // initialize m_Board
     m_Board = new char*[m_game.rows()];
 	for (int i = 0; i < m_game.rows(); i++)
 		m_Board[i] = new char[m_game.cols()];
+	  // initialize m_placedShips
+	int nShips = m_game.nShips();
+	m_placedShips = new bool[nShips];
+	for (int i = 0; i < nShips; i++)
+		m_placedShips[i] = false;
 }
 
 BoardImpl::~BoardImpl()
@@ -43,6 +53,7 @@ BoardImpl::~BoardImpl()
 	for (int i = 0; i < m_game.rows(); i++)
 		delete [] m_Board[i];
 	delete m_Board;
+	delete [] m_placedShips;
 }
 
 void BoardImpl::clear()  // modified
@@ -73,9 +84,33 @@ void BoardImpl::unblock()  // modified
         }
 }
 
-bool BoardImpl::placeShip(Point topOrLeft, int shipId, Direction dir)
+bool BoardImpl::placeShip(Point topOrLeft, int shipId, Direction dir)  // modified
 {
-    return false; // This compiles, but may not be correct
+	int r = topOrLeft.r, c = topOrLeft.c;  // start coordinate
+	int length = m_game.shipLength(shipId);   // ship length
+	char symbol = m_game.shipSymbol(shipId);           // ship symbol
+	int maxRows = m_game.rows(), maxCols = m_game.cols(); // bounds
+
+	if (m_placedShips[shipId] || r < 0 || r >= maxRows || c < 0 || c >= maxCols)
+		return false;
+	if (dir == HORIZONTAL)  // check horizontally
+	{
+		for (int i = 0; i < length; i++)
+			if (c + i >= maxCols || m_Board[r][c + i] != '.')
+				return false;
+		for (int i = 0; i < length; i++)
+			m_Board[r][c + i] = symbol;
+	}
+	else                    // check vertically
+	{
+		for (int i = 0; i < length; i++)
+			if (c + i >= maxRows || m_Board[r + i][c] != '.')
+				return false;
+		for (int i = 0; i < length; i++)
+			m_Board[r + i][c] = symbol;
+	}
+	m_placedShips[shipId] = true;
+	return true;
 }
 
 bool BoardImpl::unplaceShip(Point topOrLeft, int shipId, Direction dir)
