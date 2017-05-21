@@ -147,7 +147,7 @@ bool BoardImpl::unplaceShip(Point topOrLeft, int shipId, Direction dir)
 		return true;
 	}
 
-    return false; // This compiles, but may not be correct
+    return false;
 }
 
 void BoardImpl::display(bool shotsOnly) const  // modified

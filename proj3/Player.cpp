@@ -25,7 +25,7 @@ class AwfulPlayer : public Player
 };
 
 AwfulPlayer::AwfulPlayer(string nm, const Game& g)
- : Player("Awful " + nm, g), m_lastCellAttacked(0, 0)
+ : Player(nm, g), m_lastCellAttacked(0, 0)
 {}
 
 bool AwfulPlayer::placeShips(Board& b)
@@ -101,7 +101,7 @@ class HumanPlayer : public Player
 };
 
 HumanPlayer::HumanPlayer(string nm, const Game& g)
-	: Player(nm + " the Human", g)
+	: Player(nm, g)
 {}
 
 HumanPlayer::~HumanPlayer()
@@ -196,7 +196,87 @@ bool HumanPlayer::getLineWithDirection(Direction& d) const
 
 // TODO:  You need to replace this with a real class declaration and
 //        implementation.
-typedef AwfulPlayer MediocrePlayer;
+// typedef AwfulPlayer MediocrePlayer;
+
+class MediocrePlayer : public Player
+{
+	public:
+		MediocrePlayer(string nm, const Game& g);
+		virtual ~MediocrePlayer();
+		virtual bool placeShips(Board& b);
+		bool placeShipsRecursively(Board& b, int placedNumShips, int totalNumShips, int maxRows, int maxCols);
+		virtual Point recommendAttack();
+		virtual void recordAttackResult(Point p, bool validShot, bool shotHit, bool shipDestroyed, int shipId);
+		virtual void recordAttackByOpponent(Point p);
+
+		MediocrePlayer(const MediocrePlayer&) = delete;
+		MediocrePlayer& operator=(const MediocrePlayer&) = delete;
+};
+
+MediocrePlayer::MediocrePlayer(string nm, const Game& g)
+	: Player(nm, g)
+{}
+
+MediocrePlayer::~MediocrePlayer()
+{}
+
+bool MediocrePlayer::placeShips(Board& b)
+{
+	const Game& m_game = game();
+	for (int k = 0; k < 50; ++k)  // try 50 times to place ship
+	{
+		b.block();
+		if (placeShipsRecursively(b, 0, m_game.nShips(), m_game.rows(), m_game.cols()))
+		{
+			b.unblock();
+			return true;
+		}
+		b.unblock();
+	}
+
+	return false;
+}
+
+bool MediocrePlayer::placeShipsRecursively(Board& b, int placedNumShips, int totalNumShips, int maxRows, int maxCols)
+{
+	if (placedNumShips == totalNumShips)
+		return true;
+	  // try place ships
+	for (int r = 0; r < maxRows; r++)
+		for (int c = 0; c < maxCols; c++)
+			for(int i = 0; i < totalNumShips; i++)
+			{
+				  // try horizontal
+				if (b.placeShip(Point(r, c), i, HORIZONTAL))
+				{
+					if (placeShipsRecursively(b, placedNumShips + 1, totalNumShips, maxRows, maxCols))
+						return true;
+					b.unplaceShip(Point(r, c), i, HORIZONTAL);	
+				}
+				  // try vertical
+				if (b.placeShip(Point(r, c), i, VERTICAL))
+				{
+					if (placeShipsRecursively(b, placedNumShips + 1, totalNumShips, maxRows, maxCols))
+						return true;
+					b.unplaceShip(Point(r, c), i, VERTICAL);	
+				}				
+			}
+
+	return false;
+	
+}
+
+Point MediocrePlayer::recommendAttack()  // TODO
+{
+	return Point(0, 0);
+}
+
+void MediocrePlayer::recordAttackResult(Point p, bool validShot, bool shotHit, bool shipDestroyed, int shipId)  // TODO
+{}
+
+void MediocrePlayer::recordAttackByOpponent(Point p)  // TODO
+{}
+
 // Remember that Mediocre::placeShips(Board& b) must start by calling
 // b.block(), and must call b.unblock() just before returning.
 
