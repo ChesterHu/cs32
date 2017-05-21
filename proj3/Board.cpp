@@ -29,13 +29,14 @@ class BoardImpl
     const Game& m_game;
 	bool* m_placedShips; // dynamic bool array, m_placedShips[i] == true means the ship has been placed
 	char** m_Board;      // 2-dimention dynamic array to record board
+	int m_health;        // total health of this board
 };
 
 // Function Implementation
 ///////////////////////////////////////////////////////////
 
 BoardImpl::BoardImpl(const Game& g)  // modified
- : m_game(g)
+ : m_game(g), m_health(0)
 {
 	int nShips = m_game.nShips();
 	 
@@ -111,7 +112,8 @@ bool BoardImpl::placeShip(Point topOrLeft, int shipId, Direction dir)  // modifi
 		for (int i = 0; i < length; i++)
 			m_Board[r + i][c] = symbol;
 	}
-
+	
+	m_health += m_game.shipLength(shipId);
 	m_placedShips[shipId] = true;
 	return true;
 }
@@ -130,6 +132,7 @@ bool BoardImpl::unplaceShip(Point topOrLeft, int shipId, Direction dir)
 		for (int i = 0; i < length; i++)
 			m_Board[r][c + i] = '.';
 		m_placedShips[shipId] = false;
+		m_health -= m_game.shipLength(shipId);
 		return true;
 	}
 	else if (r + length - 1 < maxRows && m_Board[r + length - 1][c] == symbol)
@@ -137,6 +140,7 @@ bool BoardImpl::unplaceShip(Point topOrLeft, int shipId, Direction dir)
 		for (int i = 0; i < length; i++)
 			m_Board[r + i][c] = '.';
 		m_placedShips[shipId] = false;
+		m_health -= m_game.shipLength(shipId);
 		return true;
 	}
 
@@ -166,14 +170,47 @@ void BoardImpl::display(bool shotsOnly) const  // modified
 			
 }
 
-bool BoardImpl::attack(Point p, bool& shotHit, bool& shipDestroyed, int& shipId)
+bool BoardImpl::attack(Point p, bool& shotHit, bool& shipDestroyed, int& shipId)  // modified
 {
-    return false; // This compiles, but may not be correct
+	int maxRows = m_game.rows(), maxCols = m_game.cols();
+	int r = p.r, c = p.c;
+	if (r < 0 || r > maxRows || c < 0 || c > maxCols || m_Board[r][c] == 'o' || m_Board[r][c] == 'X')
+		return false;
+
+	shotHit = false;
+	shipDestroyed = false;
+	if (m_Board[r][c] == '.')
+	{
+		m_Board[r][c] = 'o';
+	}
+	else
+	{
+		for(int i = 0; i < m_game.nShips(); i++)
+		{
+			if (m_game.shipSymbol(i) == m_Board[r][c])  // its the ship to hit
+			{
+				m_health--;
+				shipId = i;
+				shotHit = true;
+				char symbol = m_Board[r][c];
+				m_Board[r][c] = 'X';
+				for (int i = 0; i < maxCols; i++)
+					if (m_Board[r][i] == symbol)
+						return true;
+				for (int i = 0; i < maxRows; i++)
+					if (m_Board[i][c] == symbol)
+						return true;
+				shipDestroyed = true;
+			}
+		}
+	}
+	
+	return true;
 }
 
-bool BoardImpl::allShipsDestroyed() const
+bool BoardImpl::allShipsDestroyed() const  // modified
 {
-    return false; // This compiles, but may not be correct
+    return m_health == 0;
 }
 
 //******************** Board functions ********************************
