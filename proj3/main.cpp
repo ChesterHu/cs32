@@ -41,7 +41,7 @@ void test()
 		assert(!b.placeShip(Point(1, 0), 4, HORIZONTAL));
 		assert(b.placeShip(Point(1, 2), 4, HORIZONTAL));
 		// b.display(true);
-		b.display(false);
+		// b.display(false);
         
         int shipId = 1;
         bool shotHit = true, shipDestroyed = true;
@@ -63,7 +63,7 @@ void test()
 	} while (0);
 
 	do {
-		cout << "Second test" << endl;
+		  // second test
 		Game g(10, 10);
 		assert(addStandardShips(g));
 		Board b(g);
@@ -75,12 +75,23 @@ void test()
 		assert(b.attack(Point(1, 1), shotHit, shipDestroyed, shipId) && !shotHit && !shipDestroyed && shipId == 0);
 		assert(!b.allShipsDestroyed());
 		assert(b.attack(Point(0, 0), shotHit, shipDestroyed, shipId) && shotHit && !shipDestroyed && shipId == 4);
-		b.display(true);
-		b.display(false);
+		// b.display(true);
+		// b.display(false);
 		assert(b.attack(Point(0, 1), shotHit, shipDestroyed, shipId) && shotHit && shipDestroyed && shipId == 4);
-		b.display(false);
+		// b.display(false);
 		assert(b.allShipsDestroyed());
 	} while(0);
+
+	do {
+		  // third test
+		Game g(10, 10);
+		addStandardShips(g);
+		Player* p1 = createPlayer("human", "chufeng", g);
+		Player* p2 = createPlayer("awful", "a", g);
+		assert(g.play(p1, p2) == p1);
+		delete p1;
+		delete p2;
+	} while (0);
 	cout << "Passed all tests" << endl;
 }
 
@@ -89,7 +100,7 @@ int main()
 {
     const int NTRIALS = 10;
 	test();
-
+	/*
     cout << "Select one of these choices for an example of the game:" << endl;
     cout << "  1.  A mini-game between two mediocre players" << endl;
     cout << "  2.  A mediocre player against a human player" << endl;
@@ -153,4 +164,5 @@ int main()
     {
        cout << "That's not one of the choices." << endl;
     }
+	*/
 }

@@ -22,7 +22,7 @@ class GameImpl
     Point randomPoint() const;
 	  // return a random point on the game board
     bool addShip(int length, char symbol, string name);
-	  // add ship to the game.
+	  // add ship to the game
 	int nShips() const;
 	  // return number of ships in on the game board
     int shipLength(int shipId) const;
@@ -118,9 +118,49 @@ string GameImpl::shipName(int shipId) const  // modified
     return m_Ships[shipId].ShipName;
 }
 
-Player* GameImpl::play(Player* p1, Player* p2, Board& b1, Board& b2, bool shouldPause)
+Player* GameImpl::play(Player* p1, Player* p2, Board& b1, Board& b2, bool shouldPause = true)
 {
-    return nullptr;  // This compiles but may not be correct
+	  // play game recursively, untill one of them wins
+	if (b1.allShipsDestroyed())
+		return p2;
+	if (b2.allShipsDestroyed())
+		return p1;
+	
+  	  // p1 attack p2
+	cout << p1->name() << "'s turn. Board for "
+		 << p2->name() << ": " << endl;
+	b2.display(p1->isHuman());  // display p2's board
+	bool shotHit, shipDestroyed;
+	int shipId;
+	
+	Point p = p1->recommendAttack();
+	bool validHit = b2.attack(p, shotHit, shipDestroyed, shipId);
+	cout << p1->name(); 
+	if (!validHit)
+	{
+	 	cout << " wasted a shot at " << '(' << p.r << ',' << p.c << ")." << endl;
+	}
+	else
+	{
+		cout << " attacked " << '(' << p.r << ',' << p.c << ')' << " and ";
+		if (shotHit)
+		{
+			if (shipDestroyed)
+				cout << "destroyed the " << shipName(shipId);
+			else
+				cout << "hit something";
+		}
+		else
+		{
+			cout << "missed";
+		}
+		cout << ", resulting in: " << endl;
+		b2.display(p1->isHuman()); // display attack result
+	}
+
+	if (shouldPause)
+		waitForEnter();
+	return play(p2, p1, b2, b1, shouldPause);
 }
 
 //******************** Game functions *******************************
@@ -239,7 +279,9 @@ Player* Game::play(Player* p1, Player* p2, bool shouldPause)
 {
     if (p1 == nullptr  ||  p2 == nullptr  ||  nShips() == 0)
         return nullptr;
-    Board b1(*this);
-    Board b2(*this);
+    Board b1(*this); Board b2(*this);
+	b1.clear(); b2.clear();
+	if (!p1->placeShips(b1) || !p2->placeShips(b2))  // place ships
+		return nullptr;
     return m_impl->play(p1, p2, b1, b2, shouldPause);
 }

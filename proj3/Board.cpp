@@ -109,7 +109,7 @@ bool BoardImpl::placeShip(Point topOrLeft, int shipId, Direction dir)  // modifi
 	else                    // check vertically
 	{
 		for (int i = 0; i < length; i++)
-			if (c + i >= maxRows || m_Board[r + i][c] != '.')
+			if (r + i >= maxRows || m_Board[r + i][c] != '.')
 				return false;
 		for (int i = 0; i < length; i++)
 			m_Board[r + i][c] = symbol;
