@@ -28,15 +28,19 @@ void test()
 	Board b(g);
 	b.clear();
 	b.block();
-	b.display(true);
 	b.unblock();
 	assert(b.placeShip(Point(0, 0), 0, HORIZONTAL));
-	assert(!b.placeShip(Point(1, 1), 0, VERTICAL));
+	assert(b.unplaceShip(Point(0, 0), 0, HORIZONTAL));
+	assert(b.placeShip(Point(1, 1), 0, VERTICAL));
+	assert(!b.unplaceShip(Point(2, 1), 0, VERTICAL));
+	assert(b.unplaceShip(Point(1, 1), 0, VERTICAL));
+	assert(b.placeShip(Point(0, 0), 0, HORIZONTAL));
 	assert(b.placeShip(Point(1, 1), 1, VERTICAL));
 	assert(!b.placeShip(Point(2, 2), 1, VERTICAL));
 	assert(!b.placeShip(Point(1, 0), 4, HORIZONTAL));
 	assert(b.placeShip(Point(1, 2), 4, HORIZONTAL));
 	b.display(true);
+	b.display(false);
 	cout << "Passed all tests" << endl;
 }
 

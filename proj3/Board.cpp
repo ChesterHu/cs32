@@ -37,12 +37,14 @@ class BoardImpl
 BoardImpl::BoardImpl(const Game& g)  // modified
  : m_game(g)
 {
-	  // initialize m_Board
+	int nShips = m_game.nShips();
+	 
+      // initialize m_Board
     m_Board = new char*[m_game.rows()];
 	for (int i = 0; i < m_game.rows(); i++)
 		m_Board[i] = new char[m_game.cols()];
+
 	  // initialize m_placedShips
-	int nShips = m_game.nShips();
 	m_placedShips = new bool[nShips];
 	for (int i = 0; i < nShips; i++)
 		m_placedShips[i] = false;
@@ -109,29 +111,55 @@ bool BoardImpl::placeShip(Point topOrLeft, int shipId, Direction dir)  // modifi
 		for (int i = 0; i < length; i++)
 			m_Board[r + i][c] = symbol;
 	}
+
 	m_placedShips[shipId] = true;
 	return true;
 }
 
 bool BoardImpl::unplaceShip(Point topOrLeft, int shipId, Direction dir)
 {
+	int r = topOrLeft.r, c = topOrLeft.c;
+	int maxRows = m_game.rows(), maxCols = m_game.cols();
+	int length = m_game.shipLength(shipId);
+	char symbol = m_game.shipSymbol(shipId);
+	if (!m_placedShips[shipId] || r < 0 || r >= maxRows || c < 0 || c >= maxCols)
+		return false;
+
+	if (dir == HORIZONTAL && c + length - 1 < maxCols && m_Board[r][c + length - 1] == symbol)  // try to remove ship
+	{
+		for (int i = 0; i < length; i++)
+			m_Board[r][c + i] = '.';
+		m_placedShips[shipId] = false;
+		return true;
+	}
+	else if (r + length - 1 < maxRows && m_Board[r + length - 1][c] == symbol)
+	{
+		for (int i = 0; i < length; i++)
+			m_Board[r + i][c] = '.';
+		m_placedShips[shipId] = false;
+		return true;
+	}
+
     return false; // This compiles, but may not be correct
 }
 
-void BoardImpl::display(bool shotsOnly) const  // modified TODO: shotsOnly different display
+void BoardImpl::display(bool shotsOnly) const  // modified
 {
-    int n_rows = m_game.rows(), n_cols = m_game.cols();
+    int maxRows = m_game.rows(), maxCols = m_game.cols();
 	cout << "  ";
-	for (int i = 0; i < n_cols; i++)
+	for (int i = 0; i < maxCols; i++)
 		cout << i;
 	cout << endl;
 
-	for (int i = 0; i < n_rows; i++)
+	for (int i = 0; i < maxRows; i++)
 	{
 		cout << i << ' ';
-		for (int j = 0; j < n_cols; j++)
+		for (int j = 0; j < maxCols; j++)
 		{
-			cout << m_Board[i][j];
+			if (shotsOnly && m_Board[i][j] != 'X' && m_Board[i][j] != 'o')
+				cout << '.';
+			else
+				cout << m_Board[i][j];
 		}
 		cout << endl;
 	}
