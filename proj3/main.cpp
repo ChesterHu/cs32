@@ -25,7 +25,7 @@ void test()
 		assert(g.shipLength(0) == 5 && g.shipLength(4) == 2);
 		assert(g.shipSymbol(2) == 'D' && g.shipSymbol(3) == 'S');
 		assert(g.shipName(1) == "battleship" && g.shipName(0) == "aircraft carrier");
-
+          // test placeShip() and unplaceShip()
 		Board b(g);
 		b.clear();
 		b.block();
@@ -40,8 +40,26 @@ void test()
 		assert(!b.placeShip(Point(2, 2), 1, VERTICAL));
 		assert(!b.placeShip(Point(1, 0), 4, HORIZONTAL));
 		assert(b.placeShip(Point(1, 2), 4, HORIZONTAL));
-		b.display(true);
+		// b.display(true);
 		b.display(false);
+        
+        int shipId = 1;
+        bool shotHit = true, shipDestroyed = true;
+        assert(!b.attack(Point(-1, 0), shotHit, shipDestroyed, shipId) && !b.attack(Point(10, 1), shotHit, shipDestroyed, shipId));
+        assert(b.attack(Point(1, 0), shotHit, shipDestroyed, shipId) && !shotHit && !shipDestroyed && shipId == 1);
+        assert(b.attack(Point(0, 0), shotHit, shipDestroyed, shipId) && shotHit && !shipDestroyed && shipId == 0);  
+        assert(b.attack(Point(0, 1), shotHit, shipDestroyed, shipId) && shotHit && !shipDestroyed && shipId == 0);  
+        assert(b.attack(Point(0, 2), shotHit, shipDestroyed, shipId) && shotHit && !shipDestroyed && shipId == 0);  
+        assert(b.attack(Point(1, 1), shotHit, shipDestroyed, shipId) && shotHit && !shipDestroyed && shipId == 1);  
+        assert(b.attack(Point(0, 3), shotHit, shipDestroyed, shipId) && shotHit && !shipDestroyed && shipId == 0);  
+        assert(b.attack(Point(0, 4), shotHit, shipDestroyed, shipId) && shotHit && shipDestroyed && shipId == 0);  
+        assert(b.attack(Point(2, 1), shotHit, shipDestroyed, shipId) && shotHit && !shipDestroyed && shipId == 1);  
+        assert(b.attack(Point(1, 2), shotHit, shipDestroyed, shipId) && shotHit && !shipDestroyed && shipId == 4);  
+        assert(b.attack(Point(3, 1), shotHit, shipDestroyed, shipId) && shotHit && !shipDestroyed && shipId == 1);
+        assert(!b.allShipsDestroyed()); 
+        assert(b.attack(Point(4, 1), shotHit, shipDestroyed, shipId) && shotHit && shipDestroyed && shipId == 1);  
+        assert(b.attack(Point(1, 3), shotHit, shipDestroyed, shipId) && shotHit && shipDestroyed && shipId == 4);
+        assert(b.allShipsDestroyed());
 	} while (0);
 
 	do {

@@ -27,7 +27,7 @@ class BoardImpl
       // TODO:  Decide what private members you need.  Here's one that's likely
       //        to be useful:
     const Game& m_game;
-	bool* m_placedShips; // dynamic bool array, m_placedShips[i] == true means the ship has been placed
+	int* m_placedShips; // dynamic bool array, m_placedShips[i] == true means the ship has been placed
 	char** m_Board;      // 2-dimention dynamic array to record board
 	int m_health;        // total health of this board
 };
@@ -46,9 +46,7 @@ BoardImpl::BoardImpl(const Game& g)  // modified
 		m_Board[i] = new char[m_game.cols()];
 
 	  // initialize m_placedShips
-	m_placedShips = new bool[nShips];
-	for (int i = 0; i < nShips; i++)
-		m_placedShips[i] = false;
+	m_placedShips = new int[nShips];
 }
 
 BoardImpl::~BoardImpl()
@@ -61,9 +59,13 @@ BoardImpl::~BoardImpl()
 
 void BoardImpl::clear()  // modified
 {
+      // clear board
 	for (int i = 0; i < m_game.rows(); i++)
 		for (int j = 0; j < m_game.cols(); j++)
 			m_Board[i][j] = '.';
+      // clear all ships
+    for (int k = 0; k < m_game.nShips(); k++)
+        m_placedShips[k] = 0;
 }
 
 void BoardImpl::block()  // modified
@@ -94,7 +96,7 @@ bool BoardImpl::placeShip(Point topOrLeft, int shipId, Direction dir)  // modifi
 	char symbol = m_game.shipSymbol(shipId);           // ship symbol
 	int maxRows = m_game.rows(), maxCols = m_game.cols(); // bounds
 
-	if (m_placedShips[shipId] || r < 0 || r >= maxRows || c < 0 || c >= maxCols)
+	if (m_placedShips[shipId] > 0 || r < 0 || r >= maxRows || c < 0 || c >= maxCols)
 		return false;
 	if (dir == HORIZONTAL)  // check horizontally
 	{
@@ -113,8 +115,8 @@ bool BoardImpl::placeShip(Point topOrLeft, int shipId, Direction dir)  // modifi
 			m_Board[r + i][c] = symbol;
 	}
 	
-	m_health += m_game.shipLength(shipId);
-	m_placedShips[shipId] = true;
+	m_health += length;
+	m_placedShips[shipId] += length;
 	return true;
 }
 
@@ -124,7 +126,8 @@ bool BoardImpl::unplaceShip(Point topOrLeft, int shipId, Direction dir)
 	int maxRows = m_game.rows(), maxCols = m_game.cols();
 	int length = m_game.shipLength(shipId);
 	char symbol = m_game.shipSymbol(shipId);
-	if (!m_placedShips[shipId] || r < 0 || r >= maxRows || c < 0 || c >= maxCols)
+
+	if (m_placedShips[shipId] == 0 || r < 0 || r >= maxRows || c < 0 || c >= maxCols)
 		return false;
 
 	if (dir == HORIZONTAL && c + length - 1 < maxCols && m_Board[r][c + length - 1] == symbol)  // try to remove ship
@@ -139,8 +142,8 @@ bool BoardImpl::unplaceShip(Point topOrLeft, int shipId, Direction dir)
 	{
 		for (int i = 0; i < length; i++)
 			m_Board[r + i][c] = '.';
-		m_placedShips[shipId] = false;
-		m_health -= m_game.shipLength(shipId);
+		m_placedShips[shipId] -= length;
+		m_health -= length;
 		return true;
 	}
 
@@ -167,18 +170,16 @@ void BoardImpl::display(bool shotsOnly) const  // modified
 		}
 		cout << endl;
 	}
-			
 }
 
 bool BoardImpl::attack(Point p, bool& shotHit, bool& shipDestroyed, int& shipId)  // modified
 {
 	int maxRows = m_game.rows(), maxCols = m_game.cols();
 	int r = p.r, c = p.c;
-	if (r < 0 || r > maxRows || c < 0 || c > maxCols || m_Board[r][c] == 'o' || m_Board[r][c] == 'X')
+    shotHit = shipDestroyed = false;
+	if (r < 0 || r >= maxRows || c < 0 || c >= maxCols || m_Board[r][c] == 'o' || m_Board[r][c] == 'X')
 		return false;
 
-	shotHit = false;
-	shipDestroyed = false;
 	if (m_Board[r][c] == '.')
 	{
 		m_Board[r][c] = 'o';
@@ -190,17 +191,11 @@ bool BoardImpl::attack(Point p, bool& shotHit, bool& shipDestroyed, int& shipId)
 			if (m_game.shipSymbol(i) == m_Board[r][c])  // its the ship to hit
 			{
 				m_health--;
-				shipId = i;
 				shotHit = true;
-				char symbol = m_Board[r][c];
 				m_Board[r][c] = 'X';
-				for (int i = 0; i < maxCols; i++)
-					if (m_Board[r][i] == symbol)
-						return true;
-				for (int i = 0; i < maxRows; i++)
-					if (m_Board[i][c] == symbol)
-						return true;
-				shipDestroyed = true;
+                shipId = i;
+                shipDestroyed = (--m_placedShips[i] == 0) ? true : false;
+                return true;
 			}
 		}
 	}
