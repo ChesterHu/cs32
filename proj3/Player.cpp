@@ -135,7 +135,9 @@ bool HumanPlayer::placeShips(Board& b)
 
 		while (true)
 		{
-			cout << "Enter row and column of topmost cell (e.g. 3 5): ";
+			cout << "Enter row and column of " 
+			     << ( (dir == HORIZONTAL) ? "leftmost " : "topmost " )
+			     << "cell (e.g. 3 5): ";
 			if (!getLineWithTwoIntegers(r, c))  // try to get coordinate
 			{
 				cout << "You must enter two integers.\n";
@@ -271,11 +273,11 @@ Point MediocrePlayer::recommendAttack()  // TODO
 	return Point(0, 0);
 }
 
-void MediocrePlayer::recordAttackResult(Point p, bool validShot, bool shotHit, bool shipDestroyed, int shipId)  // TODO
+void MediocrePlayer::recordAttackResult(Point p, bool validShot, bool shotHit, bool shipDestroyed, int shipId)
 {}
 
-void MediocrePlayer::recordAttackByOpponent(Point p)  // TODO
-{}
+void MediocrePlayer::recordAttackByOpponent(Point p)
+{}  // MediocrePlayer ignores opponent's attach
 
 // Remember that Mediocre::placeShips(Board& b) must start by calling
 // b.block(), and must call b.unblock() just before returning.
