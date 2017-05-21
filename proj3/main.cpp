@@ -17,30 +17,48 @@ bool addStandardShips(Game& g)
 
 void test()
 {
-	Game g(10, 10);
-	assert(addStandardShips(g));
-	assert(g.nShips() == 5);
-	assert(g.rows() == 10 && g.cols() == 10);
-	assert(g.shipLength(0) == 5 && g.shipLength(4) == 2);
-	assert(g.shipSymbol(2) == 'D' && g.shipSymbol(3) == 'S');
-	assert(g.shipName(1) == "battleship" && g.shipName(0) == "aircraft carrier");
+	do {
+		Game g(10, 10);
+		assert(addStandardShips(g));
+		assert(g.nShips() == 5);
+		assert(g.rows() == 10 && g.cols() == 10);
+		assert(g.shipLength(0) == 5 && g.shipLength(4) == 2);
+		assert(g.shipSymbol(2) == 'D' && g.shipSymbol(3) == 'S');
+		assert(g.shipName(1) == "battleship" && g.shipName(0) == "aircraft carrier");
 
-	Board b(g);
-	b.clear();
-	b.block();
-	b.unblock();
-	assert(b.placeShip(Point(0, 0), 0, HORIZONTAL));
-	assert(b.unplaceShip(Point(0, 0), 0, HORIZONTAL));
-	assert(b.placeShip(Point(1, 1), 0, VERTICAL));
-	assert(!b.unplaceShip(Point(2, 1), 0, VERTICAL));
-	assert(b.unplaceShip(Point(1, 1), 0, VERTICAL));
-	assert(b.placeShip(Point(0, 0), 0, HORIZONTAL));
-	assert(b.placeShip(Point(1, 1), 1, VERTICAL));
-	assert(!b.placeShip(Point(2, 2), 1, VERTICAL));
-	assert(!b.placeShip(Point(1, 0), 4, HORIZONTAL));
-	assert(b.placeShip(Point(1, 2), 4, HORIZONTAL));
-	b.display(true);
-	b.display(false);
+		Board b(g);
+		b.clear();
+		b.block();
+		b.unblock();
+		assert(b.placeShip(Point(0, 0), 0, HORIZONTAL));
+		assert(b.unplaceShip(Point(0, 0), 0, HORIZONTAL));
+		assert(b.placeShip(Point(1, 1), 0, VERTICAL));
+		assert(!b.unplaceShip(Point(2, 1), 0, VERTICAL));
+		assert(b.unplaceShip(Point(1, 1), 0, VERTICAL));
+		assert(b.placeShip(Point(0, 0), 0, HORIZONTAL));
+		assert(b.placeShip(Point(1, 1), 1, VERTICAL));
+		assert(!b.placeShip(Point(2, 2), 1, VERTICAL));
+		assert(!b.placeShip(Point(1, 0), 4, HORIZONTAL));
+		assert(b.placeShip(Point(1, 2), 4, HORIZONTAL));
+		b.display(true);
+		b.display(false);
+	} while (0);
+
+	do {
+		Game g(10, 10);
+		assert(addStandardShips(g));
+		Board b(g);
+		b.clear();
+		assert(b.placeShip(Point(0, 0), 4, HORIZONTAL));
+		
+		bool shotHit = true, shipDestroyed = true;
+		int shipId = 0;
+		assert(b.attack(Point(1, 1), shotHit, shipDestroyed, shipId) && !shotHit && !shipDestroyed && shipId == 0);
+		assert(!b.allShipsDestroyed());
+		assert(b.attack(Point(0, 0), shotHit, shipDestroyed, shipId) && shotHit && !shipDestroyed && shipId == 4);
+		assert(b.attack(Point(0, 1), shotHit, shipDestroyed, shipId) && shotHit && shipDestroyed && shipId == 4);
+		assert(b.allShipsDestroyed());
+	} while(0);
 	cout << "Passed all tests" << endl;
 }
 
