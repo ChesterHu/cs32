@@ -4,6 +4,7 @@
 #include "globals.h"
 #include <iostream>
 #include <string>
+#include <stack>
 
 using namespace std;
 
@@ -213,14 +214,29 @@ class MediocrePlayer : public Player
 
 		MediocrePlayer(const MediocrePlayer&) = delete;
 		MediocrePlayer& operator=(const MediocrePlayer&) = delete;
+	private:
+		bool** hitMap;   // true after hit
+		Point hitPoint;  // if (-1,-1), it's in state 1, otherwise state 2
 };
 
 MediocrePlayer::MediocrePlayer(string nm, const Game& g)
-	: Player(nm, g)
-{}
+	: Player(nm, g), hitPoint(-1, -1)
+{
+	hitMap = new bool* [game().rows()];
+	for (int i = 0; i < game().rows(); ++i)
+	{
+		hitMap[i] = new bool [game().cols()];
+		for (int j = 0; j < game().cols(); j++)
+			hitMap[i][j] = false;
+	}
+}
 
 MediocrePlayer::~MediocrePlayer()
-{}
+{
+	for (int i = 0; i < game().rows(); i++)
+		delete [] hitMap[i];
+	delete [] hitMap;
+}
 
 bool MediocrePlayer::placeShips(Board& b)
 {
@@ -270,11 +286,47 @@ bool MediocrePlayer::placeShipsRecursively(Board& b, int placedNumShips, int tot
 
 Point MediocrePlayer::recommendAttack()  // TODO
 {
-	return Point(0, 0);
+	int nRows = game().rows(), nCols = game().cols();
+	int r = hitPoint.r, c = hitPoint.c;
+	if (r < 0)  // state 1
+	{
+		while (true)  // try random points
+		{
+			r = randInt(nRows); c = randInt(nCols);
+			if (!hitMap[r][c])  // not hit before
+				return Point(r, c);
+		}
+	}
+	else  // state 2
+	{
+		int new_r, new_c;
+		for (int i = 0; i < 160; ++i)  // 6.1287e-05
+		{
+			new_r = r; new_c = c;
+			if (randInt(2) == 0)
+				new_r = r - 4 + randInt(9);
+			else	
+				new_c = c - 4 + randInt(9);
+			if (new_r >= 0 && new_r < nRows && new_c >= 0 && new_c < nCols && !hitMap[new_r][new_c])
+				return Point(new_r, new_c);
+		}
+	}
+
+	hitPoint.r = -1;  // if the ship's length > 5, set state to 1
+	return recommendAttack();
 }
 
 void MediocrePlayer::recordAttackResult(Point p, bool validShot, bool shotHit, bool shipDestroyed, int shipId)
-{}
+{
+	if (validShot)
+	{
+		hitMap[p.r][p.c] = true;             // record valid shot
+		if (shipDestroyed)
+			hitPoint.r = -1;                 // reset to state 1
+		else if (shotHit && hitPoint.r < 0)  // if hit a ship and it's in state 1
+			hitPoint = p;
+	}
+}
 
 void MediocrePlayer::recordAttackByOpponent(Point p)
 {}  // MediocrePlayer ignores opponent's attach

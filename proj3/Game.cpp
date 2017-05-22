@@ -158,6 +158,7 @@ Player* GameImpl::play(Player* p1, Player* p2, Board& b1, Board& b2, bool should
 		b2.display(p1->isHuman()); // display attack result
 	}
 
+	p1->recordAttackResult(p, validHit, shotHit, shipDestroyed, shipId);  // p1 records its attack result
 	if (shouldPause)
 		waitForEnter();
 	return play(p2, p1, b2, b1, shouldPause);
