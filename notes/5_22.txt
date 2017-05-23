@@ -1,0 +1,42 @@
+// tree structure
+// ==============
+// there is a unique path from the root to any node
+
+// node
+// edge
+// root
+// path
+// parent/child
+// subtree
+
+// leaf node vs. interior node
+// leaf nodes have no child, while interior node have.
+
+// depth of a node:
+//   root has depth of 0.
+
+// height of the tree:
+//   the maximum depth of the node.
+
+// store children in array may waste a lot of memory.
+#include <vector>
+using namespace std;
+
+struct Node
+{
+	string data;
+	vector<Node*> children
+};
+
+Node* root;
+
+  // a function return the number of nodes in a tree
+int countNodes(const Node* t)
+{
+	if (t == nullptr)
+		return 0;
+	int c = 1;
+	for (int i = 0; i < t->children.size(); i++)
+		c += countNodes(t->children[i]);
+	return c;
+}
