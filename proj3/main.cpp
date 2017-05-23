@@ -87,7 +87,7 @@ void test()
 		Game g(10, 10);
 		addStandardShips(g);
 		Player* p1 = createPlayer("human", "chufeng", g);
-		Player* p2 = createPlayer("mediocre", "a", g);
+		Player* p2 = createPlayer("good", "a", g);
 		assert(g.play(p1, p2) == p1);
 		delete p1;
 		delete p2;
