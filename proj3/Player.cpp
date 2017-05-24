@@ -487,7 +487,7 @@ Point GoodPlayer::recommendAttack()
 		{
 			direction--;
 			stepLength = 1;
-			if (direction == 0)
+			if (direction == 0)  // if it's a false center point
 			{
 				centerPoints.pop_back();
 				stepLength = 1;
@@ -506,7 +506,6 @@ Point GoodPlayer::recommendAttack()
 
 void GoodPlayer::recordAttackResult(Point p, bool validShot, bool shotHit, bool shipDestroyed, int shipId)
 {
-	cout << centerPoints.size() << endl;
 	if (validShot)
 	{
 		hitMap[p.r][p.c] = 'X';  // update hitMap and hitPoints
@@ -514,65 +513,43 @@ void GoodPlayer::recordAttackResult(Point p, bool validShot, bool shotHit, bool 
 			hitPoints.push_back(p);
 		if (shipDestroyed)  // switch to state 1?
 		{
-			stepLength = 1;
+			stepLength = 1;  // switch step length to 1
+			int length = game().shipLength(shipId);  // current ship length
 			if (!centerPoints.empty())
 				centerPoints.pop_back();
-			  // try to find the points that are not in the line of the ship
-			vector<Point> temp;
-			if (direction < 3)  // NORTH or SOUTH
+			  // try to find the points that are not a part of the destroyed ship
+			  // the destroyed point must be the head or tail of the ship
+			  // since we won't let the ship that been hit but not destroyed
+			for (int i = 0; i < hitPoints.size(); i++)
 			{
-				for (int i = 0; i < hitPoints.size(); i++)  // record points that are not in the line of the destroyed ship
-					if (hitPoints[i].c != p.c)
-						temp.push_back(hitPoints[i]);
-				if (temp.empty())  // if empty, record head and tail
+				switch(direction)
 				{
-					Point head(game().rows(), p.c), tail(-1, p.c);
-					for (int i = 0; i < hitPoints.size(); i++)
-					{
-						if (hitPoints[i].r < head.r)
-							head = hitPoints[i];
-						if (hitPoints[i].r > tail.r)
-							tail = hitPoints[i];
-					}
-					temp.push_back(head); temp.push_back(tail);
+					case 1 : if (hitPoints[i].c != p.c || hitPoints[i].r - p.r > length - 1)  // NORTH, find ship in direction of SOUTH
+								 centerPoints.push_back(hitPoints[i]);
+							 break;
+					case 2 : if (hitPoints[i].c != p.c || p.r - hitPoints[i].r > length - 1)
+								 centerPoints.push_back(hitPoints[i]);
+							 break;
+					case 3 : if (hitPoints[i].r != p.r || hitPoints[i].c - p.c > length - 1)  // WEST, find ship in direction of EAST
+								 centerPoints.push_back(hitPoints[i]);
+							 break;
+					case 4 : if (hitPoints[i].r != p.r || p.c - hitPoints[i].c > length - 1)
+								 centerPoints.push_back(hitPoints[i]);
+							 break;
 				}
 			}
-			else  // WEST or EAST
-			{
-				for (int i = 0; i < hitPoints.size(); i++)  // record points that are not in the line of the destroyed ship
-					if (hitPoints[i].r != p.r)
-						temp.push_back(hitPoints[i]);
-				if (temp.empty())  // if empty, record head and tail
-				{
-					Point head(p.r, game().cols()), tail(p.r, -1);
-					for (int i = 0; i < hitPoints.size(); i++)
-					{
-						if (hitPoints[i].c < head.c)
-							head = hitPoints[i];
-						if (hitPoints[i].c > tail.c)
-							tail = hitPoints[i];
-					}
-					temp.push_back(head); temp.push_back(tail);
-				}
-			}
-			if (hitPoints.size() > game().shipLength(shipId))
-			{
-				while (!temp.empty())
-				{
-					centerPoints.push_back(temp.back());
-					temp.pop_back();
-				}
-				direction = 4;      // reset direction to 4 and clear hit points
-			}
-			
+
+			hitPoints.clear();
 			if (centerPoints.empty())
 				direction = 0;     // if no center points to hit, back to state 1
 			else
+			{
 				direction = 4;
-			hitPoints.clear();
+				hitPoints.push_back(centerPoints.back());  // need also record the new center point
+			}
 
 			shipsOfOpponent[shipId] = -1;
-			if (game().shipLength(shipId) == m_step)  // need update the minLength?
+			if (length == m_step)  // need update the minLength?
 			{
 				m_step = game().rows();
 				for (int i = 0; i < shipsOfOpponent.size(); i++)
@@ -597,7 +574,7 @@ void GoodPlayer::recordAttackResult(Point p, bool validShot, bool shotHit, bool 
 				stepLength = 1;
 			}
 		}
-		else if (shotHit && direction > 0)
+		else if (shotHit)
 		{
 			stepLength++;
 		}
