@@ -244,13 +244,13 @@ bool MediocrePlayer::placeShips(Board& b)
 	const Game& m_game = game();
 	for (int k = 0; k < 50; ++k)  // try 50 times to place ship
 	{
+		b.clear();
 		b.block();
 		if (placeShipsRecursively(b, 0, m_game.nShips(), m_game.rows(), m_game.cols()))
 		{
 			b.unblock();
 			return true;
 		}
-		b.unblock();
 	}
 
 	return false;
@@ -408,13 +408,13 @@ bool GoodPlayer::placeShips(Board& b)
 
 	for (int k = 0; k < 50; ++k)  // try 50 times to place ship
 	{
+		b.clear();
 		b.block();
 		if (placeShipsRecursively(b, 0, m_game.nShips(), m_game.rows(), m_game.cols()))
 		{
 			b.unblock();
 			return true;
 		}
-		b.unblock();
 	}
 
 	return false;
@@ -451,17 +451,18 @@ bool GoodPlayer::placeShipsRecursively(Board& b, int placedNumShips, int totalNu
 
 Point GoodPlayer::recommendAttack()
 {
-	cout << direction << endl;
 	const int nRows = game().rows(), nCols = game().cols();
 	int r, c;
 	if (direction == 0)  // if in state 1, randomly pick blocks by m_step
 	{
-		while (true)
+		for(int i = 0; i < 50; i++)
 		{
 			r = randInt(nRows); c = randInt(nCols);
 			if ((r + c) % m_step == 0 && hitMap[r][c] == '.')
 				return Point(r, c);
 		}
+		m_step = 2;
+		return recommendAttack();
 	}
 	else  // if in state 2
 	{	
@@ -485,6 +486,7 @@ Point GoodPlayer::recommendAttack()
 		if (r < 0 || r >= nRows || c < 0 || c >= nCols || hitMap[r][c] != '.')  // if not a valid choice, switch direction
 		{
 			direction--;
+			stepLength = 1;
 			if (direction == 0)
 			{
 				centerPoints.pop_back();
@@ -504,6 +506,7 @@ Point GoodPlayer::recommendAttack()
 
 void GoodPlayer::recordAttackResult(Point p, bool validShot, bool shotHit, bool shipDestroyed, int shipId)
 {
+	cout << centerPoints.size() << endl;
 	if (validShot)
 	{
 		hitMap[p.r][p.c] = 'X';  // update hitMap and hitPoints
@@ -512,7 +515,8 @@ void GoodPlayer::recordAttackResult(Point p, bool validShot, bool shotHit, bool 
 		if (shipDestroyed)  // switch to state 1?
 		{
 			stepLength = 1;
-			centerPoints.clear();
+			if (!centerPoints.empty())
+				centerPoints.pop_back();
 			  // try to find the points that are not in the line of the ship
 			vector<Point> temp;
 			if (direction < 3)  // NORTH or SOUTH
@@ -530,7 +534,7 @@ void GoodPlayer::recordAttackResult(Point p, bool validShot, bool shotHit, bool 
 						if (hitPoints[i].r > tail.r)
 							tail = hitPoints[i];
 					}
-					temp.push_back(head); temp.push_back(head);
+					temp.push_back(head); temp.push_back(tail);
 				}
 			}
 			else  // WEST or EAST
@@ -548,16 +552,23 @@ void GoodPlayer::recordAttackResult(Point p, bool validShot, bool shotHit, bool 
 						if (hitPoints[i].c > tail.c)
 							tail = hitPoints[i];
 					}
-					temp.push_back(head); temp.push_back(head);
+					temp.push_back(head); temp.push_back(tail);
 				}
 			}
 			if (hitPoints.size() > game().shipLength(shipId))
 			{
-				centerPoints.swap(temp);
+				while (!temp.empty())
+				{
+					centerPoints.push_back(temp.back());
+					temp.pop_back();
+				}
 				direction = 4;      // reset direction to 4 and clear hit points
 			}
+			
+			if (centerPoints.empty())
+				direction = 0;     // if no center points to hit, back to state 1
 			else
-				direction = 0;     // else back to state 1
+				direction = 4;
 			hitPoints.clear();
 
 			shipsOfOpponent[shipId] = -1;
@@ -585,8 +596,6 @@ void GoodPlayer::recordAttackResult(Point p, bool validShot, bool shotHit, bool 
 					direction = 7 - direction;
 				stepLength = 1;
 			}
-			else
-				direction--;
 		}
 		else if (shotHit && direction > 0)
 		{

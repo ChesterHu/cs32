@@ -73,7 +73,7 @@ void BoardImpl::block()  // modified
       // Block cells with 50% probability
     for (int r = 0; r < m_game.rows(); r++)
         for (int c = 0; c < m_game.cols(); c++)
-            if (randInt(2) == 0)
+            if (randInt(3) == 0)
             {
 				m_Board[r][c] = 'X';
             }
