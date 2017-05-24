@@ -89,7 +89,7 @@ Point GameImpl::randomPoint() const
 
 bool GameImpl::addShip(int length, char symbol, string name)
 {
-    if (m_nShips < 255)
+    if (m_nShips < 255 && symbol != 'X' && symbol != '.' && symbol != 'o')
 	{
 		m_Ships[m_nShips] = Ship(length, symbol, name);
 		m_nShips++;
