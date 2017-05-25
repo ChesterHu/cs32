@@ -106,7 +106,7 @@ void test()
 
 	do {
         int nMediocreWins = 0;
-    	const int NTRIALS = 1000;
+    	const int NTRIALS = 100;
 		int totalGames = 0;
         for (int k = 1; k <= NTRIALS; k++)
         {
