@@ -100,31 +100,33 @@ void test()
 		Board b(g);
 		b.clear();
 		p1->placeShips(b);
-		b.display(false);
+		// b.display(false);
 		delete p1;
 	} while (0);
 
 	do {
         int nMediocreWins = 0;
-    	const int NTRIALS = 100;
-
+    	const int NTRIALS = 1000;
+		int totalGames = 0;
         for (int k = 1; k <= NTRIALS; k++)
         {
             cout << "============================= Game " << k
                  << " =============================" << endl;
             Game g(10, 10);
             addStandardShips(g);
-            Player* p1 = createPlayer("good", "Awful Audrey", g);
+            Player* p1 = createPlayer("good", "Good Audrey", g);
             Player* p2 = createPlayer("mediocre", "Mediocre Mimi", g);
             Player* winner = (k % 2 == 1 ?
                                 g.play(p1, p2, false) : g.play(p2, p1, false));
-            if (winner == p2)
+            if (winner == p1)
                 nMediocreWins++;
+			if (winner != nullptr)
+				totalGames++;
             delete p1;
             delete p2;
         }
-        cout << "The mediocre player won " << nMediocreWins << " out of "
-             << NTRIALS << " games." << endl;
+        cout << "The good player won " << nMediocreWins << " out of "
+             << totalGames << " games." << endl;
           // We'd expect a mediocre player to win most of the games against
           // an awful player.  Similarly, a good player should outperform
           // a mediocre player.
@@ -135,8 +137,16 @@ void test()
 
 int main()
 {
-    const int NTRIALS = 10;
-	test();
+ 	test();
+	Game g(10, 10);
+	Board b(g);
+	addStandardShips(g);
+	Player* p = createPlayer("good", "a", g);
+	b.clear();
+	// b.display(false);
+	p->placeShips(b);
+	// b.display(false);
+	delete p;
 	/*
     cout << "Select one of these choices for an example of the game:" << endl;
     cout << "  1.  A mini-game between two mediocre players" << endl;

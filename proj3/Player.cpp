@@ -145,7 +145,7 @@ bool HumanPlayer::placeShips(Board& b)
 				cout << "You must enter two integers.\n";
 				continue;
 			}
-			if (!b.placeShip(Point(r, c), k, dir))  // try to place ship
+			if (r < 0 || r >= m_game.rows() || c < 0 || c >= m_game.cols() || !b.placeShip(Point(r, c), k, dir))  // try to place ship
 			{
 				cout << "The ship can not be placed there.\n";
 				continue;
@@ -208,7 +208,7 @@ class MediocrePlayer : public Player
 		MediocrePlayer(string nm, const Game& g);
 		virtual ~MediocrePlayer();
 		virtual bool placeShips(Board& b);
-		bool placeShipsRecursively(Board& b, int placedNumShips, int totalNumShips, int maxRows, int maxCols);
+		bool placeShipsRecursively(Board& b, int placedNumShips, int& totalNumShips, int& maxRows, int& maxCols);
 		virtual Point recommendAttack();
 		virtual void recordAttackResult(Point p, bool validShot, bool shotHit, bool shipDestroyed, int shipId);
 		virtual void recordAttackByOpponent(Point p);
@@ -242,28 +242,37 @@ MediocrePlayer::~MediocrePlayer()
 bool MediocrePlayer::placeShips(Board& b)
 {
 	const Game& m_game = game();
+	int nShips = m_game.nShips();
+	int nRows = m_game.rows(), nCols = m_game.cols();
+
+	b.clear();
 	for (int k = 0; k < 50; ++k)  // try 50 times to place ship
 	{
-		b.clear();
 		b.block();
-		if (placeShipsRecursively(b, 0, m_game.nShips(), m_game.rows(), m_game.cols()))
-		{
-			b.unblock();
-			return true;
-		}
+		for (int r = 0; r < nRows; ++r)
+			for (int c = 0; c < nCols; ++c)
+				if (b.placeShip(Point(r, c), 0, HORIZONTAL) || b.placeShip(Point(r, c), 0, VERTICAL))  // place ships recursively only when the biggiest ship fits the board
+				{
+					if (placeShipsRecursively(b, 1, nShips, nRows, nCols))
+					{
+						b.unblock();
+						return true;
+					}
+					b.unplaceShip(Point(r, c), 0, VERTICAL); b.unplaceShip(Point(r, c), 0, HORIZONTAL);
+				}
+		b.unblock();
 	}
-
 	return false;
 }
 
-bool MediocrePlayer::placeShipsRecursively(Board& b, int placedNumShips, int totalNumShips, int maxRows, int maxCols)
+bool MediocrePlayer::placeShipsRecursively(Board& b, int placedNumShips, int& totalNumShips, int& maxRows, int& maxCols)
 {
 	if (placedNumShips == totalNumShips)
 		return true;
 	  // try place ships
 	for (int r = 0; r < maxRows; r++)
 		for (int c = 0; c < maxCols; c++)
-			for(int i = 0; i < totalNumShips; i++)
+			for(int i = 1; i < totalNumShips; i++)
 			{
 				  // try horizontal
 				if (b.placeShip(Point(r, c), i, HORIZONTAL))
@@ -282,7 +291,6 @@ bool MediocrePlayer::placeShipsRecursively(Board& b, int placedNumShips, int tot
 			}
 
 	return false;
-	
 }
 
 Point MediocrePlayer::recommendAttack()  // TODO
@@ -358,7 +366,11 @@ class GoodPlayer : public Player
 		virtual Point recommendAttack();
 		virtual void recordAttackResult(Point p, bool validShot, bool shotHit, bool shipDestroyed, int shipId);
 		virtual void recordAttackByOpponent(Point p);
-
+		void clearMap();
+		  // clear hitMap's block
+		void blockMap(Point center, int shipLength, char shipSymbol, Direction d);
+		  // block areas around the placed ships
+		void unblockMap(Point center, int shipLength, char shipSymbol, Direction d);
 		GoodPlayer(const GoodPlayer&) = delete;
 		GoodPlayer& operator=(const GoodPlayer&) = delete;
 	
@@ -374,7 +386,7 @@ class GoodPlayer : public Player
 
 
 GoodPlayer::GoodPlayer(string nm, const Game& g)
-	: Player(nm, g), direction(0), m_step(g.rows()), stepLength(1)
+	: Player(nm, g), direction(0), m_step(g.shipLength(0)), stepLength(1)
 {
 	int nRows = g.rows(), nCols = g.cols();
 	
@@ -400,19 +412,14 @@ bool GoodPlayer::placeShips(Board& b)
 	const Game& m_game = game();
 
 	for (int i = 0; i < m_game.nShips(); i++)  // initialize the steps and all ship length
-	{
 		shipsOfOpponent.push_back(m_game.shipLength(i));
-		if (shipsOfOpponent.back() < m_step)
-			m_step = shipsOfOpponent.back();
-	}
 
 	for (int k = 0; k < 50; ++k)  // try 50 times to place ship
 	{
 		b.clear();
-		b.block();
 		if (placeShipsRecursively(b, 0, m_game.nShips(), m_game.rows(), m_game.cols()))
 		{
-			b.unblock();
+			clearMap();
 			return true;
 		}
 	}
@@ -425,29 +432,34 @@ bool GoodPlayer::placeShipsRecursively(Board& b, int placedNumShips, int totalNu
 	if (placedNumShips == totalNumShips)
 		return true;
 	  // try place ships
-	for (int r = 0; r < maxRows; r++)
-		for (int c = 0; c < maxCols; c++)
-			for(int i = 0; i < totalNumShips; i++)
+	for (int k = 0; k < 50; ++k)
+	{
+		int r = randInt(maxRows), c = randInt(maxCols);
+		if (randInt(2) % 2 == 0)
+		{
+			if (hitMap[r][c] == '.' && b.placeShip(Point(r, c), placedNumShips, HORIZONTAL))
 			{
-				  // try horizontal
-				if (b.placeShip(Point(r, c), i, HORIZONTAL))
-				{
-					if (placeShipsRecursively(b, placedNumShips + 1, totalNumShips, maxRows, maxCols))
-						return true;
-					b.unplaceShip(Point(r, c), i, HORIZONTAL);	
-				}
-				  // try vertical
-				if (b.placeShip(Point(r, c), i, VERTICAL))
-				{
-					if (placeShipsRecursively(b, placedNumShips + 1, totalNumShips, maxRows, maxCols))
-						return true;
-					b.unplaceShip(Point(r, c), i, VERTICAL);	
-				}				
+				blockMap(Point(r, c), game().shipLength(placedNumShips), game().shipSymbol(placedNumShips), HORIZONTAL);
+				if (placeShipsRecursively(b, placedNumShips + 1, totalNumShips, maxRows, maxCols))
+					return true;
+				unblockMap(Point(r, c), game().shipLength(placedNumShips), game().shipSymbol(placedNumShips), HORIZONTAL);
+				b.unplaceShip(Point(r, c), placedNumShips, HORIZONTAL);
 			}
-
+		}
+		else
+		{
+			if (hitMap[r][c] == '.' && b.placeShip(Point(r, c), placedNumShips, VERTICAL))
+			{
+				blockMap(Point(r, c), game().shipLength(placedNumShips), game().shipSymbol(placedNumShips), VERTICAL);
+				if (placeShipsRecursively(b, placedNumShips + 1, totalNumShips, maxRows, maxCols))
+					return true;
+				unblockMap(Point(r, c), game().shipLength(placedNumShips), game().shipSymbol(placedNumShips), VERTICAL);
+				b.unplaceShip(Point(r, c), placedNumShips, VERTICAL);
+			}
+		}
+	}
 	return false;
-}
-
+}	
 
 Point GoodPlayer::recommendAttack()
 {
@@ -455,13 +467,15 @@ Point GoodPlayer::recommendAttack()
 	int r, c;
 	if (direction == 0)  // if in state 1, randomly pick blocks by m_step
 	{
-		for(int i = 0; i < 50; i++)
+		if (m_step < 1)
+			m_step = 1;
+		for(int i = 0; i < 200; i++)
 		{
 			r = randInt(nRows); c = randInt(nCols);
 			if ((r + c) % m_step == 0 && hitMap[r][c] == '.')
 				return Point(r, c);
 		}
-		m_step = 2;
+		m_step--;
 		return recommendAttack();
 	}
 	else  // if in state 2
@@ -551,9 +565,9 @@ void GoodPlayer::recordAttackResult(Point p, bool validShot, bool shotHit, bool 
 			shipsOfOpponent[shipId] = -1;
 			if (length == m_step)  // need update the minLength?
 			{
-				m_step = game().rows();
+				m_step = 0;
 				for (int i = 0; i < shipsOfOpponent.size(); i++)
-					if (shipsOfOpponent[i] != -1 && shipsOfOpponent[i] < m_step)
+					if (shipsOfOpponent[i] != -1 && shipsOfOpponent[i] > m_step)
 						m_step = shipsOfOpponent[i];
 			}
 		}
@@ -583,6 +597,56 @@ void GoodPlayer::recordAttackResult(Point p, bool validShot, bool shotHit, bool 
 
 void GoodPlayer::recordAttackByOpponent(Point p)
 {}
+
+void GoodPlayer::clearMap()
+{
+	int nRows = game().rows(), nCols = game().cols();
+	for (int r = 0; r < nRows; ++r)
+		for (int c = 0; c < nCols; ++c)
+			hitMap[r][c] = '.';
+}
+
+inline void GoodPlayer::blockMap(Point center, int shipLength, char shipSymbol, Direction d)
+{
+	int nRows = game().rows(), nCols = game().cols();
+	for (int r = center.r - shipLength; r <= center.r + shipLength; ++r)
+		for (int c = center.c - shipLength; c <= center.c + shipLength; ++c)
+			if (r >= 0 && r < nRows && c >=0 && c < nCols && hitMap[r][c] == '.')
+				hitMap[r][c] = shipSymbol;
+	if (d == VERTICAL)
+	{
+		for(int r = 0; r < nRows; ++r)
+			if (hitMap[r][center.c] == '.')
+				hitMap[r][center.c] = shipSymbol;
+	}
+	else
+	{
+		for (int c = 0; c < nCols; ++c)
+			if (hitMap[center.r][c] == '.')
+				hitMap[center.r][c] = shipSymbol;
+	}
+}
+
+inline void GoodPlayer::unblockMap(Point center, int shipLength, char shipSymbol, Direction d)
+{
+	int nRows = game().rows(), nCols = game().cols();
+	for (int r = center.r - shipLength - 1; r <= center.r + shipLength + 1; ++r)
+		for (int c = center.c - shipLength - 1; c <= center.c + shipLength + 1; ++c)
+			if (r >= 0 && r < nRows && c >=0 && c < nCols && hitMap[r][c] == shipSymbol)
+				hitMap[r][c] = '.';
+	if (d == VERTICAL)
+	{
+		for(int r = 0; r < nRows; ++r)
+			if (hitMap[r][center.c] == shipSymbol)
+				hitMap[r][center.c] = '.';
+	}
+	else
+	{
+		for (int c = 0; c < nCols; ++c)
+			if (hitMap[center.r][c] == shipSymbol)
+				hitMap[center.r][c] = '.';
+	}
+}
 
 //*********************************************************************
 //  createPlayer

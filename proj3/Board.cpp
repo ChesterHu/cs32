@@ -92,11 +92,13 @@ void BoardImpl::unblock()  // modified
 bool BoardImpl::placeShip(Point topOrLeft, int shipId, Direction dir)  // modified
 {
 	int r = topOrLeft.r, c = topOrLeft.c;  // start coordinate
+	if (m_Board[r][c] != '.')
+		return false;
 	int length = m_game.shipLength(shipId);   // ship length
 	char symbol = m_game.shipSymbol(shipId);           // ship symbol
 	int maxRows = m_game.rows(), maxCols = m_game.cols(); // bounds
 
-	if (m_placedShips[shipId] > 0 || r < 0 || r >= maxRows || c < 0 || c >= maxCols)
+	if (m_placedShips[shipId] > 0)
 		return false;
 	if (dir == HORIZONTAL)  // check horizontally
 	{

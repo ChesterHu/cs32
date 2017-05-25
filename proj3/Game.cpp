@@ -91,7 +91,14 @@ bool GameImpl::addShip(int length, char symbol, string name)
 {
     if (m_nShips < 255 && symbol != 'X' && symbol != '.' && symbol != 'o')
 	{
-		m_Ships[m_nShips] = Ship(length, symbol, name);
+		if (m_nShips == 0 || m_Ships[0].ShipLength >= length)
+			m_Ships[m_nShips] = Ship(length, symbol, name);
+		else
+		{
+			Ship temp = m_Ships[0];
+			m_Ships[0] = Ship(length, symbol, name);
+			m_Ships[m_nShips] = temp;
+		}
 		m_nShips++;
 		return true;
 	}
