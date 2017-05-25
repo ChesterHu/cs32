@@ -33,6 +33,7 @@ AwfulPlayer::AwfulPlayer(string nm, const Game& g)
 bool AwfulPlayer::placeShips(Board& b)
 {
       // Clustering ships is bad strategy
+	b.clear();
     for (int k = 0; k < game().nShips(); k++)
         if ( ! b.placeShip(Point(k,0), k, HORIZONTAL))
             return false;
@@ -123,6 +124,7 @@ bool HumanPlayer::placeShips(Board& b)
 	
 	cout << Player::name() << " must place "
 		 << m_game.nShips() << " ships.\n";
+	b.clear();
 	b.display(false);  // display the map
 	while (k < m_game.nShips())
 	{
