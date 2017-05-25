@@ -371,6 +371,9 @@ class GoodPlayer : public Player
 		void blockMap(Point center, int shipLength, char shipSymbol, Direction d);
 		  // block areas around the placed ships
 		void unblockMap(Point center, int shipLength, char shipSymbol, Direction d);
+		  // search good direction
+		int searchDirection(Point center);
+
 		GoodPlayer(const GoodPlayer&) = delete;
 		GoodPlayer& operator=(const GoodPlayer&) = delete;
 	
@@ -499,7 +502,7 @@ Point GoodPlayer::recommendAttack()
 
 		if (r < 0 || r >= nRows || c < 0 || c >= nCols || hitMap[r][c] != '.')  // if not a valid choice, switch direction
 		{
-			direction--;
+			direction = searchDirection(centerPoints.back());
 			stepLength = 1;
 			if (direction == 0)  // if it's a false center point
 			{
@@ -558,7 +561,7 @@ void GoodPlayer::recordAttackResult(Point p, bool validShot, bool shotHit, bool 
 				direction = 0;     // if no center points to hit, back to state 1
 			else
 			{
-				direction = 4;
+				direction = searchDirection(centerPoints.back());
 				hitPoints.push_back(centerPoints.back());  // need also record the new center point
 			}
 
@@ -575,7 +578,7 @@ void GoodPlayer::recordAttackResult(Point p, bool validShot, bool shotHit, bool 
 		{
 			centerPoints.clear();
 			centerPoints.push_back(p);
-			direction = 4;
+			direction = searchDirection(p);
 		}
 		else if (!shotHit && direction > 0)
 		{
@@ -646,6 +649,53 @@ inline void GoodPlayer::unblockMap(Point center, int shipLength, char shipSymbol
 			if (hitMap[center.r][c] == shipSymbol)
 				hitMap[center.r][c] = '.';
 	}
+}
+
+int GoodPlayer::searchDirection(Point center)
+{
+	int d = 0;
+	int maxPath = 0, currPath = 0;
+	int nRows = game().rows(), nCols = game().cols();
+	  // search the direction that has the longest path
+	  // NORTH
+	
+	for (int r = center.r - 1; r >= 0 && hitMap[r][center.c] == '.'; r--)
+		 currPath++;
+ 	if (currPath > maxPath)
+	{
+		 maxPath = currPath;
+		 d = 1;
+	}
+	currPath = 0;
+
+	  // SOUTH
+	for (int r = center.r + 1; r < nRows && hitMap[r][center.c] == '.'; r++)
+		currPath++;
+	if (currPath > maxPath)
+	{
+		maxPath = currPath;
+		d = 2;
+	}
+	currPath = 0;
+	  // WEST
+	for (int c = center.c - 1; c >= 0 && hitMap[center.r][c] == '.'; c--)
+		currPath++;
+	if (currPath > maxPath)
+	{
+		maxPath = currPath;
+		d = 3;
+	}
+	currPath = 0;
+	  // EAST
+	for (int c = center.c + 1; c < nCols && hitMap[center.r][c] == '.'; c++)
+		currPath++;
+	if (currPath > maxPath)
+	{
+		maxPath = currPath;
+		d = 4;
+	}
+	cout << d << endl;
+	return d;
 }
 
 //*********************************************************************
