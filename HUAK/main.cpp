@@ -106,7 +106,7 @@ void test()
 
 	do {
         int nMediocreWins = 0;
-    	int NTRIALS = 100;
+    	int NTRIALS = 1;
 		int totalGames = 0;
         for (int k = 1; k <= NTRIALS; k++)
         {
@@ -114,8 +114,8 @@ void test()
                  << " =============================" << endl;
             Game g(10, 10);
             addStandardShips(g);
-            Player* p1 = createPlayer("awful", "Good Audrey", g);
-            Player* p2 = createPlayer("mediocre", "Mediocre Mimi", g);
+            Player* p1 = createPlayer("good", "Good Audrey", g);
+            Player* p2 = createPlayer("human", "HUAK", g);
             Player* winner = (k % 2 == 1 ?
                                 g.play(p1, p2, false) : g.play(p2, p1, false));
             if (winner == p1)
@@ -137,19 +137,18 @@ void test()
 
 int main()
 {
-	int NTRIALS = 100;
- 	//test();
-	
+ 	test();
+	/*	
 	Game g(10, 10);
 	Board b(g);
 	addStandardShips(g);
-	Player* p = createPlayer("mediocre", "a", g);
+	Player* p = createPlayer("good", "GoodAudrey", g);
 	b.clear();
-	b.display(false);
 	p->placeShips(b);
+	p->recommendAttack();
 	b.display(false);
 	delete p;
-	
+	*/
 	/*
     cout << "Select one of these choices for an example of the game:" << endl;
     cout << "  1.  A mini-game between two mediocre players" << endl;
