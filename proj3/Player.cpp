@@ -331,7 +331,7 @@ void MediocrePlayer::recordAttackResult(Point p, bool validShot, bool shotHit, b
 	if (validShot)
 	{
 		hitMap[p.r][p.c] = true;             // record valid shot
-		if (shipDestroyed)
+		if (shotHit && shipDestroyed)
 			hitPoint.r = -1;                 // reset to state 1
 		else if (shotHit && hitPoint.r < 0)  // if hit a ship and it's in state 1
 			hitPoint = p;
@@ -392,7 +392,7 @@ class GoodPlayer : public Player
 GoodPlayer::GoodPlayer(string nm, const Game& g)
 	: Player(nm, g), direction(0), m_step(g.shipLength(0)), stepLength(1)
 {
-	m_step = 2;
+	m_step = 3;
 	int nRows = g.rows(), nCols = g.cols();
 	
 	hitMap = new char* [nRows];
@@ -530,7 +530,7 @@ void GoodPlayer::recordAttackResult(Point p, bool validShot, bool shotHit, bool 
 		hitMap[p.r][p.c] = 'X';  // update hitMap and hitPoints
 		if (shotHit)
 			hitPoints.push_back(p);
-		if (shipDestroyed)  // switch to state 1?
+		if (shotHit && shipDestroyed)  // switch to state 1?
 		{
 			stepLength = 1;  // switch step length to 1
 			int length = game().shipLength(shipId);  // current ship length

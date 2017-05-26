@@ -178,7 +178,7 @@ bool BoardImpl::attack(Point p, bool& shotHit, bool& shipDestroyed, int& shipId)
 {
 	int maxRows = m_game.rows(), maxCols = m_game.cols();
 	int r = p.r, c = p.c;
-    shotHit = shipDestroyed = false;
+    shotHit = false;
 	if (r < 0 || r >= maxRows || c < 0 || c >= maxCols || m_Board[r][c] == 'o' || m_Board[r][c] == 'X')
 		return false;
 
