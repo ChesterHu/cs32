@@ -2,6 +2,13 @@ Problem 2
 =========
 The insert() function use operator == and < to find the place to insert item into the Set. But we don't implement the == and < operator for class Coord.
 
+Problem 4
+=========
+The reason to use two-parameter function is that we need an additional path parameter to record the label in a DFS path. Since we are not allowed to use any
+other container, we need a string to record the previous labels we walked through. Since we don't know either how many levels every domain may have and how many 
+subdomain a domain may have, so we can't keep track of every other domain if we go deeper into one particular subdomain. Therefore we need a recursive function to
+solve this problem without additional container.
+
 Problem 5
 =========
 
