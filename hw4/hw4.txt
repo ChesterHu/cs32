@@ -1,3 +1,19 @@
 Problem 2
 =========
 The insert() function use operator == and < to find the place to insert item into the Set. But we don't implement the == and < operator for class Coord.
+
+Problem 5
+=========
+
+a. The time complexity is N * N * N. Because for every person i (i from 0 ~ N - 1) and every other person j (j from 0 ~ N - 1), we will examine every person k (k from 0 ~ N - 1) that if person k is the direct intermediary person.
+
+b. The time complexity is still N * N * N. Because even though it narrow down the search space of person j, but every person i still has to examin with 0.5 * N people in average. Therefore, it's still in order of N * N * N.
+
+Problem 6
+=========
+
+a. The worst case time complexity is N * N. Because in the worst case, the algorithm will insert every item from set2 to set1. And for each item the insert function in worst case use k * N operations to get the tail of set 2, where 2 >= k >= 1. therefore, the time complexity is N * N.
+
+b. The time complexity is N * log N. Because the algorithm first use 2 * N * log(2 * N) to sort the vector, them it will use 2 * N operations to insert unique value from vector to set. And we only consider the higher order, so remove the constant number and lower order N.
+
+c. The time complexity is N. Because the algorithm traverse those two sets separately. Therefore, it will use operation of 2 * N plus the assignment operations N. 
