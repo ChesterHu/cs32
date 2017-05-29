@@ -609,7 +609,6 @@ Point GoodPlayer::recommendAttack()
 
 		if (r < 0 || r >= nRows || c < 0 || c >= nCols || m_map[r][c] != '.')  // if invalid points recommend new direction
 		{
-			m_hitLength = 1;  // reset hit length to 1
 			if (m_hitLength > 1)  // should in the opposite direction
 			{
 				if (m_state == NORTH)
@@ -620,8 +619,10 @@ Point GoodPlayer::recommendAttack()
 					m_state = EAST;
 				if (m_state == EAST)
 					m_state = WEST;
+				m_hitLength = 1;
 				return recommendAttack();
 			}
+			m_hitLength = 1;
 			 // else find new direction from center point
 			recommendDirection(p);
 			if (m_state == NONE)  // if no direction to choose, pop the centerPoints

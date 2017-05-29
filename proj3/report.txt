@@ -1,0 +1,14 @@
+Game class
+==========
+
+The game class has data members: 
+	1. int m_rows; the number of rows of the game board.
+	2. int m_cols; the number of cols of the game board.
+	3. int m_nShips; the number of ships in the game.
+	4. Ship m_Ships[255]; array record all ships in the game.
+The game has a private data struct Ship, which includes:
+	1. int ShipLength; the ship length.
+	2. char shipSymbol; the ship symbol.
+	3. string shipName; the shipName.
+When the game add a ship, the m_nShips++, and add the Ship to the end of m_Ships.
+

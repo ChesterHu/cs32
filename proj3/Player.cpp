@@ -300,12 +300,17 @@ Point MediocrePlayer::recommendAttack()  // TODO
 	int r = hitPoint.r, c = hitPoint.c;
 	if (r < 0)  // state 1
 	{
-		while (true)  // try random points
+		for (int i = 0; i < 200; i++)  // try random points
 		{
 			r = randInt(nRows); c = randInt(nCols);
 			if (!hitMap[r][c])  // not hit before
 				return Point(r, c);
 		}
+
+		for (r = 0; r < nRows; r++)
+			for (c = 0; c < nCols; c++)
+				if (!hitMap[r][c])
+					return Point(r, c);
 	}
 	else  // state 2
 	{
@@ -696,7 +701,6 @@ int GoodPlayer::searchDirection(Point center)
 		maxPath = currPath;
 		d = 4;
 	}
-	cout << d << endl;
 	return d;
 }
 

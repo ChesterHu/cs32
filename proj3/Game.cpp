@@ -31,7 +31,7 @@ class GameImpl
 	  // return the symbol of m_Ships[shipId]
     string shipName(int shipId) const;
 	  // return the name of m_Ships[shipId]
-    Player* play(Player* p1, Player* p2, Board& b1, Board& b2, bool shouldPause);
+    Player* play(Player* p1, Player* p2, Board& b1, Board& b2, bool shouldPause, int round);
 
 	private:
 
@@ -125,13 +125,30 @@ string GameImpl::shipName(int shipId) const  // modified
     return m_Ships[shipId].ShipName;
 }
 
-Player* GameImpl::play(Player* p1, Player* p2, Board& b1, Board& b2, bool shouldPause = true)
+Player* GameImpl::play(Player* p1, Player* p2, Board& b1, Board& b2, bool shouldPause = true, int round = 0)
 {
+	if (round == 0 )
+		if(!p1->placeShips(b1) || !p2->placeShips(b2))  // place ships
+			return nullptr;
 	  // play game recursively, untill one of them wins
 	if (b1.allShipsDestroyed())
+	{
+		if (p1->isHuman())  // if human lose, display winner's board
+		{
+			cout << "You lose, the winner's board:" << endl;
+			b2.display(false);
+		}
 		return p2;
+	}
 	if (b2.allShipsDestroyed())
+	{
+		if (p2->isHuman())
+		{
+			cout << "You lose, the winner's board:" << endl;
+			b1.display(false);
+		}
 		return p1;
+	}
 	
   	  // p1 attack p2
 	cout << p1->name() << "'s turn. Board for "
@@ -168,7 +185,7 @@ Player* GameImpl::play(Player* p1, Player* p2, Board& b1, Board& b2, bool should
 	p1->recordAttackResult(p, validHit, shotHit, shipDestroyed, shipId);  // p1 records its attack result
 	if (shouldPause)
 		waitForEnter();
-	return play(p2, p1, b2, b1, shouldPause);
+	return play(p2, p1, b2, b1, shouldPause, round + 1);
 }
 
 //******************** Game functions *******************************
@@ -288,7 +305,5 @@ Player* Game::play(Player* p1, Player* p2, bool shouldPause)
     if (p1 == nullptr  ||  p2 == nullptr  ||  nShips() == 0)
         return nullptr;
     Board b1(*this); Board b2(*this);
-	if (!p1->placeShips(b1) || !p2->placeShips(b2))  // place ships
-		return nullptr;
     return m_impl->play(p1, p2, b1, b2, shouldPause);
 }

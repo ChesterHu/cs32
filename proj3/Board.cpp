@@ -91,6 +91,8 @@ void BoardImpl::unblock()  // modified
 
 bool BoardImpl::placeShip(Point topOrLeft, int shipId, Direction dir)  // modified
 {
+	if (shipId >= m_game.nShips() || shipId < 0)  // invalid shipId
+		return false;
 	int r = topOrLeft.r, c = topOrLeft.c;  // start coordinate
 	if (m_Board[r][c] != '.')
 		return false;
@@ -98,7 +100,7 @@ bool BoardImpl::placeShip(Point topOrLeft, int shipId, Direction dir)  // modifi
 	char symbol = m_game.shipSymbol(shipId);           // ship symbol
 	int maxRows = m_game.rows(), maxCols = m_game.cols(); // bounds
 
-	if (m_placedShips[shipId] > 0)
+	if (m_placedShips[shipId] > 0)  // the ship has been placed
 		return false;
 	if (dir == HORIZONTAL)  // check horizontally
 	{
@@ -124,6 +126,8 @@ bool BoardImpl::placeShip(Point topOrLeft, int shipId, Direction dir)  // modifi
 
 bool BoardImpl::unplaceShip(Point topOrLeft, int shipId, Direction dir)
 {
+	if (shipId >= m_game.nShips() || shipId < 0)  // invalid shipId
+		return false;
 	int r = topOrLeft.r, c = topOrLeft.c;
 	int maxRows = m_game.rows(), maxCols = m_game.cols();
 	int length = m_game.shipLength(shipId);
@@ -196,7 +200,7 @@ bool BoardImpl::attack(Point p, bool& shotHit, bool& shipDestroyed, int& shipId)
 				shotHit = true;
 				m_Board[r][c] = 'X';
                 shipId = i;
-                shipDestroyed = (--m_placedShips[i] == 0) ? true : false;
+                shipDestroyed = (--m_placedShips[i] <= 0) ? true : false;
                 return true;
 			}
 		}
