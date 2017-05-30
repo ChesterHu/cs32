@@ -94,8 +94,6 @@ bool BoardImpl::placeShip(Point topOrLeft, int shipId, Direction dir)  // modifi
 	if (shipId >= m_game.nShips() || shipId < 0)  // invalid shipId
 		return false;
 	int r = topOrLeft.r, c = topOrLeft.c;  // start coordinate
-	if (m_Board[r][c] != '.')
-		return false;
 	int length = m_game.shipLength(shipId);   // ship length
 	char symbol = m_game.shipSymbol(shipId);           // ship symbol
 	int maxRows = m_game.rows(), maxCols = m_game.cols(); // bounds

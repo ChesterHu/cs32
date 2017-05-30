@@ -14,7 +14,7 @@ using namespace std;
 //  you're sorting so many items that insertion_sort would take more time
 //  than you're willing to wait.
 
-const bool TEST_INSERTION_SORT = true;
+const bool TEST_INSERTION_SORT = false;
 
 //========================================================================
 

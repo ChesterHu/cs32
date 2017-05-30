@@ -397,7 +397,7 @@ class GoodPlayer : public Player
 GoodPlayer::GoodPlayer(string nm, const Game& g)
 	: Player(nm, g), direction(0), m_step(g.shipLength(0)), stepLength(1)
 {
-	m_step = 3;
+	m_step = 2;
 	int nRows = g.rows(), nCols = g.cols();
 	
 	hitMap = new char* [nRows];

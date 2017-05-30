@@ -89,7 +89,7 @@ Point GameImpl::randomPoint() const
 
 bool GameImpl::addShip(int length, char symbol, string name)
 {
-    if (m_nShips < 255 && symbol != 'X' && symbol != '.' && symbol != 'o')
+    if (m_nShips < 255)
 	{
 		if (m_nShips == 0 || m_Ships[0].ShipLength >= length)
 			m_Ships[m_nShips] = Ship(length, symbol, name);
@@ -127,7 +127,7 @@ string GameImpl::shipName(int shipId) const  // modified
 
 Player* GameImpl::play(Player* p1, Player* p2, Board& b1, Board& b2, bool shouldPause = true, int round = 0)
 {
-	if (round == 0 )
+	if (round == 0)
 		if(!p1->placeShips(b1) || !p2->placeShips(b2))  // place ships
 			return nullptr;
 	  // play game recursively, untill one of them wins
@@ -304,6 +304,7 @@ Player* Game::play(Player* p1, Player* p2, bool shouldPause)
 {
     if (p1 == nullptr  ||  p2 == nullptr  ||  nShips() == 0)
         return nullptr;
-    Board b1(*this); Board b2(*this);
+    Board b1(*this); 
+	Board b2(*this);
     return m_impl->play(p1, p2, b1, b2, shouldPause);
 }
