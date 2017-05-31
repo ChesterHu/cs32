@@ -133,15 +133,18 @@ Player* GameImpl::play(Player* p1, Player* p2, Board& b1, Board& b2, bool should
 	  // play game recursively, untill one of them wins
 	if (b1.allShipsDestroyed())
 	{
+		cout << p2->name() << " wins!" << endl;
 		if (p1->isHuman())  // if human lose, display winner's board
 		{
 			cout << "You lose, the winner's board:" << endl;
 			b2.display(false);
 		}
+		
 		return p2;
 	}
 	if (b2.allShipsDestroyed())
 	{
+		cout << p1->name() << " wins!" << endl;
 		if (p2->isHuman())
 		{
 			cout << "You lose, the winner's board:" << endl;

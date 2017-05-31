@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "globals.h"
 #include <iostream>
+#include <string>
 
 using namespace std;
 
@@ -47,6 +48,7 @@ BoardImpl::BoardImpl(const Game& g)  // modified
 
 	  // initialize m_placedShips
 	m_placedShips = new int[nShips];
+	clear();
 }
 
 BoardImpl::~BoardImpl()

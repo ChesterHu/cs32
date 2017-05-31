@@ -137,7 +137,7 @@ void test()
 
 int main()
 {
-	int NTRIALS = 100;
+	int NTRIALS = 10000;
  	// test();
 	/*
 	Game g(10, 10);
