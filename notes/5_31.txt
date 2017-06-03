@@ -1,0 +1,69 @@
+// print tree function
+void printtree(const Node* t, int depth)
+{
+	if (t != nullptr)
+	{
+		cout << string(2 * depth, ' ') << t->data << endl;
+		for (int k = 0; k < t->children.size(); k++)
+			printtree(t->children[k], depth + 1);
+	}
+}
+
+void printtree(const Node* t)
+{
+	printtree(t, 0);
+}
+
+// preorder traversal: process the root, then process the children
+// postorder traversal: process the children, then process the root
+// inorder traversal: process the left subtree, then the root, then the right subtree
+
+// A binary tree is either empty, or a node with a left binary subtree
+// and a right binary subtree.
+// every node in the left BST is <= the value at this node and
+// every node in the right BST is >= the value at this node
+// most BST do not have duplicates
+struct Node
+{
+	string data;
+	Node* left;
+	Node* right;
+}
+
+// print a BST in alphabetic order
+
+void printBST(const Node* t)
+{
+	if (t != nullptr)
+	{
+		printBST(t->left);
+		cout << t->data << endl;
+		printBST(t->right);
+	}
+}
+
+// move right most leaf in the left subtree or left most leaf on the right subtree to the root won't violate the tree structure
+// in this BST move Homer or Maggie to the root won't violate the tree structure
+                          Lisa
+					/              \
+				Bart               Marge
+				    \              /     \
+					Homer      Maggie    Patty
+				   /                        \
+				Carl                       Selma
+
+// BST is efficient when the tree is well balanced, BST won't have constant time to get node
+// hash table
+// some number of "buckets"
+
+		Hash table		
+         ______
+		|      |    linked list
+		|      |   ___    ___
+		|      |->|   |->|   |->nullptr
+		|      |  |___|  |___|
+		|      |
+		...   ...           load factor = number of items / number of bucket
+		|      |
+		|______|->nullptr
+// search in hash table has linear complexity, but divided by number of bucket, so it often use less time than BST, which has log N complexity in searching.
