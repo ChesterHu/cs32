@@ -19,6 +19,19 @@ struct Pair
 	Pair(int newLine, int newScope) : lineNum(newLine), scope(newScope) {}
 };
 
+  // struct for store identifier and it's scope
+struct Node
+{
+	string id;
+	vector<Pair> m_Scopes;
+	Node* next;
+	Node(string new_id, int new_line, int new_Scope) 
+		: id(new_id), next(nullptr) 
+	{
+		m_Scopes.push_back(Pair(new_line, new_Scope)); 
+	}
+	~Node() { delete next; }
+};
   // a hashTable for string
 class hashTable
 {
@@ -30,19 +43,6 @@ class hashTable
 		bool declare(string id, int lineNum, int scopeNum);
 		int find(string id) const;
 	private:
-		struct Node
-		{
-			string id;
-			vector<Pair> m_Scopes;
-			Node* next;
-			Node(string new_id, int new_line, int new_Scope) 
-				: id(new_id), next(nullptr) 
-			{
-			   	m_Scopes.push_back(Pair(new_line, new_Scope)); 
-			}
-			~Node() { delete next; }
-		};
-
 		Node* bucket[TABLE_SIZE];
 };
 
@@ -56,6 +56,8 @@ class SymbolTableImpl
 		bool declare(const string& id, int lineNum);
 		int find(const string& id) const;
 	private:
+		  // use a vector of pointers point to Nodes
+		// vector<vector<Node*> > idVector;
 		vector<vector<string> > idVector;
 		hashTable table;
 };
