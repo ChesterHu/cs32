@@ -6,9 +6,19 @@
 #include <string>
 #include <iostream>
 #include <cassert>
+#include <vector>
 using namespace std;
 
-const int TABLE_SIZE = 100;
+const int TABLE_SIZE = 20000;
+
+  // struct to store lineNum and scope
+struct Pair
+{
+	int lineNum;
+	int scope;
+	Pair(int newLine, int newScope) : lineNum(newLine), scope(newScope) {}
+};
+
   // a hashTable for string
 class hashTable
 {
@@ -16,15 +26,20 @@ class hashTable
 		hashTable();
 		~hashTable();
 
-		bool declare(string id, int lineNum);
+		void deleteScope(string id);
+		bool declare(string id, int lineNum, int scopeNum);
 		int find(string id) const;
 	private:
 		struct Node
 		{
 			string id;
-			int lineNum;
+			vector<Pair> m_Scopes;
 			Node* next;
-			Node(string new_id, int new_line) : id(new_id), lineNum(new_line), next(nullptr) {}
+			Node(string new_id, int new_line, int new_Scope) 
+				: id(new_id), next(nullptr) 
+			{
+			   	m_Scopes.push_back(Pair(new_line, new_Scope)); 
+			}
 			~Node() { delete next; }
 		};
 
@@ -35,28 +50,19 @@ class hashTable
 class SymbolTableImpl
 {
 	public:
-		SymbolTableImpl();
-		~SymbolTableImpl();
+		SymbolTableImpl() { idVector.push_back(vector<string>()); }
 		void enterScope();
 		bool exitScope();
 		bool declare(const string& id, int lineNum);
 		int find(const string& id) const;
 	private:
-		  // scope, actually linked list
-		struct Scope
-		{
-			hashTable table;
-			Scope* next;
-			Scope* prev;
-			Scope() : next(nullptr), prev(nullptr) {}
-			~Scope() { delete next; }
-		};
-
-		Scope* head;
-		Scope* currScope;
+		vector<vector<string> > idVector;
+		hashTable table;
 };
+
 // function implementation
 ///////////////////////////////////////////////////////////
+
 
   // constructor
 hashTable::hashTable()
@@ -81,15 +87,31 @@ inline int hashF(const string& key)
 	return hashVal % TABLE_SIZE;
 }
 
-bool hashTable::declare(string id, int lineNum)
+void hashTable::deleteScope(string id)
 {
-	Node** ptr = &bucket[hashF(id)];
+	Node* ptr = bucket[hashF(id)];
+	while (ptr != nullptr && ptr->id != id)
+		ptr = ptr->next;
+	ptr->m_Scopes.pop_back();
+}
+
+bool hashTable::declare(string id, int lineNum, int scopeNum)
+{
+	Node** ptr = &bucket[hashF(id)];  // get pointer points to the pointer of the hash values bucket
 	while (*ptr != nullptr)
 	{
-		if ((*ptr)->id == id) return false;
+		if ((*ptr)->id == id)  // if find the node with the same id
+		{
+			if ((*ptr)->m_Scopes.empty() || (*ptr)->m_Scopes.back().scope != scopeNum)
+			{
+				(*ptr)->m_Scopes.push_back(Pair(lineNum, scopeNum));
+				return true;
+			}
+			return false;
+		}
 		ptr = &((*ptr)->next);
 	}
-	*ptr = new Node(id, lineNum);
+	*ptr = new Node(id, lineNum, scopeNum);
 	return true;
 }
 
@@ -98,37 +120,26 @@ int hashTable::find(string id) const
 	Node* ptr = bucket[hashF(id)];
 	while (ptr != nullptr)
 	{
-		if (ptr->id == id) return ptr->lineNum;
+		if (ptr->id == id)
+			return (ptr->m_Scopes.empty()) ? -1 : ptr->m_Scopes.back().lineNum;
 		ptr = ptr->next;
 	}
 	return -1;
 }
 
-SymbolTableImpl::SymbolTableImpl()
-	: head(new Scope)
-{
-	currScope = head;
-}
-
-SymbolTableImpl::~SymbolTableImpl()
-{
-	delete head;
-}
-
 inline void SymbolTableImpl::enterScope()
 {
-	currScope->next = new Scope;
-	currScope->next->prev = currScope;
-	currScope = currScope->next;
+	idVector.push_back(vector<string>());
 }
 
 inline bool SymbolTableImpl::exitScope()
 {
-	if (currScope->prev != nullptr)
+	if (idVector.size() > 1)
 	{
-		currScope = currScope->prev;
-		delete currScope->next;
-		currScope->next = nullptr;
+		vector<string>& currId = idVector.back();
+		for (int i = 0; i < currId.size(); ++i)
+			table.deleteScope(currId[i]);
+		idVector.pop_back();
 		return true;
 	}
 	return false;
@@ -136,23 +147,27 @@ inline bool SymbolTableImpl::exitScope()
 
 inline bool SymbolTableImpl::declare(const string& id, int lineNum)
 {
-	return currScope->table.declare(id, lineNum);
+	if (table.declare(id, lineNum, idVector.size()))
+	{
+		idVector.back().push_back(id);
+		return true;
+	}
+	return false;
 }
 
-int SymbolTableImpl::find(const string& id) const
+inline int SymbolTableImpl::find(const string& id) const
 {
-	Scope* ptr = currScope;
-	int lineNum = ptr->table.find(id);
-	while (lineNum == -1 && ptr->prev != nullptr)
-	{
-		ptr = ptr->prev;
-		lineNum = ptr->table.find(id);
-	}
-	return lineNum;
+	return table.find(id);
 }
 /*
 int main()
 {
+	hashTable ht;
+	assert(ht.declare("abc", 1, 0));
+	assert(ht.declare("abc", 2, 2));
+	assert(!ht.declare("abc", 3, 2));
+	assert(ht.find("abc") == 2);
+
 	SymbolTable st;
 	assert(st.declare("alpha", 1));
 	assert(st.declare("beta", 2));
