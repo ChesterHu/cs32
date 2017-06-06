@@ -40,7 +40,7 @@ class hashTable
 		~hashTable();
 
 		void deleteScope(string id);
-		bool declare(string id, int lineNum, int scopeNum);
+		Node* declare(string id, int lineNum, int scopeNum);
 		int find(string id) const;
 	private:
 		Node* bucket[TABLE_SIZE];
@@ -50,15 +50,15 @@ class hashTable
 class SymbolTableImpl
 {
 	public:
-		SymbolTableImpl() { idVector.push_back(vector<string>()); }
+		SymbolTableImpl() { idVector.push_back(vector<Node*>()); }
 		void enterScope();
 		bool exitScope();
 		bool declare(const string& id, int lineNum);
 		int find(const string& id) const;
 	private:
 		  // use a vector of pointers point to Nodes
-		// vector<vector<Node*> > idVector;
-		vector<vector<string> > idVector;
+		vector<vector<Node*> > idVector;
+		// vector<vector<string> > idVector;
 		hashTable table;
 };
 
@@ -97,7 +97,7 @@ inline void hashTable::deleteScope(string id)
 	ptr->m_Scopes.pop_back();
 }
 
-inline bool hashTable::declare(string id, int lineNum, int scopeNum)
+inline Node* hashTable::declare(string id, int lineNum, int scopeNum)
 {
 	Node** ptr = &bucket[hashF(id)];  // get pointer points to the pointer of the hash values bucket
 	while (*ptr != nullptr)
@@ -107,14 +107,15 @@ inline bool hashTable::declare(string id, int lineNum, int scopeNum)
 			if ((*ptr)->m_Scopes.empty() || (*ptr)->m_Scopes.back().scope != scopeNum)
 			{
 				(*ptr)->m_Scopes.push_back(Pair(lineNum, scopeNum));
-				return true;
+				return *ptr;
 			}
-			return false;
+			else
+				return nullptr;
 		}
 		ptr = &((*ptr)->next);
 	}
 	*ptr = new Node(id, lineNum, scopeNum);
-	return true;
+	return *ptr;
 }
 
 inline int hashTable::find(string id) const
@@ -131,16 +132,18 @@ inline int hashTable::find(string id) const
 
 inline void SymbolTableImpl::enterScope()
 {
-	idVector.push_back(vector<string>());
+	idVector.push_back(vector<Node*>());
 }
 
 inline bool SymbolTableImpl::exitScope()
 {
 	if (idVector.size() > 1)
 	{
-		vector<string>& currId = idVector.back();
+		vector<Node*>& currId = idVector.back();
 		for (int i = 0; i < currId.size(); ++i)
-			table.deleteScope(currId[i]);
+		{
+			currId[i]->m_Scopes.pop_back();
+		}
 		idVector.pop_back();
 		return true;
 	}
@@ -149,9 +152,10 @@ inline bool SymbolTableImpl::exitScope()
 
 inline bool SymbolTableImpl::declare(const string& id, int lineNum)
 {
-	if (table.declare(id, lineNum, idVector.size()))
+	Node* result = table.declare(id, lineNum, idVector.size());
+	if (result != nullptr)
 	{
-		idVector.back().push_back(id);
+		idVector.back().push_back(result);
 		return true;
 	}
 	return false;
