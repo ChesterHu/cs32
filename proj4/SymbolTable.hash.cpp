@@ -30,7 +30,6 @@ struct Node
 	{
 		m_Scopes.push_back(Pair(new_line, new_Scope)); 
 	}
-	~Node() { delete next; }
 };
   // a hashTable for string
 class hashTable
@@ -39,8 +38,7 @@ class hashTable
 		hashTable();
 		~hashTable();
 
-		void deleteScope(const string& id);
-		Node* declare(const string& id, int lineNum, int scopeNum);
+		Node* declare(const string& id, const int& lineNum, int scopeNum);
 		int find(const string& id) const;
 	private:
 		Node* bucket[TABLE_SIZE];
@@ -76,8 +74,16 @@ hashTable::hashTable()
   // destructor
 hashTable::~hashTable()
 {
+	Node* ptr;
 	for (int i = 0; i < TABLE_SIZE; ++i)
-		delete bucket[i];
+	{
+		while (bucket[i] != nullptr)
+		{
+			ptr = bucket[i];
+			bucket[i] = bucket[i]->next;
+			delete ptr;
+		}
+	}
 }
 
   // return the hash value of a key
@@ -89,15 +95,7 @@ inline int hashF(const string& key)
 	return hashVal % TABLE_SIZE;
 }
 
-inline void hashTable::deleteScope(const string& id)
-{
-	Node* ptr = bucket[hashF(id)];
-	while (ptr != nullptr && ptr->id != id)
-		ptr = ptr->next;
-	ptr->m_Scopes.pop_back();
-}
-
-inline Node* hashTable::declare(const string& id, int lineNum, int scopeNum)
+inline Node* hashTable::declare(const string& id, const int& lineNum, int scopeNum)
 {
 	Node** ptr = &bucket[hashF(id)];  // get pointer points to the pointer of the hash values bucket
 	while (*ptr != nullptr)
