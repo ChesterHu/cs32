@@ -1,0 +1,18 @@
+Priority Queue
+==============
+A complete binary tree has every level filled except possibly the bottom one, and that one is fulled from left-to-right.
+
+A (max) heap is a complete binary tree where the value at each node is >= all the values in the subtree of that node. 
+
+A min heap is a compete binary tree where the value at each node is <= all the values in the subtrees of that node.
+
+Insert:
+	First, insert it so you have a complete binary tree
+	Then, bubble up the new item to its proper place
+
+Remove the largest item in a (max) heap (or smallest in a minheap):
+	First remove the root and move the bottom-right most item to the root position to make a complete binary tree.
+	Then, trickle the moved item down to the proper level.
+
+Give the child index i, it's parent: (int) (i - 1) / 2
+Give the parent index j, it's two children: 2 * j + 1 and 2 * j + 2
