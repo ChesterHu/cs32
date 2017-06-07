@@ -32,7 +32,7 @@ c.                     50
 
 a.
 
-// Tree class contains a tree node and child node
+  // Tree class contains a tree node and child node
 class tree
 {
 	public:
@@ -69,7 +69,7 @@ class tree
 };
 
 b. 
-// the function for inserting a node to BST
+  // the function for inserting a node to BST
 void tree::insertNode(const int val)
 {
 	Node** ptr = &m_root;   // a pointer points to the pointer of a tree Node

@@ -24,11 +24,17 @@ struct Node
 {
 	string id;
 	vector<Pair> m_Scopes;
-	Node* next;
+	Node* left;
+	Node* right;
 	Node(const string& new_id, int new_line, int new_Scope) 
-		: id(new_id), next(nullptr) 
+		: id(new_id), left(nullptr), right(nullptr)
 	{
 		m_Scopes.push_back(Pair(new_line, new_Scope)); 
+	}
+	~Node()
+	{
+		delete left;
+		delete right;
 	}
 };
   // a hashTable for string
@@ -74,15 +80,9 @@ hashTable::hashTable()
   // destructor
 hashTable::~hashTable()
 {
-	Node* ptr;
 	for (int i = 0; i < TABLE_SIZE; ++i)
 	{
-		while (bucket[i] != nullptr)
-		{
-			ptr = bucket[i];
-			bucket[i] = bucket[i]->next;
-			delete ptr;
-		}
+		delete bucket[i];
 	}
 }
 
@@ -110,7 +110,7 @@ inline Node* hashTable::declare(const string& id, const int& lineNum, int scopeN
 			else
 				return nullptr;
 		}
-		ptr = &((*ptr)->next);
+		ptr = (id < (*ptr)->id) ? &((*ptr)->left) : &((*ptr)->right);
 	}
 	*ptr = new Node(id, lineNum, scopeNum);
 	return *ptr;
@@ -123,7 +123,7 @@ inline int hashTable::find(const string& id) const
 	{
 		if (ptr->id == id)
 			return (ptr->m_Scopes.empty()) ? -1 : ptr->m_Scopes.back().lineNum;
-		ptr = ptr->next;
+		ptr = (id < ptr->id) ? ptr->left : ptr->right;
 	}
 	return -1;
 }
