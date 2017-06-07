@@ -138,7 +138,8 @@ inline bool SymbolTableImpl::exitScope()
 	if (idVector.size() > 1)
 	{
 		vector<Node*>& currId = idVector.back();
-		for (int i = 0; i < currId.size(); ++i)
+		int len = currId.size();
+		for (int i = 0; i < len; ++i)
 		{
 			currId[i]->m_Scopes.pop_back();
 		}

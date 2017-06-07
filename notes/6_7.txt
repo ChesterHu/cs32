@@ -16,3 +16,26 @@ Remove the largest item in a (max) heap (or smallest in a minheap):
 
 Give the child index i, it's parent: (int) (i - 1) / 2
 Give the parent index j, it's two children: 2 * j + 1 and 2 * j + 2
+
+Binary tree
+                  10
+			9            6
+	     3     2      5
+
+Array 
+           10 9 6 3 2 5
+	remove the top item: 5 9 6 3 2, then swap...
+	new heap 9 5 6 3 2
+
+Heap sort
+---------
+Sort an array in asscending order
+	6 3 5 9 2 10
+Start with the half way point: 5 (because it's the middle of the tree), swap it with 10. Next compare 3, 9, 2
+	10 9 6 3 2 5
+Repeatedly, remove the biggest item (putting it at the end) and restore the heap
+	5 9 6 3 2 10
+...
+	2 3 5 6 9 10
+Time complexity is O(N * log N)
+
