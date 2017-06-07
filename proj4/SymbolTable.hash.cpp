@@ -39,9 +39,9 @@ class hashTable
 		hashTable();
 		~hashTable();
 
-		void deleteScope(string id);
-		Node* declare(string id, int lineNum, int scopeNum);
-		int find(string id) const;
+		void deleteScope(const string& id);
+		Node* declare(const string& id, int lineNum, int scopeNum);
+		int find(const string& id) const;
 	private:
 		Node* bucket[TABLE_SIZE];
 };
@@ -89,7 +89,7 @@ inline int hashF(const string& key)
 	return hashVal % TABLE_SIZE;
 }
 
-inline void hashTable::deleteScope(string id)
+inline void hashTable::deleteScope(const string& id)
 {
 	Node* ptr = bucket[hashF(id)];
 	while (ptr != nullptr && ptr->id != id)
@@ -97,7 +97,7 @@ inline void hashTable::deleteScope(string id)
 	ptr->m_Scopes.pop_back();
 }
 
-inline Node* hashTable::declare(string id, int lineNum, int scopeNum)
+inline Node* hashTable::declare(const string& id, int lineNum, int scopeNum)
 {
 	Node** ptr = &bucket[hashF(id)];  // get pointer points to the pointer of the hash values bucket
 	while (*ptr != nullptr)
@@ -118,7 +118,7 @@ inline Node* hashTable::declare(string id, int lineNum, int scopeNum)
 	return *ptr;
 }
 
-inline int hashTable::find(string id) const
+inline int hashTable::find(const string& id) const
 {
 	Node* ptr = bucket[hashF(id)];
 	while (ptr != nullptr)
