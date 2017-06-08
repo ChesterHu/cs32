@@ -78,6 +78,8 @@ int main()
 	a.insertNode(30);
 	a.insertNode(65);
 	a.insertNode(80);
+	a.insertNode(1);
+	a.insertNode(0);
 	a.inorder();
 	cout << endl;
 }
