@@ -99,6 +99,7 @@ inline int hashF(const string& id)
 	return (h % TABLE_SIZE);
 	
 }
+
 Node* hashTable::declare(const string& id, const int& lineNum, int scopeNum)
 {
 	Node** ptr = &bucket[hashF(id)];  // get pointer points to the pointer of the hash values bucket

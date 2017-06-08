@@ -26,15 +26,11 @@ struct Node
 	vector<Pair> m_Scopes;
 	Node* left;
 	Node* right;
+	Node** parent;
 	Node(const string& new_id, int new_line, int new_Scope) 
 		: id(new_id), left(nullptr), right(nullptr)
 	{
 		m_Scopes.push_back(Pair(new_line, new_Scope)); 
-	}
-	~Node()
-	{
-		delete left;
-		delete right;
 	}
 };
   // a hashTable for string
@@ -42,7 +38,6 @@ class hashTable
 {
 	public:
 		hashTable();
-		~hashTable();
 
 		Node* declare(const string& id, const int& lineNum, int scopeNum);
 		int find(const string& id) const;
@@ -55,6 +50,12 @@ class SymbolTableImpl
 {
 	public:
 		SymbolTableImpl() { idVector.push_back(vector<Node*>()); }
+		~SymbolTableImpl()
+		{
+			for (int i = 0; i < idVector.size(); ++i)
+				for (int j = 0; j < idVector[i].size(); ++j)
+					delete idVector[i][j];
+		}
 		void enterScope();
 		bool exitScope();
 		bool declare(const string& id, int lineNum);
@@ -77,19 +78,10 @@ hashTable::hashTable()
 		bucket[i] = nullptr;
 }
 
-  // destructor
-hashTable::~hashTable()
-{
-	for (int i = 0; i < TABLE_SIZE; ++i)
-	{
-		delete bucket[i];
-	}
-}
-
   // return the hash value of a key
 inline int hashF(const string& key)
 {
-	unsigned int hashVal = 0;
+	unsigned long long hashVal = 0;
 	for (int i = 0; i < key.size(); ++i)
 		hashVal = hashVal * 101 + key[i] + 1;
 	return hashVal % TABLE_SIZE;
@@ -113,6 +105,7 @@ inline Node* hashTable::declare(const string& id, const int& lineNum, int scopeN
 		ptr = (id < (*ptr)->id) ? &((*ptr)->left) : &((*ptr)->right);
 	}
 	*ptr = new Node(id, lineNum, scopeNum);
+	(*ptr)->parent = ptr;
 	return *ptr;
 }
 
@@ -142,6 +135,33 @@ inline bool SymbolTableImpl::exitScope()
 		for (int i = 0; i < len; ++i)
 		{
 			currId[i]->m_Scopes.pop_back();
+			if (currId[i]->m_Scopes.empty())
+			{
+				// move left subtree right most leaf to top
+				Node* currNode = currId[i]->left;
+				if (currNode == nullptr)
+				{
+					currNode = currId[i];
+					if (currNode->right != nullptr)
+						currNode->right->parent = currNode->parent;
+					*(currId[i]->parent) = currId[i]->right;
+				}
+				else
+				{
+					while (currNode->right != nullptr)
+						currNode = currNode->right;
+					if (currNode->left != nullptr)
+						currNode->left->parent = currNode->parent;
+					*(currNode->parent) = currNode->left;
+					*(currId[i]->parent) = currNode;
+					currNode->left = currId[i]->left; currNode->right = currId[i]->right;
+					if (currId[i]->left != nullptr)
+						currId[i]->left->parent = &(currNode->left);
+					if (currId[i]->right != nullptr)
+						currId[i]->right->parent = &(currNode->right);
+				}
+				delete currId[i];
+			}
 		}
 		idVector.pop_back();
 		return true;
