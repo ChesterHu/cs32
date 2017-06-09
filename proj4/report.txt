@@ -1,0 +1,153 @@
+Algorithms and data structures
+//////////////////////////////
+
+My implementation of Scopes is based on hash table and linked list. I write two classes, hashTable and 
+SymbolTableImpl. I also write two structs to help me build the hashTable:
+
+1. Pair and Node
+================
+
+1.1 Pair
+----------------------------------------------------------------------------------------------------------
+  // struct Pair to store line number and scope number
+struct Pair
+{
+	int lineNum;
+	int scope;
+	Pair(int newLine, int newScope) : lineNum(newLine), scope(newScope) {}
+	Pair() {}
+};
+
+int lineNum 
+/* the line number of the identifier. */
+
+int scope
+/* the scope number of the identifier. */
+----------------------------------------------------------------------------------------------------------
+
+1.2 Node
+----------------------------------------------------------------------------------------------------------
+  // struct for store identifier and it's scope
+struct Node
+{
+	Pair m_Scopes[4];
+	int m_size;
+	
+	string id;
+	Node* next;
+	Node** prev;
+	Node(const string& new_id, int new_line, int new_Scope) 
+		: id(new_id), next(nullptr), prev(nullptr), m_size(1)
+	{
+		m_Scopes[0] = Pair(new_line, new_Scope); 
+	}
+};
+
+
+Pair   m_Scopes[4]
+/* the 1-dimension array with 4 buckets. Pair is a data struct I defined to 
+   store the line number (int) and scope number (int) of the identifier. When 
+   the identifier is declared in a scope, I will first look at the last Pair 
+   in m_Scope, if the last Pair's scope equals to the current scope number, 
+   declare function will return false, otherwise, it will write the scope 
+   number and the line number of the declaration to the m_Scopes[m_size] and 
+   return true. */
+
+int    m_size
+/* the number of valid buckets in m_Scopes. */
+
+int    m_cap
+/* the capacity of m_Scopes, if m_size excceeds the capacity, I will use a larger 
+   array to store the Pairs. (Actually capacity of 4 buckets is enough for 400000 
+   lines of commands.txt.) */
+
+string id
+/* the string of identifier. */
+
+Node*  next 
+/* the pointer points to the next list node in hashTable if there is a collision. */
+
+Node**  prev 
+/* the pointer points to the pointer of a Node, which points to the current node. 
+   It's the address of the previous node's "next" pointer, and I use this to delete 
+   the current node. */
+
+2. hashTable
+============
+  
+  // the number of buckets in my hash table.
+const int TABLE_SIZE = 20000; 
+  // the class of hashTable
+class hashTable
+{
+	public:
+		hashTable();
+		~hashTable();
+
+		Node* declare(const string& id, const int& lineNum, int scopeNum);
+		int find(const string& id) const;
+	private:
+		Node* bucket[TABLE_SIZE];
+};
+
+/* This the the hashTable I used to store all the successfully declared identifiers 
+   in the SymbolTable. If an identifier was successfully declared in any scope such 
+   that the programme haven't exited the scope, (i.e it's node m_size > 0) the 
+   identifier should be stored in a Node in the linked list starts from certain bucket 
+   in the hashTable. Otherwise the identifier should not in the hashTable or should 
+   be removed from the hashTable after exiting the scope. */
+
+2.1 Private class member
+----------------------------------------------------------------------------------------------------------
+Node* bucket[TABLE_SIZE]  
+/* the array of pointers to linked list, every bucket is the head of a linked list. 
+   When an identifier is declared in a scope, first find if there is a Node with the 
+   same identifier name. If there is no such Node, add it to the linked list. If there 
+   if a Node with the same identifier name, if it's last Pair's scope number equals to 
+   the current scope number, then the identifier must have been declared in the same 
+   scope, in this case the declare operation will fail. */
+
+2.3 Public class function
+----------------------------------------------------------------------------------------------------------
+hashTable::hashTable();
+/* The constructor of hashTable, will traversal all the buckets in the array bucket
+   array, and set then point to nullptr. */
+
+hashTable::~hashTable();
+/* The destructor of hashTable, will traversall all the buckets and delete all the
+   Nodes */
+
+Node* hashTable::declare(const string& id, const int& lineNum, int scopeNum);
+/* The declare function of hashTable. If the identifier is not in the hashTable then
+   it will add the Node to the corresponding bucket. If the declare fail, it will
+   return nullptr, otherwise it will return the identifier's Node. */
+
+Pesudocode:
+-----------
+{
+	  // use hash function find the bucket that may contain id's Node;
+	Node** ptr = &bucket[hashF(id)];
+	while (*ptr is not nullptr)
+	{
+		  // if find the identifier's Node, check if it's been declared in
+		  // the same scope
+		if ( (*ptr)->id == id )
+		{
+			if the Node's m_size is 0 or Node's m_Scopes[m_size - 1].scope != scopeNum
+			{
+				if the array is full, expand m_Scopes.
+				add Pair(lineNum, scopeNum) to then end of m_Scopes
+				m_size++;
+				return *ptr;
+			}
+			else return nullptr  // the identifier has been declared in the scope
+		}
+		move to the next Node;
+	}
+	  // add identifier as a new Node
+	*ptr = new Node(id, lineNum, scopeNum);
+	  // record it's prev pointer for future delete
+	(*ptr)->prev = ptr;
+	return *ptr;
+
+}
