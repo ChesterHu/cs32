@@ -1,214 +1,197 @@
+// SymbolTable.cpp
+
+// This is a correct but inefficient implementation of
+// the SymbolTable functionality.
 #include "SymbolTable.h"
 #include <string>
 #include <vector>
-#include <list>
-#include <algorithm>
-#include <stack>
-
-#include <iostream> // !!!!!!!!!!!!!!!!!!!!!!!!!
 using namespace std;
 
-const int NUMBEROFBUCKS = 20000;
+const int TABLE_SIZE = 15000;
 const unsigned int HASHCOEF = 16777619;
 const unsigned int HASHBASE = 2166136261U;
-
-class SymbolTableImpl
+  // struct to store lineNum and scope
+struct Pair
 {
-	struct identifier
-	{
-		string name;
-		list<int> line;
-		list<int> scopeIdx;
-		identifier* next;
-		identifier(string _name) : name(_name), next(nullptr) {}
-	};
-
-public:
-	SymbolTableImpl();
-	void enterScope();
-	bool exitScope();
-	bool declare(const string& id, int lineNum);
-	int find(const string& id) const;
-	~SymbolTableImpl();
-
-//	void printTable() const;  // !!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-private:
-	int hashCode(const string& id) const;
-
-	int curIdx;
-	identifier* buck[NUMBEROFBUCKS];
-	vector<vector<identifier*>> id_vec;
+	int lineNum;
+	int scope;
+	Pair(int newLine, int newScope) : lineNum(newLine), scope(newScope) {}
+	Pair() {}
 };
 
-SymbolTableImpl::SymbolTableImpl() 
+  // struct for store identifier and it's scope
+struct Node
 {
-	curIdx = 0;
-	id_vec.push_back(vector<identifier*>());
-	for (int i = 0; i < NUMBEROFBUCKS; i++)
-		buck[i] = nullptr;
-}
-
-SymbolTableImpl::~SymbolTableImpl()
-{
-	for (int i = 0; i < id_vec.size(); i++)
-		for (int j = 0; j < id_vec[i].size(); j++)
-			delete id_vec[i][j];
-}
-
-void SymbolTableImpl::enterScope()
-{
-	curIdx++;
-	id_vec.push_back(vector<identifier*>());
-}
-
-bool SymbolTableImpl::exitScope()
-{
-	if (id_vec.size() <= 1)
-		return false;
-	identifier* id;
-	// initial scope cannot be left
-	for (int i = 0; i < id_vec.back().size(); i++)
+	Pair* m_Scopes;
+	int m_size;
+	int m_cap;
+	string id;
+	Node* next;
+	Node** prev;
+	Node(const string& new_id, int new_line, int new_Scope) 
+		: m_size(1), m_cap(2), id(new_id), next(nullptr), prev(nullptr)
 	{
-		id = id_vec.back()[i];
-		id->line.pop_back();
-		id->scopeIdx.pop_back();
-		if (id->line.empty())
+		m_Scopes = new Pair[2];
+		m_Scopes[0] = Pair(new_line, new_Scope); 
+	}
+	~Node()
+	{
+		delete [] m_Scopes;
+	}
+};
+
+  // a hashTable for string
+class hashTable
+{
+	public:
+		hashTable();
+		~hashTable();
+
+		Node* declare(const string& id, const int& lineNum, int scopeNum);
+		int find(const string& id) const;
+	private:
+		Node* bucket[TABLE_SIZE];
+};
+
+  // This class does the real work of the implementation.
+class SymbolTableImpl
+{
+	public:
+		SymbolTableImpl() { idVector.push_back(vector<Node*>()); }
+		void enterScope();
+		bool exitScope();
+		bool declare(const string& id, int lineNum);
+		int find(const string& id) const;
+	private:
+		  // use a vector of pointers point to Nodes
+		vector<vector<Node*> > idVector;
+		// vector<vector<string> > idVector;
+		hashTable table;
+};
+
+// function implementation
+///////////////////////////////////////////////////////////
+
+
+  // constructor
+hashTable::hashTable()
+{
+	for (int i = 0; i < TABLE_SIZE; ++i)
+		bucket[i] = nullptr;
+}
+
+  // destructor
+hashTable::~hashTable()
+{
+	Node* ptr;
+	for (int i = 0; i < TABLE_SIZE; ++i)
+	{
+		while (bucket[i] != nullptr)
 		{
-			int h = hashCode(id->name);
-			identifier* p = buck[h];
-			identifier* q = buck[h];
-			if (buck[h]->name == id->name)
-			{
-				buck[h] = p->next;
-				delete p;
-			}
-			else
-			{
-				while (p->name != id->name)
-				{
-					q = p;
-					p = p->next;
-				}
-				q->next = p->next;
-				delete p;
-			}
+			ptr = bucket[i];
+			bucket[i] = bucket[i]->next;
+			delete ptr;
 		}
 	}
-	curIdx--;
-	id_vec.pop_back();
-	return true;
 }
 
-int SymbolTableImpl::hashCode(const string& id) const
+  // return the hash value of a key
+inline int hashF(const string& id)
 {
-	/*
-	unsigned long hash = 5381;
-	int c;
-
-	for (const char& c : id) 
-	{
-		hash = ((hash << 5) + hash) + (int)c;
-	}
-	return hash % NUMBEROFBUCKS;
-	*/
 	unsigned int h = HASHBASE;
 	for (int i = 0; i != id.size(); i++)
 		h = (h + id[i]) * HASHCOEF;
-	return (h % NUMBEROFBUCKS);
+	return (h % TABLE_SIZE);
 	
 }
 
-
-bool SymbolTableImpl::declare(const string& id, int lineNum)
+Node* hashTable::declare(const string& id, const int& lineNum, int scopeNum)
 {
-	if (id.empty())
-		return false;
-
-	int h = hashCode(id);
-	// buck[h] is null
-	if (buck[h] == nullptr)
+	Node** ptr = &bucket[hashF(id)];  // get pointer points to the pointer of the hash values bucket
+	while (*ptr != nullptr)
 	{
-		buck[h] = new identifier(id);
-		buck[h]->line.push_back(lineNum);
-		buck[h]->scopeIdx.push_back(curIdx);
-		id_vec.back().push_back(buck[h]);
-		return true;
-	}
-	identifier* p = buck[h];
-	identifier* q = buck[h];
-
-	while (p != nullptr)
-	{
-		if (p->name == id)
+		if ((*ptr)->id == id)  // if find the node with the same id
 		{
-			// same declaration in the scope
-			if (!p->scopeIdx.empty() && p->scopeIdx.back() == curIdx)
-				return false;
-			// no declaration in the scope
-			else
+			if ((*ptr)->m_size == 0 || (*ptr)->m_Scopes[(*ptr)->m_size - 1].scope != scopeNum)
 			{
-				p->line.push_back(lineNum);
-				p->scopeIdx.push_back(curIdx);
-				id_vec.back().push_back(p);
-				return true;
+				if (++(*ptr)->m_size == (*ptr)->m_cap)
+				{
+					(*ptr)->m_cap += 2;  // expand capacity
+					Pair* newScopes = new Pair[(*ptr)->m_cap];
+					for (int i = 0; i < (*ptr)->m_size; ++i)
+						newScopes[i] = (*ptr)->m_Scopes[i];
+					Pair* temp = newScopes; newScopes = (*ptr)->m_Scopes;
+					(*ptr)->m_Scopes = temp;
+					delete [] newScopes;
+				}
+				
+				(*ptr)->m_Scopes[(*ptr)->m_size - 1] = Pair(lineNum, scopeNum);
+				return *ptr;
 			}
+			else
+				return nullptr;
 		}
-		else
-		{
-			q = p;
-			p = p->next;
-		}
-			
+		ptr = &((*ptr)->next);
 	}
-	// declaratio of first time 
-	if (p == nullptr)
-	{
-		q->next = new identifier(id);
-		p = q->next;
-		p->line.push_back(lineNum);
-		p->scopeIdx.push_back(curIdx);
-		id_vec.back().push_back(p);
-	}
-	return true;
+	*ptr = new Node(id, lineNum, scopeNum);
+	(*ptr)->prev = ptr;
+	return *ptr;
 }
 
-int SymbolTableImpl::find(const string& id) const
+inline int hashTable::find(const string& id) const
 {
-	if (id.empty())
-		return -1;
-
-	identifier* p = buck[hashCode(id)];
-	while (p != nullptr)
+	Node* ptr = bucket[hashF(id)];
+	while (ptr != nullptr)
 	{
-		if ((p->name) == id)
-			if (!p->line.empty())
-				return p->line.back();
-			else
-				return -1;		
-		p = p->next;
+		if (ptr->id == id)
+			return (ptr->m_size == 0) ? -1 : ptr->m_Scopes[ptr->m_size - 1].lineNum;
+		ptr = ptr->next;
 	}
 	return -1;
 }
 
-/*
-void SymbolTableImpl::printTable() const
+inline void SymbolTableImpl::enterScope()
 {
-	for (int i = 0; i < NUMBEROFBUCKS; i++)
-	{
-		identifier* p = buck[i];
-		while (p != nullptr)
-		{
-			if (!p->line.empty())
-				cout << p->name << ' ' << p->line.back() << endl;
-			p = p->next;
-		}
-	}
-	cout << "============================" << endl;
+	idVector.push_back(vector<Node*>());
 }
-*/
 
+inline bool SymbolTableImpl::exitScope()
+{
+	if (idVector.size() > 1)
+	{
+		vector<Node*>& currId = idVector.back();
+		int len = currId.size();
+		for (int i = 0; i < len; ++i)
+		{
+			if (--currId[i]->m_size == 0)
+			{
+				*(currId[i]->prev) = currId[i]->next;
+				if (currId[i]->next != nullptr)
+					currId[i]->next->prev = currId[i]->prev;
+				delete currId[i];
+			}
+		}
+		idVector.pop_back();
+		return true;
+	}
+	return false;
+}
+
+inline bool SymbolTableImpl::declare(const string& id, int lineNum)
+{
+	Node* result = table.declare(id, lineNum, idVector.size());
+	if (result != nullptr)
+	{
+		idVector.back().push_back(result);
+		return true;
+	}
+	return false;
+}
+
+inline int SymbolTableImpl::find(const string& id) const
+{
+	return table.find(id);
+}
 //*********** SymbolTable functions **************
 
 // For the most part, these functions simply delegate to SymbolTableImpl's
@@ -216,36 +199,30 @@ void SymbolTableImpl::printTable() const
 
 SymbolTable::SymbolTable()
 {
-	m_impl = new SymbolTableImpl;
+    m_impl = new SymbolTableImpl;
 }
 
 SymbolTable::~SymbolTable()
 {
-	delete m_impl;
+    delete m_impl;
 }
 
 void SymbolTable::enterScope()
 {
-	m_impl->enterScope();
+    m_impl->enterScope();
 }
 
 bool SymbolTable::exitScope()
 {
-	return m_impl->exitScope();
+    return m_impl->exitScope();
 }
 
 bool SymbolTable::declare(const string& id, int lineNum)
 {
-	return m_impl->declare(id, lineNum);
+    return m_impl->declare(id, lineNum);
 }
 
 int SymbolTable::find(const string& id) const
 {
-	return m_impl->find(id);
+    return m_impl->find(id);
 }
-/*
-void SymbolTable::printTable() const
-{
-	m_impl->printTable();
-}
-*/
