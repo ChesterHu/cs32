@@ -28,7 +28,7 @@ struct Node
 	Node* right;
 	Node** parent;
 	Node(const string& new_id, int new_line, int new_Scope) 
-		: id(new_id), left(nullptr), right(nullptr)
+		: id(new_id), left(nullptr), right(nullptr), parent(nullptr)
 	{
 		m_Scopes.push_back(Pair(new_line, new_Scope)); 
 	}

@@ -111,13 +111,17 @@ Node* bucket[TABLE_SIZE]
 
 2.2 Public class function
 ----------------------------------------------------------------------------------------------------------
+
 hashTable::hashTable();
 /* The constructor of hashTable, will traversal all the buckets in the array bucket
    array, and set then point to nullptr. */
+----------------------------------------------------------------------------------------------------------
 
 hashTable::~hashTable();
 /* The destructor of hashTable, will traversall all the buckets and delete all the
    Nodes */
+
+----------------------------------------------------------------------------------------------------------
 
 Node* hashTable::declare(const string& id, const int& lineNum, int scopeNum);
 /* The declare function of hashTable. If the identifier is not in the hashTable then
@@ -125,7 +129,6 @@ Node* hashTable::declare(const string& id, const int& lineNum, int scopeNum);
    return nullptr, otherwise it will return the identifier's Node. */
 
 Pesudocode
-----------------------------------------------------------------------------------------------------------
 {
 	  // use hash function find the bucket that may contain id's Node;
 	Node** ptr = &bucket[hashF(id)];
@@ -138,7 +141,7 @@ Pesudocode
 			if the Node's m_size is 0 or Node's m_Scopes[m_size - 1].scope != scopeNum
 			{
 				if the array is full, expand m_Scopes.
-				add Pair(lineNum, scopeNum) to then end of m_Scopes
+				add Pair(lineNum, scopeNum) to the end of m_Scopes
 				m_size++;
 				return *ptr;
 			}
@@ -160,13 +163,12 @@ int hashTable::find(const string& id) const;
    table, return -1. */
 
 Pesudocode
-----------------------------------------------------------------------------------------------------------
 {
 	  // use hash function the bucket that may contain id's Node
 	Node* ptr = bucket[hashF(id)];
 	while (ptr != nullptr)
 	{
-		if ptr->id == id, return  ptr->m_Scopes[ptr->m_size - 1].scope;
+		if ptr->id == id, return  ptr->m_Scopes[ptr->m_size - 1].lineNum;
 		else ptr = ptr->next;
 	}
 	return -1;
@@ -210,17 +212,19 @@ hashTable table;
 
 3.2 Public class function
 ----------------------------------------------------------------------------------------------------------
+
 SymbolTable::SymbolTable();
 /* The constructor of symbol table, push an empty vector to represent the base scope. */
+----------------------------------------------------------------------------------------------------------
 
 void SymboTable::enterScope();
 /* Enter a scope by pushing an empty vector to the idVector. */
+----------------------------------------------------------------------------------------------------------
 
 bool exitScope();
 /* Return true if successfully exit a scope, return false if programme in the base scope. */
 
 Pseudocode
-----------------------------------------------------------------------------------------------------------
 {
 	  // the size of idVector is the current scope number.
 	if idVector.size() == 1, return false;
@@ -234,12 +238,10 @@ Pseudocode
 /* Time complexity O(B), where B is the average number of identifiers in the current scopes. */
 ----------------------------------------------------------------------------------------------------------
 
-----------------------------------------------------------------------------------------------------------
 bool SymbolTable::declare(const string& id, int lineNum);
 /* Declare an id in the hash table. Return true if id is declared in table, otherwise return false. */
 
 Pseudocode
-----------------------------------------------------------------------------------------------------------
 {
 	  // try to declare the id in the hash table
 	Node* ptr = table.declare(id, lineNum, idVector.size());
@@ -253,6 +255,7 @@ Pseudocode
 /* Time complexity O(N), where N is total number of identifiers in the hash table. (It's very low because
    divided by TABLE_SIZE. */
 ----------------------------------------------------------------------------------------------------------
+
 int SymbolTable::find(const string& id)
 {
 	return table.find(id);

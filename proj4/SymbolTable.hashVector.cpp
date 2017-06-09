@@ -22,16 +22,21 @@ struct Pair
   // struct for store identifier and it's scope
 struct Node
 {
-	Pair m_Scopes[4];
+	Pair* m_Scopes;
 	int m_size;
-	
+	int m_cap;
 	string id;
 	Node* next;
 	Node** prev;
 	Node(const string& new_id, int new_line, int new_Scope) 
-		: id(new_id), next(nullptr), prev(nullptr), m_size(1)
+		: m_size(1), m_cap(2), id(new_id), next(nullptr), prev(nullptr)
 	{
+		m_Scopes = new Pair[2];
 		m_Scopes[0] = Pair(new_line, new_Scope); 
+	}
+	~Node()
+	{
+		delete [] m_Scopes;
 	}
 };
 
@@ -109,7 +114,18 @@ Node* hashTable::declare(const string& id, const int& lineNum, int scopeNum)
 		{
 			if ((*ptr)->m_size == 0 || (*ptr)->m_Scopes[(*ptr)->m_size - 1].scope != scopeNum)
 			{
-				(*ptr)->m_Scopes[(*ptr)->m_size++] = Pair(lineNum, scopeNum);
+				if (++(*ptr)->m_size == (*ptr)->m_cap)
+				{
+					(*ptr)->m_cap += 2;  // expand capacity
+					Pair* newScopes = new Pair[(*ptr)->m_cap];
+					for (int i = 0; i < (*ptr)->m_size; ++i)
+						newScopes[i] = (*ptr)->m_Scopes[i];
+					Pair* temp = newScopes; newScopes = (*ptr)->m_Scopes;
+					(*ptr)->m_Scopes = temp;
+					delete [] newScopes;
+				}
+				
+				(*ptr)->m_Scopes[(*ptr)->m_size - 1] = Pair(lineNum, scopeNum);
 				return *ptr;
 			}
 			else
