@@ -7,7 +7,7 @@
 #include <vector>
 using namespace std;
 
-const int TABLE_SIZE = 20000;
+const int TABLE_SIZE = 15000;
 const unsigned int HASHCOEF = 16777619;
 const unsigned int HASHBASE = 2166136261U;
   // struct to store lineNum and scope
