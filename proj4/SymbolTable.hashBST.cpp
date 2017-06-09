@@ -32,12 +32,26 @@ struct Node
 	{
 		m_Scopes.push_back(Pair(new_line, new_Scope)); 
 	}
+	~Node()
+	{
+		delete left;
+		delete right;
+	}
 };
   // a hashTable for string
 class hashTable
 {
 	public:
-		hashTable();
+		hashTable()
+		{
+			for (int i = 0; i < TABLE_SIZE; ++i)
+				bucket[i] = nullptr;
+		}
+		~hashTable()
+		{
+			for (int i = 0; i < TABLE_SIZE; ++i)
+				delete bucket[i];
+		}
 
 		Node* declare(const string& id, const int& lineNum, int scopeNum);
 		int find(const string& id) const;
@@ -50,12 +64,7 @@ class SymbolTableImpl
 {
 	public:
 		SymbolTableImpl() { idVector.push_back(vector<Node*>()); }
-		~SymbolTableImpl()
-		{
-			for (int i = 0; i < idVector.size(); ++i)
-				for (int j = 0; j < idVector[i].size(); ++j)
-					delete idVector[i][j];
-		}
+		
 		void enterScope();
 		bool exitScope();
 		bool declare(const string& id, int lineNum);
@@ -69,14 +78,6 @@ class SymbolTableImpl
 
 // function implementation
 ///////////////////////////////////////////////////////////
-
-
-  // constructor
-hashTable::hashTable()
-{
-	for (int i = 0; i < TABLE_SIZE; ++i)
-		bucket[i] = nullptr;
-}
 
   // return the hash value of a key
 inline int hashF(const string& key)
@@ -160,6 +161,8 @@ inline bool SymbolTableImpl::exitScope()
 					if (currId[i]->right != nullptr)
 						currId[i]->right->parent = &(currNode->right);
 				}
+				currId[i]->left = currId[i]->right = nullptr;
+				*(currId[i]->parent) = nullptr;
 				delete currId[i];
 			}
 		}
@@ -184,58 +187,6 @@ inline int SymbolTableImpl::find(const string& id) const
 {
 	return table.find(id);
 }
-/*
-int main()
-{
-	hashTable ht;
-	assert(ht.declare("abc", 1, 0));
-	assert(ht.declare("abc", 2, 2));
-	assert(!ht.declare("abc", 3, 2));
-	assert(ht.find("abc") == 2);
-
-	SymbolTable st;
-	assert(st.declare("alpha", 1));
-	assert(st.declare("beta", 2));
-	assert(st.declare("p1", 3));
-	assert(st.find("alpha") == 1);   // the alpha declared in line 1
-	assert(st.declare("p2", 4));
-	assert(st.find("beta") == 2);    // the beta declared in line 2
-	assert(st.declare("p3", 5));
-	assert(st.find("gamma") == -1);  // Error!  gamma hasn't been declared
-	assert(st.declare("f", 6));
-	st.enterScope();
-	assert(st.declare("beta", 7));
-	assert(st.declare("gamma", 8));
-	assert(st.find("alpha") == 1);   // the alpha declared in line 1
-	assert(st.find("beta") == 7);    // the beta declared in line 7
-	assert(st.find("gamma") == 8);   // the gamma declared in line 8
-	st.enterScope();
-	assert(st.declare("alpha", 13));
-	assert(st.declare("beta", 14));
-	assert(!st.declare("beta", 15)); // Error! beta already declared
-	assert(st.find("alpha") == 13);  // the alpha declared in line 13
-	assert(st.exitScope());
-	assert(st.find("alpha") == 1);   // the alpha declared in line 1
-	assert(st.find("beta") == 7);    // the beta declared in line 7
-	st.enterScope();
-	assert(st.declare("beta", 21));
-	assert(st.find("beta") == 21);   // the beta declared in line 21
-	assert(st.exitScope());
-	assert(st.exitScope());
-	assert(st.declare("p4", 25));
-	assert(st.find("alpha") == 1);   // the alpha declared in line 1
-	assert(st.declare("p5", 26));
-	assert(st.find("beta") == 2);    // the beta declared in line 2
-	assert(st.declare("p6", 27));
-	assert(st.find("gamma") == -1); // Error! gamma is not in scope
-	assert(st.declare("main", 28));
-	st.enterScope();
-	assert(st.declare("beta", 29));
-	assert(st.find("beta") == 29);   // the beta declared in line 29
-	assert(st.find("f") == 6);       // the f declared in line 6
-	assert(st.exitScope());
-}
-*/
 //*********** SymbolTable functions **************
 
 // For the most part, these functions simply delegate to SymbolTableImpl's

@@ -1,8 +1,10 @@
-Algorithms and data structures
-//////////////////////////////
+PROJECT 4 REPORT
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 My implementation of Scopes is based on hash table and linked list. I write two classes, hashTable and 
-SymbolTableImpl. I also write two structs to help me build the hashTable:
+SymbolTableImpl. Even the time complexity of find and declare in the hash table is O(N), since it divided
+by the TABLE_SIZE == 20000, therefore, the actually time in every operation is very slow compare to a BST
+structure, which has time complexity of O(log N). I also write two structs to help me build the hashTable.
 
 1. Pair and Node
 =========================================================================================================
@@ -44,7 +46,7 @@ struct Node
 };
 
 
-Pair   m_Scopes[4]
+Pair m_Scopes[4]
 /* the 1-dimension array with 4 buckets. Pair is a data struct I defined to 
    store the line number (int) and scope number (int) of the identifier. When 
    the identifier is declared in a scope, I will first look at the last Pair 
@@ -53,10 +55,10 @@ Pair   m_Scopes[4]
    number and the line number of the declaration to the m_Scopes[m_size] and 
    return true. */
 
-int    m_size
+int m_size
 /* the number of valid buckets in m_Scopes. */
 
-int    m_cap
+int m_cap
 /* the capacity of m_Scopes, if m_size excceeds the capacity, I will use a larger 
    array to store the Pairs. (Actually capacity of 4 buckets is enough for 400000 
    lines of commands.txt.) */
@@ -64,10 +66,10 @@ int    m_cap
 string id
 /* the string of identifier. */
 
-Node*  next 
+Node* next 
 /* the pointer points to the next list node in hashTable if there is a collision. */
 
-Node**  prev 
+Node** prev 
 /* the pointer points to the pointer of a Node, which points to the current node. 
    It's the address of the previous node's "next" pointer, and I use this to delete 
    the current node. */
@@ -122,7 +124,7 @@ Node* hashTable::declare(const string& id, const int& lineNum, int scopeNum);
    it will add the Node to the corresponding bucket. If the declare fail, it will
    return nullptr, otherwise it will return the identifier's Node. */
 
-Pesudocode:
+Pesudocode
 ----------------------------------------------------------------------------------------------------------
 {
 	  // use hash function find the bucket that may contain id's Node;
@@ -150,12 +152,14 @@ Pesudocode:
 	(*ptr)->prev = ptr;
 	return *ptr;
 }
+/* Time complexity O(N), where N is the total number of identifiers in hash table. */
+----------------------------------------------------------------------------------------------------------
 
 int hashTable::find(const string& id) const;
 /* The function to find the lineNum of identifier, if the identifier is not in the hash
    table, return -1. */
 
-Pesudocode:
+Pesudocode
 ----------------------------------------------------------------------------------------------------------
 {
 	  // use hash function the bucket that may contain id's Node
@@ -167,6 +171,8 @@ Pesudocode:
 	}
 	return -1;
 }
+/* Time complexity O(N), where N is the total number of identifiers in hash table. */
+----------------------------------------------------------------------------------------------------------
 
 3. SymbolTableImpl
 ==========================================================================================================
@@ -181,7 +187,7 @@ class SymbolTableImpl
 	private:
 		  // use a vector of pointers point to Nodes
 		vector<vector<Node*> > idVector;
-		// vector<vector<string> > idVector;
+		  // vector<vector<string> > idVector;
 		hashTable table;
 };
 
@@ -198,3 +204,56 @@ vector<vector<Node*> > idVector;
    level of scopes, the second dimension represents every level scopes's identifier. When enter a new scope,
    just push an empty vector to the back of the idVector. When successfully declare a scope, push the pointer 
    points to the identifier's Node at the back of the current scopes vector. */
+
+hashTable table;
+/* The hash table used in this symbol table. */
+
+3.2 Public class function
+----------------------------------------------------------------------------------------------------------
+SymbolTable::SymbolTable();
+/* The constructor of symbol table, push an empty vector to represent the base scope. */
+
+void SymboTable::enterScope();
+/* Enter a scope by pushing an empty vector to the idVector. */
+
+bool exitScope();
+/* Return true if successfully exit a scope, return false if programme in the base scope. */
+
+Pseudocode
+----------------------------------------------------------------------------------------------------------
+{
+	  // the size of idVector is the current scope number.
+	if idVector.size() == 1, return false;
+	for every Node pointer np in the idVector.back()
+	{
+		np->m_size--;
+		if np->m_size == 0 delete the node;
+	}
+	return true;
+}
+/* Time complexity O(B), where B is the average number of identifiers in the current scopes. */
+----------------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------------
+bool SymbolTable::declare(const string& id, int lineNum);
+/* Declare an id in the hash table. Return true if id is declared in table, otherwise return false. */
+
+Pseudocode
+----------------------------------------------------------------------------------------------------------
+{
+	  // try to declare the id in the hash table
+	Node* ptr = table.declare(id, lineNum, idVector.size());
+	if (ptr != nullptr)  // if id is declared in the hash table
+	{
+		idVector.push_back(ptr);
+		return true;
+	}
+	return false;
+}
+/* Time complexity O(N), where N is total number of identifiers in the hash table. (It's very low because
+   divided by TABLE_SIZE. */
+----------------------------------------------------------------------------------------------------------
+int SymbolTable::find(const string& id)
+{
+	return table.find(id);
+}
