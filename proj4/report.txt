@@ -5,7 +5,7 @@ My implementation of Scopes is based on hash table and linked list. I write two 
 SymbolTableImpl. I also write two structs to help me build the hashTable:
 
 1. Pair and Node
-================
+=========================================================================================================
 
 1.1 Pair
 ----------------------------------------------------------------------------------------------------------
@@ -73,7 +73,7 @@ Node**  prev
    the current node. */
 
 2. hashTable
-============
+==========================================================================================================
   
   // the number of buckets in my hash table.
 const int TABLE_SIZE = 20000; 
@@ -107,7 +107,7 @@ Node* bucket[TABLE_SIZE]
    the current scope number, then the identifier must have been declared in the same 
    scope, in this case the declare operation will fail. */
 
-2.3 Public class function
+2.2 Public class function
 ----------------------------------------------------------------------------------------------------------
 hashTable::hashTable();
 /* The constructor of hashTable, will traversal all the buckets in the array bucket
@@ -123,7 +123,7 @@ Node* hashTable::declare(const string& id, const int& lineNum, int scopeNum);
    return nullptr, otherwise it will return the identifier's Node. */
 
 Pesudocode:
------------
+----------------------------------------------------------------------------------------------------------
 {
 	  // use hash function find the bucket that may contain id's Node;
 	Node** ptr = &bucket[hashF(id)];
@@ -149,5 +149,52 @@ Pesudocode:
 	  // record it's prev pointer for future delete
 	(*ptr)->prev = ptr;
 	return *ptr;
-
 }
+
+int hashTable::find(const string& id) const;
+/* The function to find the lineNum of identifier, if the identifier is not in the hash
+   table, return -1. */
+
+Pesudocode:
+----------------------------------------------------------------------------------------------------------
+{
+	  // use hash function the bucket that may contain id's Node
+	Node* ptr = bucket[hashF(id)];
+	while (ptr != nullptr)
+	{
+		if ptr->id == id, return  ptr->m_Scopes[ptr->m_size - 1].scope;
+		else ptr = ptr->next;
+	}
+	return -1;
+}
+
+3. SymbolTableImpl
+==========================================================================================================
+class SymbolTableImpl
+{
+	public:
+		SymbolTableImpl() { idVector.push_back(vector<Node*>()); }
+		void enterScope();
+		bool exitScope();
+		bool declare(const string& id, int lineNum);
+		int find(const string& id) const;
+	private:
+		  // use a vector of pointers point to Nodes
+		vector<vector<Node*> > idVector;
+		// vector<vector<string> > idVector;
+		hashTable table;
+};
+
+/* The class to implement SymbolTable. idVector is a 2-dimentional vector of Node's pointers, which points 
+   to declared identifiers in each scope. When enter a scope, just push an empty vector to the back of 
+   idVector, when exit a scope. for every pointer in the back vector of idVector, decrease the pointed Node's 
+   m_size by 1. If the pointed Node's m_size is 0, delete that Node. */
+
+3.1 Private class member
+----------------------------------------------------------------------------------------------------------
+vector<vector<Node*> > idVector;
+/* The 2-dimension vector to store all declared identifier's Node's pointer. I use this to fast delete all 
+   current scopes identifiers when the programme exit the current scope. The first dimension represents 
+   level of scopes, the second dimension represents every level scopes's identifier. When enter a new scope,
+   just push an empty vector to the back of the idVector. When successfully declare a scope, push the pointer 
+   points to the identifier's Node at the back of the current scopes vector. */
