@@ -19,7 +19,7 @@ class Rectangle : public Shape
 {
 	public:
     Rectangle(double x, double y, double dx, double dy);    // if we don't implement virtual move function, it will use the move function in base class
-		virtual void draw() const;                              // check : always implement the exact virtual class
+		virtual void draw() const;                          // check : always implement the exact virtual class
 		virtual double diag() const;
 	private:
 		double m_dx;

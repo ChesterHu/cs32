@@ -28,6 +28,7 @@ int main() {
 	student a(2, 8);
 	cout << a.get_age() << endl;
 	int i = 2, j = 3;
+	int d[100];
 	compare(i, j);
 	return 0;
 }

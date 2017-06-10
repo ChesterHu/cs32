@@ -23,7 +23,7 @@ int main()
     h();
   ...;
   String s("Hello");
-  f(s);  // Will copy s, need a copy constructor otherwise will free memory twice.
+  f(s);         // Will copy s, need a copy constructor otherwise will free memory twice.
   ...;
 }
 
@@ -72,7 +72,7 @@ String::String(const char* value)
 String::String(const char* value)
 {
   if (value == nullptr)
-    value = ""; 							// The const means we can't modify the content of the pointer points, but we can let pointer point to other object.
+    value = ""; 					// The const means we can't modify the content of the pointer points, but we can let pointer point to other object.
   m_len = strlen(value); 			// Use "" to indicate it's a string.
   m_text = new char[m_len+1];
   // m_text[0] = '\0';
@@ -102,7 +102,7 @@ String& String::operator=(const String& rhs)
   return *this;
 }
 
-// Deconstructor
+// Destructor
 String::~String()
 {
   delete [] m_text;
@@ -136,5 +136,4 @@ Different implementation in constructor:
   -------    VS     ------ 
  |  int  |         |  int |
   -------           ------ 
-// Second one is much easier to implement and construct, but use more instructions (time) and spaces.
-
+  // Second one is much easier to implement and construct, but use more instructions (time) and spaces.
