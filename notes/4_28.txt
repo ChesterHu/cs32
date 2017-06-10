@@ -65,4 +65,3 @@ virtual function
 	delete p; // Will have undefined behavior, if the destructor is not virtual.
 pure virtual function:
 	virtual void speak() const = 0; // A pure virtual function.
-

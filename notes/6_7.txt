@@ -38,4 +38,3 @@ Repeatedly, remove the biggest item (putting it at the end) and restore the heap
 ...
 	2 3 5 6 9 10
 Time complexity is O(N * log N)
-

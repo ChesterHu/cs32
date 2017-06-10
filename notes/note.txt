@@ -1,0 +1,697 @@
+// NEVER NEVER NEVER attempt to override a non-virtual function!!!
+// Derived* ---> Base*
+// Derived& ---> Base&
+
+class Shape
+{
+	public:
+		virtual void move(double xnew, double ynew);   // if every class use the same function, don't make it virtual
+		virtual void draw() const = 0;   // let the function point to nullptr, it's "pure virtual", which will make this
+		double x() const;                // class as abstract class
+		double y() const;
+
+	private:
+		double m_x;
+		double m_y;
+};
+
+class Rectangle : public Shape
+{
+	public:
+    Rectangle(double x, double y, double dx, double dy);    // if we don't implement virtual move function, it will use the move function in base class
+		virtual void draw() const;                              // check : always implement the exact virtual class
+		virtual double diag() const;
+	private:
+		double m_dx;
+		double m_dy;
+};
+
+// what if WarningSymbol class has a different implementation of move function?
+
+class WarningSymbol : public Shape
+{
+	virtual void move(double xnew, double ynew);
+};
+
+class Polygon : public Shape
+{
+};
+
+void Shape::move(double xnew, double ynew)
+{
+	m_x = xnew; m_y = ynew;
+}
+
+void WarningSymbol::move(double xnew, double ynew)
+{
+	Shape::move(xnew, ynew);   // will use move function of Shape class
+	// ...flash three times...
+}
+
+// let's see what is the consequence...
+WarningSymbol ws;
+ws.move(x, y);   // will call move function of WarningSymbol
+f(ws);           // will call move function of Shape!
+// thus we have to make move function virtual
+// so NEVER attempt to override a non-virtual function!!!
+
+void f(Shape& x)
+{
+	x.move(10, 20);
+	x.draw();
+}
+
+Rectangle r;
+f(r);   // will call move function of WarningSymbol and call draw function of Rectangle
+                ____
+//       |---- |vptr|              virtual pointer to virtual functions talbe (vptr)
+//       |     |m_x |<----sp       when the object is Rectangle, the vptr will points to the 
+//       |     |m_y |              virtual table of Rectangle. vptr is a part of Shape instance
+//       |     |____|
+//       |
+//       |   Shape's virtual table
+//       |----------->  _____
+//       |     move   0|     |-------------+-------> Shape::move(double xnew, double ynew)
+//(sp=&r)|     draw   1|_____|------------/--------> nullptr (it's purevirtual)    when shape's draw is a pure virtual will cause undefined
+//       |                               /                                         behavior if we call the draw function of shape, thus 
+//       |   Rectangle's virtual table  /                                          C++ don't allow us create instance of such objects
+//       |----------->  _____          /
+//             move   0|     |---------
+//             draw   1|     |---------------------> Rectangle::draw()
+//             diag   2|_____|---------------------> Rectangle::diag()
+
+Shape* sp;
+Rectangle r;
+Shape s;
+sp = &r; 
+// sp = &s;
+sp->draw();   // call the function that sp->vptr[1] points to
+// the cost of call a virtual function is expensive than call a non-virtual function
+
+// abstract class VS. concrete class
+// RULE:
+//   If a class has at least one pure virtual function, it'a an abstract class
+
+// 1. Construct the base part
+// 2. Construct the data members
+// 3. Excute the body of the constructor
+// ======
+// 1. Execute the body of the deconstructor
+// 2. Destroy the data members
+// 3. Destroy the base part
+
+Shape::Shape(double x, double y)
+	: m_x(x), m_y(y)
+{}
+
+Rectangle::Rectangle(double x, double y, double dx, double dy)
+	: Shape(x, y), m_dx(dx), m_dy(dy)
+{}
+
+//                 Polygon                      when destructed, we need implement destructor of Polygon's linked list member
+//                  ______                      in order to let compiler know which destructor to call, we make destructor virtual
+//         sp------|>____ |                     and we must implement it, because every derived class will call base class destructor     
+//                 ||    ||
+//                 ||____||
+//                 |  ----|-->linked list
+//                 |______|
+//
+
+// RULE:
+//   If a class is designed to base class, declare its
+//   destructor virtual and implement it
+
+// inheritance & polymorphism
+// if a class is designed to be a base class, declare its destructor to be 
+// virtual, and implement it.
+
+class Shape
+{
+	public:
+		virtual ~Shape() {}
+};
+
+class Polygon : public Shape
+{
+	public:
+		virtual ~Polygon() 
+		{
+			delete head;
+		}
+	private:
+		struct Node
+		{
+			int data;
+			Node* next;
+			~Node() { delete next; }
+		};
+
+		Node* head;
+};
+
+Shape *sp;
+sp = new Polygon();
+// sp = new Rectangle();
+delete sp;   // need destructor of Shape, Polygon and Rectangle be virtual, otherwise
+             // compiler won't know which destructor to call.
+
+
+
+// static in C++
+// In C++ "static" can also apply to member functions and data members of classes. A 
+// static data member is also called a "class variable", while a non-static data member
+// is an "instance variable". If a data member of a class is static, which means the 
+// variable is shared by all objects of this classes. So a static data member is 
+// essentially a global variable within a certain class.
+// 
+// Non-static member functions can access all data members of the class: static and non-
+// static. Static member functions can only operate on the static data members.
+// The static function, as other function in the class, has the right to access other 
+// member of the same class, but need to pass an instance of the class. Otherwise it can
+// only access static member.
+// C++ standard allows only static constant integral or enumeration types to be
+// initialized inside the class.
+
+class student
+{
+	public:
+		student() { num_student++; };
+		int how_many() { return num_student; }
+	private:
+		static int num_student;
+};
+
+Class template
+==============
+template<typename T>
+
+T minimun(T a, T b)
+{
+	if (a < b)
+		return a;
+	return b;
+}
+
+int main()
+{
+	int k;
+	cin >> k;
+	cout << minumun(k, 10) / 2;
+	double x;
+	...;
+	double z = 3 * minimum(x * x, x + 10);
+	...;
+	int z = minimum(0, 3 * k - k + 4);
+	...;
+}
+
+Recursion
+=========
+
+// question1
+double average(const int arr[], int n)
+{
+	if (n == 1)
+		return arr[0];
+	double prevAvg = average(arr, n - 1);
+	return ((n - 1) * prevAvg + arr[n - 1]) / n;
+}
+
+int sumDigits(int n)
+{
+	if (n < 10)
+		return n;
+
+	return n % 10 + sumDigits(n / 10);
+}
+
+bool palindrome(const string &s)
+{
+	if (s.length() < 2)
+		return true;
+
+	return (s[0] == s[s.size() - 1]) && palindrome(s.substr(1, s.size() - 2);
+}
+
+// C++ Template 
+using namespace std;
+template<typename T>    // template <typename T1, typename T2, ... > T1 & T2 could be same and different
+
+T minimum(T a, T b)     // int minimum(int a, int b);
+{                       // double minimum(double a, double b);
+	if (a < b)          // Instantiation of the template has to compile
+		return a;
+	else
+		return b;
+}
+
+char* minimum(char* a, char* b)    // overiding the function, use this for special case when a, b are char
+{
+	if (strcmp(a, b) < 0)          // C string compare builtin function
+		return a;
+	else
+		return b;
+}
+
+T sum(const T a[], int n)          // double(), int(), bool() ... initialize 0
+{                                  // string() initialize ""
+	T total = T();                 // int*() initialize nullptr
+	for (int k = 0; k < n; ++k)
+		total += a[k];
+	return total;
+}
+
+// int main()
+// {
+// 	 int k;
+//   cin >> k;
+//   cout << minimum(k, 10) / 2;
+//   double x;
+//	 double y = 3 * minumum(x * x, x + 10);
+//	 int z = minumum(0, 3 * k - k + 4);
+// }
+
+// When you use template
+//   Your call has to match some template
+//   No conversions are considered in template argument deduction
+
+
+// template<typename T1, typename T2>
+// ??? minimum(T1 a, T2 b)    // undefined return type, no good solution
+// {
+//    if (a < b)
+//      return a;
+//    else
+//      return b;
+// }
+
+// int main()                          // Chicken minimum(Chicken a, Chicken b)
+// {                                   // {
+//   Chicken c1, c2;                   // 	if (a < b)
+//   Chichen c3 = minimum(c1, c2);     //     return a;
+// }                                   //   else
+                                       //     return b;
+								       // }
+
+// int main()
+// {
+//	 char ca1[100];   // C string
+//	 char ca2[100];
+//	 cin.getline(ca1, 100);
+//	 cin.getline(ca2, 100);
+// 	 char* ca3 = minimum(ca1, ca2);   // will compare the address of ca1 and ca2 point to
+// }
+
+// ExpensiveToCopyThing minimium(const ExpensiveToCopyThing& a, const ExpensiveToCopyThing& b)
+// {
+//   if (a < b)
+//     return a;
+//   else
+//     return b;
+// }
+
+
+
+// int main()
+// {
+//   ExpensiveToCopyThing x, y;
+//   ExpensiveToCopyThing z = minimum(x, y);
+// }
+
+
+// int main()
+// {
+//   double da[100];                                                                           // string sum(const string a[], int n)
+//   da = {1, 2, 3, 4, 5};                                                                     // {
+//   cout << sum(da, 5);                                                                       //   string total = 0  
+//   string sa[10] = {"This", "is", "a", "test."};                                             //    ....
+//   string s = sum(sa, 4);    // won't work because can't initialize string with zero. 
+// }                                                               
+
+template<typename T>
+class Stack
+{
+	public:
+		Stack();
+		void push(T x);
+		void pop();
+		T top() const;
+		int size() const;
+	private:
+		T m_data[100];
+		int m_top;
+};
+
+template<typename T>
+Stack<T>::Stack()      // compiler will only instantiate them when it's been called
+	: m_top()
+{}
+
+template<typename T>
+void Stack<T>::push(const T& x)
+{
+	m_data[m_top] = x;    // undefined if it's full
+	m_top++;
+}
+
+template<typename T>
+void Stack<T>::pop()
+{
+	m_top--;   // undefined if it's empty
+}
+
+template<typename T>
+Stack<T>::top() const
+{
+	return m_data[m_top - 1];   // undefined if it's empty
+}
+
+template<typename T>
+int Stack<T>::size() const
+{
+	return m_top;
+}
+
+template<typename T>
+Stack<T>::~Stack()
+{}
+
+// STL standard template library
+#include <stack>
+#include <queue>
+// other useful ones
+#include <vector>
+//  _____         _______
+// |     |------>|_______|
+// | cap |   |     __________
+// | size|   ---->|__________|  push_back when the size is bigger than capacity, then points to larger array
+// |_____|
+
+vector<int> vi;
+vi.push_back(10);
+vi.push_back(20);
+vi.push_back(30);
+cout << vi.size();
+cout << vi.front();
+cout << vi.back();
+vi[1] = 40;
+vi.pop_back();
+vi.at(1) = 60;
+vi.at(3) = 70;   // throws exception
+vector<double> vd(10);
+// vd.size() is 10, each element is 0.0
+vector<double> vs(10, "Hello");
+// vs.size() is 10, each element is "Hello"
+int a[5] = {10, 20, 30, 40, 50};
+vector<int> vx(a, a + 5);
+// vx.size() is 5, vx[0] is 10, vx[1] is
+// 20, ..., vx[4] is 50
+
+#include <list>
+list<int> li;   // empty list
+li.push_back(20);
+li.push_back(30);
+li.push_front(10);
+cout << li.size();    // writes 3
+cout << li.front();   // writes 10
+cout << li.back()l    // writes 30
+li.push_front(40);
+li.pop_front();
+
+//   li.begin()                        li.end()
+//        v                               v
+//       10         20           30
+
+// Iterator
+//   acts like a pointer, hide the details of pointers and nodes in the list
+for (list<int>::iterator p = li.begin(); p!= li.end(); p++)   // can also do p-- but p -= 2 and p += 2 won't compile 
+	cout << *p << endl;
+
+template<typename Iter, typename T>
+Iter find(Iter b, Iter e, T& target)
+{
+	for (; b != e; b++)
+		if (*b == target)
+			return b;
+	return b;
+}
+
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int main()
+{
+	vector<int> vi;
+	vector<int>::iterator p = find(vi.begin(), vi.end(), 42);
+	if (p != vi.end())
+	{
+		int n = count(vi.begin(), vi.end(), 0);
+		reverse(vi.begin(), vi.end());
+	}
+	sort(vi.begin(), vi.end());
+}
+Climbing Stairs
+===============
+There is n steps stairs. Return how many times you can do climbing the stairs
+
+dp[i] = dp[i - 1] + dp[i - 2]
+
+
+Contains Duplicates
+===================
+Given an array of integers, find if the array contains any duplicates. Return true if any duplicates, otherwise return false.
+
+use set || map
+
+Majorit Elements
+=================
+Given an array of size n, find the majority element. The majority element is the elements appears more than n/2 times. You may assume that there is always majority elements.
+
+use set || map
+
+Two Sum
+=======
+Given an array of integers, return indices of the two numbers such that they add up to a specific target.
+
+Merge Two Sorted List
+=====================
+Merge two sorted liked list and return it as a new list. The new list should be made from the two lists
+
+recursion
+template<typename Iter, typename Func>
+Iter find_if(Iter b, Iter e, Func f)
+{
+	for ( ; b != e; b++)
+		if (f(*b))
+			break;
+	return b;
+}
+
+bool isNegative(int k)
+{
+	return k < 0;
+}
+
+bool isEmpty(string s)
+{
+	return s.empty();
+}
+
+
+bool isGreater(int i, int j)
+{
+	return i > j;
+}
+
+bool makesLessThan(const Employee& e1, const Employee& e2)
+{
+	return e1.salary() < e2.salary();
+}
+
+bool hasBetterRecord(const Team& t1, const Team& t2)
+{
+	if (t1.wins() > t2.wins())
+		return true;
+	if (t1.wins() < t2.wins())
+		return false;
+	return t1.ties() > t2.ties();
+}
+
+
+
+int main()
+{
+	vector<int> vi;
+	vector<int>::iterator p = find_if(vi.begin(), vi.end(), isNegative);   // find the first negative value
+	                                                                       // will generate a pointer to the code for is Negative function
+                                                                         // pointor to function that take on int and return bool.
+	                                                                       // g(), g could be the name of a appropriate function
+	                                                                       // g could be a pointer to an appropriate function.
+	vector<string>::iterator p = find_if(vi.begin(), vi.end(), isEmpty);   // find the first empty string
+	
+	vector<int> vi;
+	sort(vi.begin(), vi.end(), isGreater);                 // sort int in descending order
+	Employee ea[100];
+	sort(ea, ea + 100, makesLessThan);                     // sort employees by salary in ascending order
+	vector<Team> league;
+	sort(league.begin(), league.end(), hasBetterRecord);   // sort teams by the number of wins and ties in ascending order.
+
+	for (int i = 0; i < N; i++)  // 7N + 1 operations
+		c[i] = a[i] * b[i];        // 5 operations
+}
+
+// traditional matrix multiplication do O(N*N*N) complexity
+// all log functions are proportional to each other.
+
+// tree structure
+// ==============
+// there is a unique path from the root to any node
+
+// node
+// edge
+// root
+// path
+// parent/child
+// subtree
+
+// leaf node vs. interior node
+// leaf nodes have no child, while interior node have.
+
+// depth of a node:
+//   root has depth of 0.
+
+// height of the tree:
+//   the maximum depth of the node.
+
+// store children in array may waste a lot of memory.
+#include <vector>
+using namespace std;
+
+struct Node
+{
+	string data;
+	vector<Node*> children
+};
+
+Node* root;
+
+  // a function return the number of nodes in a tree
+int countNodes(const Node* t)
+{
+	if (t == nullptr)
+		return 0;
+	int c = 1;
+	for (int i = 0; i < t->children.size(); i++)
+		c += countNodes(t->children[i]);
+	return c;
+}
+// print tree function
+void printtree(const Node* t, int depth)
+{
+	if (t != nullptr)
+	{
+		cout << string(2 * depth, ' ') << t->data << endl;
+		for (int k = 0; k < t->children.size(); k++)
+			printtree(t->children[k], depth + 1);
+	}
+}
+
+void printtree(const Node* t)
+{
+	printtree(t, 0);
+}
+
+// preorder traversal: process the root, then process the children
+// postorder traversal: process the children, then process the root
+// inorder traversal: process the left subtree, then the root, then the right subtree
+
+// A binary tree is either empty, or a node with a left binary subtree
+// and a right binary subtree.
+// every node in the left BST is <= the value at this node and
+// every node in the right BST is >= the value at this node
+// most BST do not have duplicates
+struct Node
+{
+	string data;
+	Node* left;
+	Node* right;
+}
+
+// print a BST in alphabetic order
+
+void printBST(const Node* t)
+{
+	if (t != nullptr)
+	{
+		printBST(t->left);
+		cout << t->data << endl;
+		printBST(t->right);
+	}
+}
+
+// move right most leaf in the left subtree or left most leaf on the right subtree to the root won't violate the tree structure
+// in this BST move Homer or Maggie to the root won't violate the tree structure
+                          Lisa
+					/              \
+				Bart               Marge
+				    \              /     \
+					Homer      Maggie    Patty
+				   /                        \
+				Carl                       Selma
+
+// BST is efficient when the tree is well balanced, BST won't have constant time to get node
+// hash table
+// some number of "buckets"
+
+		Hash table		
+         ______
+		|      |    linked list
+		|      |   ___    ___
+		|      |->|   |->|   |->nullptr
+		|      |  |___|  |___|
+		|      |
+		...   ...           load factor = number of items / number of bucket
+		|      |
+		|______|->nullptr
+// search in hash table has linear complexity, but divided by number of bucket, so it often use less time than BST, which has log N complexity in searching.
+Priority Queue
+==============
+A complete binary tree has every level filled except possibly the bottom one, and that one is fulled from left-to-right.
+
+A (max) heap is a complete binary tree where the value at each node is >= all the values in the subtree of that node. 
+
+A min heap is a compete binary tree where the value at each node is <= all the values in the subtrees of that node.
+
+Insert:
+	First, insert it so you have a complete binary tree
+	Then, bubble up the new item to its proper place
+
+Remove the largest item in a (max) heap (or smallest in a minheap):
+	First remove the root and move the bottom-right most item to the root position to make a complete binary tree.
+	Then, trickle the moved item down to the proper level.
+
+Give the child index i, it's parent: (int) (i - 1) / 2
+Give the parent index j, it's two children: 2 * j + 1 and 2 * j + 2
+
+Binary tree
+                  10
+			9            6
+	     3     2      5
+
+Array 
+           10 9 6 3 2 5
+	remove the top item: 5 9 6 3 2, then swap...
+	new heap 9 5 6 3 2
+
+Heap sort
+---------
+Sort an array in asscending order
+	6 3 5 9 2 10
+Start with the half way point: 5 (because it's the middle of the tree), swap it with 10. Next compare 3, 9, 2
+	10 9 6 3 2 5
+Repeatedly, remove the biggest item (putting it at the end) and restore the heap
+	5 9 6 3 2 10
+...
+	2 3 5 6 9 10
+Time complexity is O(N * log N)
