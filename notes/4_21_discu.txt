@@ -5,13 +5,14 @@ Don't do things in the wrong order
 Advice: If you're creating a new Node, set the values in the new Node first.
 
 Always check normal (middle), fromt, back, empty, one-element
-						____       ____      ____
-		head-->| 23 |     | 85 |    | 42 |<--tail
-					 ------     ------    ------
-					 |next|---->|next|--->|next|--->nullptr
-					 ------     ------    ------
- nullptr<--|prev|<----|prev|<---|prev|
-					 ------     ------    ------
+                       ____       ____      ____
+               head-->| 23 |     | 85 |    | 42 |<--tail
+                      ------     ------    ------
+                      |next|---->|next|--->|next|--->nullptr
+                      ------     ------    ------
+            nullptr<--|prev|<----|prev|<---|prev|
+                      ------     ------    ------
+
 When delete tail list, check if it's also pointed by head.
 
 Make cirle linked list: tail's next point to head list, will eliminate many special cases. A tech is to add one more Node in the head
@@ -19,24 +20,23 @@ Make cirle linked list: tail's next point to head list, will eliminate many spec
  Dummy Node
       |
 head  |
-    ____				____       ____      ____
-	 |		|			 | 23 |     | 85 |    | 42 |<--tail
-	 ------			 ------     ------    ------
-	 |		|			 |next|---->|next|--->|next|--->nullptr
-	 ------			 ------     ------    ------
-	 |		|<-----|prev|<----|prev|<---|prev|
-	 ------			 ------     ------    ------
+    ____        ____       ____      ____
+   |    |      | 23 |     | 85 |    | 42 |<--tail
+   ------      ------     ------    ------
+   |    |      |next|---->|next|--->|next|--->nullptr
+   ------      ------     ------    ------
+   |    |<-----|prev|<----|prev|<---|prev|
+   ------      ------     ------    ------
 
 Dummy Node let the code works for empty node or other special cases. But check iterator points to the head list, because head pointer always points to dummy node.
 
 LIFO
 ====
 Structure: last in first out
-				  top
-
-	push-->|   |--->pop
-				 |   |
-				 |   |
+          top
+  push-->|   |--->pop
+         |   |
+         |   |
          |   |
          -----
 Stack
@@ -55,17 +55,17 @@ using namespace std;
 
 int main()
 {
-		// Declaring a stack will hold int.
+	  // Declaring a stack will hold int.
 	stack<int> s;
 	s.push(10);
 	s.push(20);
-		// n will be 20.
+	  // n will be 20.
 	int n = s.top();
-		// 20 will be removed. C++ library pop() won't return the top item in the stack, it returns void.
+	  // 20 will be removed. C++ library pop() won't return the top item in the stack, it returns void.
 	s.pop();
 	if ( ! s.empty())
 	{
-			// size() still works if stack is empty.
+		  // size() still works if stack is empty.
 		cout << s.size() << endl;
 		...;
 	}
@@ -76,14 +76,14 @@ A: For restriction. Hide details from users. Make operations simple.
 
 Implementation
 --------------
-					0   1  2  3 ...
+          0   1  2  3 ...
           __________________
-				 |  |  |  |  |      |
-				 --------------------
-	top  
-	___      pop:  top--
- | 0 |     push: top++
- -----
+         |  |  |  |  |      |
+         --------------------
+      top  
+      ___      pop:  top--
+     | 0 |     push: top++
+     -----
 
 capacity = 200, dynamic allocate
 
