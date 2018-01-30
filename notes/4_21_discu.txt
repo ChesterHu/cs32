@@ -90,11 +90,11 @@ capacity = 200, dynamic allocate
 FIFO
 ====
 Structure: first in first out
-				 __________________
+         __________________
  out<---|                  |<---in
-				--------------------
-	head                     tail
-	front                    back
+        --------------------
+       head                     tail
+       front                    back
 
 Queue
 -----
