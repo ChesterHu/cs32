@@ -64,7 +64,7 @@ void f(Shape& x)
 Rectangle r;
 f(r);   // will call move function of WarningSymbol and call draw function of Rectangle
                 ____
-//       |---- |vptr|              virtual pointer to virtual functions talbe (vptr)
+//       |---- |vptr|              virtual pointer to virtual functions table (vptr)
 //       |     |m_x |<----sp       when the object is Rectangle, the vptr will points to the 
 //       |     |m_y |              virtual table of Rectangle. vptr is a part of Shape instance
 //       |     |____|
