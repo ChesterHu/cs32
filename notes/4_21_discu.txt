@@ -93,8 +93,8 @@ Structure: first in first out
          __________________
  out<---|                  |<---in
         --------------------
-       head                     tail
-       front                    back
+       head                tail
+       front               back
 
 Queue
 -----
