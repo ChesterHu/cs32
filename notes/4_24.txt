@@ -83,7 +83,7 @@ void f(Rectangle & r)
 //   (subclasses)
 //   derive class
 
-Shape pic[100]
+Shape* pic[100]
 pic[0] = new Circle;
 pic[1] = new Rectangle;
 pic[2] = new Circle;
