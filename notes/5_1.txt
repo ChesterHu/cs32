@@ -96,7 +96,7 @@ sp->draw();   // call the function that sp->vptr[1] points to
 // 2. Construct the data members
 // 3. Excute the body of the constructor
 // ======
-// 1. Execute the body of the deconstructor
+// 1. Execute the body of the destructor
 // 2. Destroy the data members
 // 3. Destroy the base part
 
@@ -118,5 +118,5 @@ Rectangle::Rectangle(double x, double y, double dx, double dy)
 //
 
 // RULE:
-//   If a class is designed to base class, declare its
+//   If a class is designed to be a base class, declare its
 //   destructor virtual and implement it
