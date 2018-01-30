@@ -33,7 +33,7 @@ class Set
 		};
 
 		Node* m_head;
-		int  	m_size;
+		int m_size;
 };
 
 void unite(const Set& s1, const Set& s2, Set& result);
