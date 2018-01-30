@@ -38,7 +38,7 @@ class Shape
 
 Circle.h
 --------
-class Circl : public Shape  // A Circle is a kind of shapee
+class Circl : public Shape  // A Circle is a kind of shape
 {
   public:
     void move(double xnew, double ynew);
