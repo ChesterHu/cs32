@@ -44,26 +44,26 @@ void printBST(const Node* t)
 
 // move right most leaf in the left subtree or left most leaf on the right subtree to the root won't violate the tree structure
 // in this BST move Homer or Maggie to the root won't violate the tree structure
-                          Lisa
+                                             Lisa
 					/              \
-				Bart               Marge
-				    \              /     \
-					Homer      Maggie    Patty
-				   /                        \
-				Carl                       Selma
+                                     Bart               Marge
+                                        \              /     \
+                                       Homer      Maggie    Patty
+                                       /                        \
+                                    Carl                       Selma
 
 // BST is efficient when the tree is well balanced, BST won't have constant time to get node
 // hash table
 // some number of "buckets"
 
 		Hash table		
-         ______
-		|      |    linked list
-		|      |   ___    ___
-		|      |->|   |->|   |->nullptr
-		|      |  |___|  |___|
-		|      |
-		...   ...           load factor = number of items / number of bucket
-		|      |
-		|______|->nullptr
+                 ______
+                |      |    linked list
+                |      |   ___    ___
+                |      |->|   |->|   |->nullptr
+                |      |  |___|  |___|
+                |      |
+                ...   ...           load factor = number of items / number of bucket
+                |      |
+                |______|->nullptr
 // search in hash table has linear complexity, but divided by number of bucket, so it often use less time than BST, which has log N complexity in searching.
